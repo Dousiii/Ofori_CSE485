@@ -17,8 +17,11 @@ function App() {
         <>
             <Router>
                 <Routes>
-                    {/* Automatically navigate to home when visiting "/" */}
+                    {/*
+                    Automatically navigate to home when visiting
+
                     <Route path="/" element={<Navigate to="/home" replace />} />
+                    */}
                     
                     <Route
                         path="/home" // Change this to whatever path you want for the home page
@@ -30,6 +33,13 @@ function App() {
                     />
                 </Routes>
             </Router>
+            <div>
+                You can enter /Homepage after the url goto the login page, 
+                <p></p>
+                You can enter /panels after the url goto the panels, 
+
+            </div>
+
         </>
     );
 }
