@@ -1,0 +1,120 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.home-container {
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.home-text1 {
+  top: 238px;
+  left: 727px;
+  position: absolute;
+  font-size: 50px;
+  align-self: center;
+}
+.home-text2 {
+  top: 394px;
+  left: 620px;
+  position: absolute;
+}
+.home-text3 {
+  top: 458px;
+  left: 622px;
+  position: absolute;
+}
+.home-textinput1 {
+  top: 384px;
+  left: 722px;
+  position: absolute;
+}
+.home-textinput2 {
+  top: 450px;
+  left: 721px;
+  position: absolute;
+}
+.home-button {
+  top: 527px;
+  left: 758px;
+  position: absolute;
+  background-color: #81c1f1;
+}
+@media(max-width: 479px) {
+  .home-text1 {
+    top: 302px;
+    left: 179px;
+    position: absolute;
+    font-size: 40px;
+  }
+  .home-text2 {
+    top: 399px;
+    left: 73px;
+    position: absolute;
+  }
+  .home-text3 {
+    top: 476px;
+    left: 71px;
+    position: absolute;
+  }
+  .home-textinput1 {
+    top: 390px;
+    left: 164px;
+    position: absolute;
+  }
+  .home-textinput2 {
+    top: 467px;
+    left: 161px;
+    position: absolute;
+  }
+  .home-button {
+    top: 541px;
+    left: 195px;
+    width: 84px;
+    height: 38px;
+    position: absolute;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    background-color: #81c1f1;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
