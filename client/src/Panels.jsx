@@ -1,17 +1,18 @@
 import React from "react";
-import "./App.css";
-import { useNavigate } from "react-router-dom"; // Change import to useNavigate
+import "./Panels.css";
+import Sidebar from './dashboardSidebar/Sidebar';
+import Content from "./dashboardSidebar/Content";
 
-function Panels() {
-    const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
+  const Panels = () => {
     return (
-        <>
-            <div>
-                <h1>Hello from admin panels!</h1>
-            </div>
-        </>
+      <div className="dashboard">
+        <Sidebar />
+        <div className="content-info">
+        <Content />
+        </div>
+      </div>
     );
-}
+  };
 
 export default Panels;

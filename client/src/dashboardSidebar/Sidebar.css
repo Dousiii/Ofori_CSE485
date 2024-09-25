@@ -1,0 +1,33 @@
+.menu {
+display: flex;
+flex-direction: column;
+gap: 3rem;
+}
+
+.icon{
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.title{
+    font-weight: 600;
+    font-size: 2rem;
+    color:rgb(53, 53, 55);
+}
+.card{
+    display: flex;
+    align-items: center;
+    gap:1.2rem;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 1rem;
+    padding: 10px;
+    transition: 0.3s ease-in-out;
+    color:rgb(53, 53, 55);
+}
+.card:hover{
+    background: rgb(53, 53, 55);
+    color: rgb(190, 190, 194);
+    font-size: 1.4rem;
+}
