@@ -14,3 +14,12 @@ body{
     display: flex;
     gap: 20px;
 }
+.content-info{
+    display: flex;
+    background: rgb(235, 235, 235);
+    flex: 1;
+    border-radius: 10px;
+    padding: 1.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+}
