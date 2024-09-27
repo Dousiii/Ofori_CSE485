@@ -19,7 +19,7 @@ class Admin(db.Model):
     Password = db.Column(db.String(255), nullable=False)
     Email = db.Column(db.String(100), nullable=False)
 
-# Event Table
+
 class Event(db.Model):
     __tablename__ = 'Event'
 
