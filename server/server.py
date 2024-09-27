@@ -10,6 +10,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
+#Initial the Table in DataBase
+
+#
+
 # Admin Table
 class Admin(db.Model):
     __tablename__ = 'Admin'
@@ -19,7 +23,7 @@ class Admin(db.Model):
     Password = db.Column(db.String(255), nullable=False)
     Email = db.Column(db.String(100), nullable=False)
 
-
+#Event table
 class Event(db.Model):
     __tablename__ = 'Event'
 
@@ -37,6 +41,11 @@ class Audience(db.Model):
     Event_id = db.Column(db.Integer, db.ForeignKey('Event.Event_id'), nullable=False)  # Foreign key referencing the Event table
     Name = db.Column(db.String(100), nullable=False)
     Email = db.Column(db.String(200), nullable=False)
+
+#Initial some get all function to check it connection
+
+#
+
 
 #function to get all admin from Admin table
 @app.route('/getAdmins', methods=['GET'])
