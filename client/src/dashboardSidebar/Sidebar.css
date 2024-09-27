@@ -10,11 +10,7 @@ gap: 3rem;
     flex-direction: column;
     gap: 2rem;
 }
-.title{
-    font-weight: 600;
-    font-size: 2rem;
-    color:rgb(53, 53, 55);
-}
+
 .card{
     display: flex;
     align-items: center;
