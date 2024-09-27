@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Panels.css";
+import "./admin.css";
 import Sidebar from './dashboardSidebar/Sidebar';
 import Content from "./dashboardSidebar/DefaultContent";
 import History from "./dashboardSidebar/History";
