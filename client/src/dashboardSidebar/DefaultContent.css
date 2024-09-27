@@ -7,6 +7,9 @@
     padding: 10px; /* Padding inside the box */
     margin-top: 10px; /* Space above the box */
     background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
   ul {
     list-style-type: none; /* Remove default list styling */
@@ -62,6 +65,9 @@
     margin-top: 10px; /* Space above the box */
     background: white;
     flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
   .peopleList{
     display: flex;

@@ -20,7 +20,7 @@ import UploadContent from "./dashboardSidebar/UploadContent";
         case "add":
           return <UploadContent />;
         default:
-          return <EditContent />;
+          return <Content />;
       }
     };
 
