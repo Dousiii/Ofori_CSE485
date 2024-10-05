@@ -26,37 +26,43 @@ function Forget() {
         if (password === confirmPassword) {
             setErrorMessage('');
         } else {
-            setErrorMessage('Passwords do not match'); 
+            setErrorMessage("Passwords do not match");
         }
     };
 
     return (
-        <div className="forget-container">
-        <h2>Reset Your Password</h2>
-        <form onSubmit={handleResetPassword}>
-            <div className="forget-input-container">
-            <label htmlFor="new-password">New Password:</label>
-            <input
-                type="password"
-                id="new-password"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-            />
+        <div className="forget-background">
+            <div className="forget-container">
+            <h2>Reset Your Password</h2>
+            <form onSubmit={handleResetPassword}>
+                <div className="forget-input-container">
+                <label htmlFor="new-password">New Password:</label>
+                <input
+                    type="password"
+                    id="new-password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    required
+                />
+                </div>
+                <div className="forget-input-container">
+                <label htmlFor="confirm-password">Confirm Password:</label>
+                <input
+                    type="password"
+                    id="confirm-password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    required
+                />
+                {errorMessage && (
+                    <div className="forget-error-message-container">
+                        <span>{errorMessage}</span>
+                    </div>
+                )}
+                </div>
+                <button type="submit" className="forget-reset-button">Reset</button>
+            </form>
             </div>
-            <div className="forget-input-container">
-            <label htmlFor="confirm-password">Confirm Password:</label>
-            <input
-                type="password"
-                id="confirm-password"
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-                required
-            />
-            {errorMessage && <span className="forget-error-message">{errorMessage}</span>}
-            </div>
-            <button type="submit" className="forget-reset-button">Reset</button>
-        </form>
         </div>
     );
 }

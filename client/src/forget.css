@@ -1,0 +1,88 @@
+/* background */
+.forget-background {
+    background-color: #f9dce8; 
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+/* framework */
+.forget-container {
+    background-color: white;
+    padding: 70px;
+    border-radius: 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    width: 400px; 
+    text-align: center; 
+}
+
+/* title */
+.forget-container h2 {
+    font-size: 40px;
+    color: #fc7bb1;
+    margin-top: -20px; 
+}
+  
+/* input box and label styles */
+.forget-input-container {
+    margin-bottom: 15px;
+    text-align: left;
+}
+.forget-input-container label {
+    display: block;
+    font-size: 16px;
+    color: #fc7bb1;
+    margin-bottom: 5px;
+}
+.forget-input-container input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ffaee8;
+    border-radius: 5px;
+    box-sizing: border-box; 
+    background-color: #fff4fd;
+    color: #d65fbc; 
+    border-radius: 20px;
+}
+  
+/* error message */
+.forget-error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+  
+/* login button */
+.forget-reset-button {
+    width: 100px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #fc7bb1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 30px;
+}
+.forget-reset-button:hover {
+    background-color: #db6a99;
+}
+
+/* error message */
+.forget-error-message-container {
+    color: red;
+    text-align: center; 
+    margin-top: 30px;
+    margin-bottom: -20px;
+    background-color: #f8d7da;
+    padding: 10px;
+    border-radius: 5px; 
+}
+.error-icon {
+    font-weight: bold;
+    margin-right: 5px;
+}
