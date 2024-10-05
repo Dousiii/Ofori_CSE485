@@ -16,6 +16,7 @@ import Forget from "./forget";
 import Popup from "./popup";
 import Adminedit from "./Adminedit";
 import Adminupload from "./Adminupload";
+import EncryptionTest from "./EncryptionTest";
 import "./App.css";
 
 function App() {
@@ -50,6 +51,10 @@ function App() {
                     <Route
                         path="/popup"
                         element={<Popup />}
+                    />
+                    <Route
+                        path="/encr"
+                        element={<EncryptionTest />}
                     />
                     <Route
                         path="/aedit"
