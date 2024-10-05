@@ -12,6 +12,7 @@ import Homepage from "./Homepage";
 import Panels from "./Panels";
 import Login from "./login";
 import VF from "./verification";
+import Forget from "./forget";
 import Popup from "./popup";
 import Adminedit from "./Adminedit";
 import Adminupload from "./Adminupload";
@@ -41,6 +42,10 @@ function App() {
                     <Route
                         path="/verification"
                         element={<VF />}
+                    />
+                    <Route
+                        path="/forget"
+                        element={<Forget />}
                     />
                     <Route
                         path="/popup"
