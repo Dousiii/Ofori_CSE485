@@ -101,5 +101,38 @@ def decrypt_endpoint():
     decrypted_data = decrypt_data(encrypted_data.encode())  # Using the decryption function
     return jsonify({'decrypted_data': decrypted_data})  # Returns the decrypted data
 
+@app.route('/admin_login', methods=['POST'])
+def Admin_login():
+    data = request.json  # Get email and password from the front end
+    email = data.get('email')
+    password = data.get('password')
+
+    # Query the admin's email in the database. If the database is connected, use the following line of code
+    # admin = Admin.query.filter_by(Email=email).first()
+
+    # This line of code simulates the admin's email address and password. 
+    # It is used to test the function when there is no connection to the database. It will be deleted later
+    mock_admin = {'Email': 'admin@example.com', 'Password': 'admin123'}
+
+    '''
+    # These codes are also used after connecting to the database
+    if admin:
+        # Directly compare the password in the database with the password sent from the front end
+        if admin.Password == password:
+            return jsonify({"message": "Login successful", "admin_id": admin.Admin_id}), 200
+        else:
+            return jsonify({"message": "Invalid password"}), 401
+    else:
+        return jsonify({"message": "Admin not found"}), 404
+    '''
+
+    if email == mock_admin['Email']:
+        if password == mock_admin['Password']:
+            return jsonify({"message": "Login successful", "admin_id": 1}), 200
+        else:
+            return jsonify({"message": "Invalid password"}), 401
+    else:
+        return jsonify({"message": "Invalid email"}), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
