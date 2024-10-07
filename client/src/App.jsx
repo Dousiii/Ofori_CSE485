@@ -25,7 +25,7 @@ function App() {
                     {/*
                     Automatically navigate to home when visiting*/}
 
-                    <Route path="/" element={<Navigate to="/admin" replace />} />
+                    <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route
                         path="/home"
                         element={<Homepage />}
