@@ -1,4 +1,9 @@
-
+.fixedButton{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    font-size: 50px;
+}
 .pageHome{
     width: 1200px;
     padding: 0 30px;
@@ -37,13 +42,18 @@
     width: 500px;
     height: 300px;
 }
+
 .buttonSubmit{
-    width: 200px;
-    background-color:#C88686FF;
-    border: 1px solid #C88686FF;
-    border-radius: 40px;
-    color: white;
-    padding: 14px 70px;
+    all: unset;
+    width: 330px !important;
+    font-size: 18px !important;
+    background:#C88686FF !important;
+    border: 1px solid #C88686FF !important;
+    border-radius: 40px !important;
+    color: white !important;
+    /* padding: 14px 70px; */
+    height: 40px;
+    line-height: 40px;
     white-space: normal;
     box-shadow: 0px 0px 0px 0px #FFFFFF;
     text-align: center;
