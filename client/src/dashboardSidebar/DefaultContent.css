@@ -57,8 +57,6 @@
   }
 
   .event-list {
-    display: flex;
-  flex-direction: column-reverse; /* Reverse the visual order */
     max-height: 300px; /* Adjust height as needed */
     overflow-y: auto; /* Enable vertical scrolling */
     border: 1px solid #ccc; /* Optional border for the box */

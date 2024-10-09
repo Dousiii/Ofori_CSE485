@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import React from 'react'
 import "./UploadContent.css"
 
-const UploadContent = ({ addEvent }) => {
+const UploadContent = () => {
 
   const [formData, setFormData] = useState({
     title: "",
@@ -39,16 +39,9 @@ const UploadContent = ({ addEvent }) => {
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    const newEvent = {
-      id: Date.now(),
-      title: formData.title,
-      date: formData.date,
-      time: formData.time,
-      place: formData.location,
-      people: [],
-    };
-
-    addEvent(newEvent);
+    alert(
+      `Title: ${formData.title}, Date: ${formData.date}, Time: ${formData.time}, Location: ${formData.location}, Description: ${formData.description}`
+    );
 
     // Here you'd send the form data to your backend, including the video file
 
@@ -134,6 +127,9 @@ const UploadContent = ({ addEvent }) => {
           onChange={handleChange}
           required
         />
+
+
+
 
       <button type="submit">Publish Event</button>
 

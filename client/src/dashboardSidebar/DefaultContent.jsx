@@ -2,19 +2,38 @@ import React, { useState } from 'react'
 import "./DefaultContent.css"
 import { Button, Space, DatePicker, version } from 'antd';
 
-const DefaultContent = ({ events }) => {
+const DefaultContent = () => {
+  const events = [
+    {
+      id: 1,
+      title: "React Workshop",
+      date: "2024-09-30",
+      time: "10:00 AM",
+      place: "Conference Room A",
+      people: ["Alice Smith", "Bob Johnson", "Charlie Brown"]
+    },
+    {
+      id: 2,
+      title: "Python Bootcamp",
+      date: "2024-10-01",
+      time: "2:00 PM",
+      place: "Lab 101",
+      people: ["Diana Prince", "Ethan Hunt", "Fiona Apple"]
+    },
+    {
+      id: 3,
+      title: "AI Seminar",
+      date: "2024-10-05",
+      time: "11:00 AM",
+      place: "Auditorium B",
+      people: ["George Clooney", "Hannah Montana", "Ian Malcolm"]
+    },
+  ];
 
-   // Sort events by date to ensure the newest event comes first
-   const sortedEvents = events && events.length > 0
-   ? [...events].sort((a, b) => new Date(b.date) - new Date(a.date))
-   : [];
+  // State to track the current event and the people who signed up
+  const [selectedEvent, setSelectedEvent] = useState(events[0]);
+  const [peopleList, setPeopleList] = useState(events[0].people);
 
- // Set the newest event (the first one after sorting) as the default
- const initialEvent = sortedEvents.length > 0 ? sortedEvents[0] : null;
-
- // State to track the current event and the people who signed up
- const [selectedEvent, setSelectedEvent] = useState(initialEvent);
- const [peopleList, setPeopleList] = useState(initialEvent ? initialEvent.people : []);
   // Handle event click
   const handleEventClick = (event) => {
     setSelectedEvent(event);
