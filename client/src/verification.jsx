@@ -7,7 +7,7 @@ function verification(){
         <div className="verify-email-container"> {/* container */}
           <h2 className="verify-email-title">Verify Your Email</h2>
           <p className="verify-email-text">
-            Please check your email and enter the verification code
+            Please check your email (inbox and spam) and enter the verification code
           </p>
           <form className="verify-email-form">  {/* code and submit button */}
             <div className="ver-input-container">
@@ -20,7 +20,7 @@ function verification(){
                 required
               />
             </div>
-            <button type="submit" className="verify-email-button">Continue</button>
+            <button type="submit" className="verify-email-button">Submit</button>
           </form>
           <p className="resend-text"> {/* resend */}
             Didn't receive the code?{" "}
