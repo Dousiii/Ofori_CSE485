@@ -5,12 +5,15 @@
 
 }
 
+body{
+      padding:20px;
+      padding-top: 0;
+  }
 
 
 .dashboard {
     display: flex;
     /* gap: 20px; */
-    background-color: aliceblue;
 }
 .content-info{
     display: flex;
