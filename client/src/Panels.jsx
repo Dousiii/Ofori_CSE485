@@ -5,22 +5,41 @@ import Content from "./dashboardSidebar/DefaultContent";
 import History from "./dashboardSidebar/History";
 import EditContent from "./dashboardSidebar/EditContent";
 import UploadContent from "./dashboardSidebar/UploadContent";
+import { initialEvents } from "./eventsData";
 
 
   const Panels = () => {
 
     const [activeContent, setActiveContent] = useState("dashboard"); // Default to "dashboard"
+    const [events, setEvents] = useState(initialEvents); // Manage events in Panels
+
+    // Function to add new event
+  const addEvent = (newEvent) => {
+    setEvents([...events, newEvent]);
+  };
+
+    // Function to update an existing event
+    const updateEvent = (updatedEvent) => {
+      setEvents((prevEvents) =>
+        prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
+      );
+
+    };
+
+    const deleteEvent = (eventId) => {
+      setEvents(events.filter(event => event.id !== Number(eventId)));
+    };
 
     const renderContent = () => {
       switch (activeContent) {
         case "dashboard":
-          return <Content />;
+          return <Content events={events}/>;
         case "edit":
-          return <EditContent />;
+          return <EditContent events={events} onUpdateEvent={updateEvent} onDeleteEvent={deleteEvent} />;
         case "add":
-          return <UploadContent />;
+          return <UploadContent addEvent={addEvent}/>;
         default:
-          return <Content />;
+          return <Content events={events}/>;
       }
     };
 
