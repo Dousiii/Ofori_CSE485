@@ -1,5 +1,5 @@
 /* background */
-.login-background {
+.forget-background {
     background-color: #f9dce8; 
     height: 100vh;
     display: flex;
@@ -8,8 +8,8 @@
     padding: 20px;
   }
 
-/* login framework */
-.login-container {
+/* framework */
+.forget-container {
     background-color: white;
     padding: 70px;
     border-radius: 20px; 
@@ -19,26 +19,25 @@
 }
 
 /* title */
-.login-title {
+.forget-container h2 {
     font-size: 40px;
-    font-family: sans-serif;
     color: #fc7bb1;
     margin-top: -20px; 
 }
-
+  
 /* input box and label styles */
-.login-input-container {
+.forget-input-container {
     margin-bottom: 15px;
     text-align: left;
 }
-.login-input-container label {
+.forget-input-container label {
     display: block; 
     margin-bottom: 5px;
     font-size: 16px;
     font-weight: bold;
     color: #fc7bb1;
 }
-.login-input-container input {
+.forget-input-container input {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -49,32 +48,17 @@
     color: #d65fbc; 
     border-radius: 20px;
 }
-/* autofill style */
-.login-input:-webkit-autofill {
-    background-color: #fff4fd !important;
-    -webkit-box-shadow: 0 0 0 1000px #fff4fd inset !important; 
-    color: #d65fbc !important; 
-    -webkit-text-fill-color: #d65fbc !important; 
-}
-
-/* Forgot Password */
-.forgot-password-link {
-    text-align: right;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-.forgot-password-link a {
-    color: #fc7bb1;
-    text-decoration: underline;
-    text-decoration-thickness: 1px; 
+  
+/* error message */
+.forget-error-message {
+    color: red;
     font-size: 14px;
+    margin-top: 10px;
+    display: block;
 }
-.forgot-password-link a:hover {
-    text-decoration-thickness: 2px; 
-}
-
+  
 /* login button */
-.login-button {
+.forget-reset-button {
     width: 100px;
     padding: 10px;
     font-size: 16px;
@@ -83,26 +67,23 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 30px;
 }
-.login-button:hover {
+.forget-reset-button:hover {
     background-color: #db6a99;
 }
 
-/* login message */
-.message-error {
-    background-color: #f8d7da; 
-    color: red; 
-    padding: 10px; 
-    margin-top: 20px; 
-    border-radius: 5px; 
+/* error message */
+.forget-error-message-container {
+    color: red;
     text-align: center; 
+    margin-top: 30px;
+    margin-bottom: -20px;
+    background-color: #f8d7da;
+    padding: 10px;
+    border-radius: 5px; 
 }
-.message-success {
-    background-color: #d4edda; 
-    color: #155724; 
-    padding: 10px; 
-    margin-top: 20px; 
-    border-radius: 5px; 
-    text-align: center; 
+.error-icon {
+    font-weight: bold;
+    margin-right: 5px;
 }

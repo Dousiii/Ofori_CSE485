@@ -12,9 +12,11 @@ import Homepage from "./Homepage";
 import Panels from "./Panels";
 import Login from "./login";
 import VF from "./verification";
+import Forget from "./forget";
 import Popup from "./popup";
 import Adminedit from "./Adminedit";
 import Adminupload from "./Adminupload";
+import EncryptionTest from "./EncryptionTest";
 import "./App.css";
 
 function App() {
@@ -43,8 +45,16 @@ function App() {
                         element={<VF />}
                     />
                     <Route
+                        path="/forget"
+                        element={<Forget />}
+                    />
+                    <Route
                         path="/popup"
                         element={<Popup />}
+                    />
+                    <Route
+                        path="/encr"
+                        element={<EncryptionTest />}
                     />
                     <Route
                         path="/aedit"
