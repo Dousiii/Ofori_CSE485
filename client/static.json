@@ -1,0 +1,13 @@
+{
+    "root": "client/build/",
+    "routes": {
+        "/": "index.html",
+        "/home": "index.html",
+        "/admin": "index.html",
+        "/login": "index.html",
+        "/verification": "index.html",
+        "/popup": "index.html",
+        "/aedit": "index.html",
+        "/aeupload": "index.html"
+    }
+}

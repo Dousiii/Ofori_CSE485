@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+
 from flask import request
 from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
@@ -8,8 +9,9 @@ app = Flask(__name__)
 CORS(app)
 
 
+
 # MySQL Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:ofori13462@localhost/ofori'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ofori_database:oforiDatabase1234!@146.190.71.187/ofori'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -46,6 +48,8 @@ class Audience(db.Model):
     Event_id = db.Column(db.Integer, db.ForeignKey('Event.Event_id'), nullable=False)  # Foreign key referencing the Event table
     Name = db.Column(db.String(100), nullable=False)
     Email = db.Column(db.String(200), nullable=False)
+    Phone = db.Column(db.String(50), nullable=True)
+
 
 #Initial some get all function to check it connection
 
@@ -84,6 +88,7 @@ def get_Audience():
         'Name': audience.Name,
         'Email': audience.Email,
         'Event_id': audience.Event_id
+        'Phone': audience.Phone
     } for audience in audiences])
 
     
@@ -136,3 +141,4 @@ def Admin_login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

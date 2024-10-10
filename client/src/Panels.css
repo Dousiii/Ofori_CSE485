@@ -1,0 +1,29 @@
+* {
+    margin:0;
+    padding:0;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+body{
+  background-color: #E8B1B7;
+
+
+    padding:20px;
+    padding-top: 0;
+}
+
+
+.dashboard {
+    display: flex;
+    /* gap: 20px; */
+}
+.content-info{
+    display: flex;
+    background: rgb(235, 235, 235);
+    flex: 1;
+    border-radius: 10px;
+    padding: 1.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+}

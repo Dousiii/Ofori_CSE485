@@ -1,0 +1,78 @@
+.scrollable-box {
+    max-height: 300px; /* Adjust height as needed */
+    min-height: 200px;
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional border for the box */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding inside the box */
+    margin-top: 10px; /* Space above the box */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  ul {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove padding */
+  }
+  
+  li {
+    padding: 5px; /* Space between items */
+    border-bottom: 1px solid #eee; /* Optional separator */
+  }
+  
+  li:last-child {
+
+    border-bottom: none; /* Remove border for the last item */
+  }
+
+  .even {
+    background-color: #f0f0f0; /* Light gray for even items */
+  }
+  
+  .odd {
+    background-color: #ffffff; /* Light blue for odd items */
+  }
+
+  .content{
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: 100%;
+  }
+  
+  .cards{
+    display: flex;
+    background: rgb(235, 235, 235);
+    border-radius: 10px;
+    padding: 1.5rem;
+    gap: 2rem;
+    justify-content: space-between;
+  }
+
+  .button-container {
+    text-align: right; /* Aligns the button to the right */
+    margin-top: 1.5rem; /* Space above the button */
+    position: relative; /* To position the button in the corner */
+  }
+
+  .event-list {
+    display: flex;
+  flex-direction: column-reverse; /* Reverse the visual order */
+    max-height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional border for the box */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px; /* Padding inside the box */
+    margin-top: 10px; /* Space above the box */
+    background: white;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .peopleList{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
