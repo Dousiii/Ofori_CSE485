@@ -8,6 +8,10 @@ function Forget() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    // showPassword and showConfirmPassword are used to control whether the passwords should be displayed as plain text or hidden
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     // These two functions are event handling functions, which are called when the user enters a password and confirms the password respectively.
     // Whenever the user types something in the input box, setPassword and setConfirmPassword will update the state (i.e. password and confirmPassword) with the input value.
     const handlePasswordChange = (e) => {
@@ -30,41 +34,81 @@ function Forget() {
         }
     };
 
+    // Functions to toggle password visibility
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     return (
         <div className="forget-background">
-            <div className="forget-container">
+          <div className="forget-container">
             <h2>Reset Your Password</h2>
             <form onSubmit={handleResetPassword}>
-                <div className="forget-input-container">
+              
+              <div className="forget-input-container">
                 <label htmlFor="new-password">New Password:</label>
-                <input
-                    type="password"
+                <div className="input-with-toggle">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
                     id="new-password"
                     value={password}
                     onChange={handlePasswordChange}
                     required
-                />
+                    className="password-input" 
+                  />
+                  <button
+                    type="button"
+                    onClick={toggleShowPassword}
+                    className="password-toggle-button"
+                  >
+                    <img 
+                      src={showPassword ? "/Image/hide.jpg" : "/Image/show.jpg"} // Toggle showing and hiding pictures
+                      alt={showPassword ? "Hide Password" : "Show Password"}
+                      className="password-toggle-icon"
+                    />
+                  </button>
                 </div>
-                <div className="forget-input-container">
+              </div>
+    
+              <div className="forget-input-container">
                 <label htmlFor="confirm-password">Confirm Password:</label>
-                <input
-                    type="password"
+                <div className="input-with-toggle">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
                     id="confirm-password"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
                     required
-                />
-                {errorMessage && (
-                    <div className="forget-error-message-container">
-                        <span>{errorMessage}</span>
-                    </div>
-                )}
+                    className="password-input" 
+                  />
+                  <button
+                    type="button"
+                    onClick={toggleShowConfirmPassword}
+                    className="password-toggle-button"
+                  >
+                    <img 
+                      src={showConfirmPassword ? "/Image/hide.jpg" : "/Image/show.jpg"} 
+                      alt={showConfirmPassword ? "Hide Password" : "Show Password"}
+                      className="password-toggle-icon"
+                    />
+                  </button>
                 </div>
-                <button type="submit" className="forget-reset-button">Reset</button>
+              </div>
+    
+              {errorMessage && (
+                <div className="forget-error-message-container">
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+    
+              <button type="submit" className="forget-reset-button">Reset</button>
             </form>
-            </div>
+          </div>
         </div>
-    );
-}
+      );
+    }
 
 export default Forget;
