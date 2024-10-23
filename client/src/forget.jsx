@@ -2,21 +2,25 @@ import React, { useState } from 'react';
 import './forget.css';
 
 function Forget() {
-    // password and confirmPassword are two states, which are used to save the password and confirm password entered by the user in the two input boxes respectively
-    // errorMessage is another state, which is used to save error prompt information. For example, when the two passwords do not match, a prompt "Passwords do not match" will be displayed.
+    // email, password, and confirmPassword are states that save the user inputs for email, new password, and confirm password respectively
+    const [email, setEmail] = useState('');  
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    
+    // message is a state that stores either success or error message
+    // messageType is used to determine whether the message is an error or success (for styling)
+    const [message, setMessage] = useState('');  
+    const [messageType, setMessageType] = useState('');  
 
     // showPassword and showConfirmPassword are used to control whether the passwords should be displayed as plain text or hidden
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    // These two functions are event handling functions, which are called when the user enters a password and confirms the password respectively.
-    // Whenever the user types something in the input box, setPassword and setConfirmPassword will update the state (i.e. password and confirmPassword) with the input value.
+    // handlePasswordChange and handleConfirmPasswordChange are called when the user types in the password or confirm password input fields, updating the respective states
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
     };
+
     const handleConfirmPasswordChange = (e) => {
         setConfirmPassword(e.target.value);
     };
@@ -25,12 +29,35 @@ function Forget() {
     // And then compares the two passwords:
     // If there is a match, clear the error message (setErrorMessage('')).
     // If they do not match, an error message is set to “Passwords do not match” and displayed next to the input box.
-    const handleResetPassword = (e) => {
+    const handleResetPassword = async (e) => {
         e.preventDefault();
-        if (password === confirmPassword) {
-            setErrorMessage('');
+        if (password !== confirmPassword) {
+            setMessageType('error');  // Set message type to error
+            setMessage("Passwords do not match");
+            return;
+        }
+
+        setMessage('');  // Clear any previous messages
+
+        // Send POST request to the backend
+        const response = await fetch('http://localhost:5000/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                newPassword: password,
+            }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            setMessageType('success');  // Set message type to success
+            setMessage(result.message);
         } else {
-            setErrorMessage("Passwords do not match");
+            setMessageType('error');  // Set message type to error
+            setMessage(result.message);
         }
     };
 
@@ -38,6 +65,7 @@ function Forget() {
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
+
     const toggleShowConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
@@ -48,6 +76,18 @@ function Forget() {
             <h2>Reset Your Password</h2>
             <form onSubmit={handleResetPassword}>
               
+              <div className="forget-input-container">
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="text"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="email-input forget-input"
+                />
+              </div>
+
               <div className="forget-input-container">
                 <label htmlFor="new-password">New Password:</label>
                 <div className="input-with-toggle">
@@ -97,10 +137,11 @@ function Forget() {
                   </button>
                 </div>
               </div>
-    
-              {errorMessage && (
-                <div className="forget-error-message-container">
-                  <span>{errorMessage}</span>
+
+              {/* Unified message display for both error and success */}
+              {message && (
+                <div className={`forget-message-container ${messageType === 'success' ? 'success' : 'error'}`}>
+                  <span>{message}</span>
                 </div>
               )}
     
@@ -109,6 +150,7 @@ function Forget() {
           </div>
         </div>
       );
-    }
+}
 
 export default Forget;
+

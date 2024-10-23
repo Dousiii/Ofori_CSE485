@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 from flask import request
 from flask_cors import CORS
@@ -82,14 +83,15 @@ def get_events():
 #function to get all audiences from Audience table
 @app.route('/getAudiences', methods=['GET'])
 def get_Audience():
-    audiences = Audience.query.all()  #get all audience in table
-    return jsonify([{
-        'Audience_id': audience.Audience_id,
-        'Name': audience.Name,
-        'Email': audience.Email,
-        'Event_id': audience.Event_id
-        'Phone': audience.Phone
-    } for audience in audiences])
+    audiences = Audience.query.all()  # get all audience in table
+    return jsonify([
+        {
+            'Audience_id': audience.Audience_id,
+            'Name': audience.Name,
+            'Email': audience.Email,
+            'Event_id': audience.Event_id,
+            'Phone': audience.Phone
+        } for audience in audiences])
 
     
 # API：Encrypting Data
@@ -138,6 +140,36 @@ def Admin_login():
             return jsonify({"message": "Invalid password"}), 401
     else:
         return jsonify({"message": "Invalid email"}), 404
+
+# Simple password reset function, using json file to store user information
+# In the future will change to database
+USERS_FILE = 'users.json'
+def read_users():
+    try:
+        with open(USERS_FILE, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def write_users(users):
+    with open(USERS_FILE, 'w') as file:
+        json.dump(users, file, indent=2)
+# Reset password API
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email') 
+    new_password = data.get('newPassword')
+
+    users = read_users()
+    user = next((u for u in users if u['email'] == email), None) 
+
+    if user:
+        user['password'] = new_password 
+        write_users(users)
+        return jsonify({"message": "Password updated successfully"}), 200
+    else:
+        return jsonify({"message": "Reset failure"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
