@@ -137,6 +137,37 @@ def Admin_login():
     else:
         return jsonify({"message": "Invalid email"}), 404
 
+
+
+#      Verification page function   ⬇︎⬇︎⬇︎⬇︎
+
+#
+
+# Function to get admin email
+def get_admin_email(admin_id):
+    admin = Admin.query.filter_by(Admin_id=admin_id).first()
+    return admin.Email if admin else None
+
+@app.route('/get_admin_email/<int:admin_id>', methods=['GET'])
+def get_admin_email_api(admin_id):
+    admin = db.session.get(Admin, admin_id)
+    if admin:
+        return jsonify({'email': admin.Email}), 200
+    else:
+        return jsonify({'error': 'Admin not found'}), 404
+
+
+#
+
+#       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

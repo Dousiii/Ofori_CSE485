@@ -4,8 +4,27 @@ import './verification.css';
 function Verification() {
   const [counter, setCounter] = useState(30); 
   const [isCounting, setIsCounting] = useState(false); 
+  const [userEmail, setUserEmail] = useState('');
+  const [isEmailLoaded, setIsEmailLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+
+  const adminId = 1;
+
+  const fetchAdminEmail = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/get_admin_email/${adminId}`); 
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setUserEmail(data.email);
+      setIsEmailLoaded(true);
+    } catch (error) {
+      console.error('Error fetching admin email:', error);
+      setIsEmailLoaded(true);
+    }
+  };
 
   const startCountdown = () => {
     setCounter(5);
@@ -30,6 +49,7 @@ function Verification() {
   }, [isCounting]);
 
   useEffect(() => {
+    fetchAdminEmail();
     startCountdown();
   }, []);
 
@@ -68,11 +88,11 @@ function Verification() {
         </form>
 
         <p className="resend-text">
-          Code will be sent to Email: <strong>{"Example email"}</strong>
+          Code will be sent to Email: <strong>{isEmailLoaded ? userEmail : "Loading..."}</strong>
           <br />
           <br />
           Didn't receive the code?{" "}
-          <button type="button" className="resend-code-button" onClick={() => {startCountdown(); }} disabled={isCounting}>
+          <button type="button" className="resend-code-button" onClick={() => { fetchAdminEmail(); startCountdown(); }} disabled={isCounting}>
             {isCounting ? "Resend in " + counter + "s" : "Resend Code"}
           </button>
         </p>
