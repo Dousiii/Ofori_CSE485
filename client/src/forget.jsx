@@ -16,6 +16,33 @@ function Forget() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // This function validates the password complexity based on common password requirements:
+    // At least 7 characters, one uppercase letter, one lowercase letter, one number, and one special character
+    const validatePassword = (password) => {
+        const minLength = 7;
+        const hasUpperCase = /[A-Z]/.test(password);  // Must contain at least one uppercase letter
+        const hasLowerCase = /[a-z]/.test(password);  // Must contain at least one lowercase letter
+        const hasNumber = /[0-9]/.test(password);  // Must contain at least one number
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);  // Must contain at least one special character
+
+        if (password.length < minLength) {
+            return "Password must be at least 7 characters long";
+        }
+        if (!hasUpperCase) {
+            return "Password must contain at least one uppercase letter";
+        }
+        if (!hasLowerCase) {
+            return "Password must contain at least one lowercase letter";
+        }
+        if (!hasNumber) {
+            return "Password must contain at least one number";
+        }
+        if (!hasSpecialChar) {
+            return "Password must contain at least one special character";
+        }
+        return "";  // Password is valid if no errors
+    };
+
     // handlePasswordChange and handleConfirmPasswordChange are called when the user types in the password or confirm password input fields, updating the respective states
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
@@ -26,11 +53,21 @@ function Forget() {
     };
 
     // This function is called when the "Reset" button is clicked (submitting the form).
-    // And then compares the two passwords:
-    // If there is a match, clear the error message (setErrorMessage('')).
-    // If they do not match, an error message is set to “Passwords do not match” and displayed next to the input box.
+    // First, it checks if the password meets the complexity requirements.
+    // Then, it compares the two passwords:
+    // If there is a match and the password is valid, it clears the error message and sends the request to reset the password.
+    // If the password does not meet the requirements, it sets an appropriate error message.
     const handleResetPassword = async (e) => {
         e.preventDefault();
+
+        // Validate password complexity
+        const passwordValidationError = validatePassword(password);
+        if (passwordValidationError) {
+            setMessageType('error');
+            setMessage(passwordValidationError);  // Set error message if password is invalid
+            return;
+        }
+
         if (password !== confirmPassword) {
             setMessageType('error');  // Set message type to error
             setMessage("Passwords do not match");
@@ -153,4 +190,3 @@ function Forget() {
 }
 
 export default Forget;
-

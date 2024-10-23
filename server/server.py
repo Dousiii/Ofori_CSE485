@@ -169,7 +169,7 @@ def reset_password():
         write_users(users)
         return jsonify({"message": "Password updated successfully"}), 200
     else:
-        return jsonify({"message": "Reset failure"}), 404
+        return jsonify({"message": "Can not find your email"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
