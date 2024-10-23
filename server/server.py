@@ -1,14 +1,12 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_cors import CORS
 from flask import request
 from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
 
 app = Flask(__name__)
 CORS(app)
-
-
 
 # MySQL Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ofori_database:oforiDatabase1234!@146.190.71.187/ofori'
@@ -87,7 +85,7 @@ def get_Audience():
         'Audience_id': audience.Audience_id,
         'Name': audience.Name,
         'Email': audience.Email,
-        'Event_id': audience.Event_id
+        'Event_id': audience.Event_id,
         'Phone': audience.Phone
     } for audience in audiences])
 
