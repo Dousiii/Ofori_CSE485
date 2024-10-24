@@ -1,21 +1,26 @@
-from flask import Flask, jsonify
+import random
+import os
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask import request
-from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
+from flask import Flask, request, jsonify
+from veri_server import send_verification_email
+
 
 app = Flask(__name__)
 CORS(app)
 
+##MySql setting     ⬇︎⬇︎⬇︎⬇︎
+
 # MySQL Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ofori_database:oforiDatabase1234!@146.190.71.187/ofori'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Ofori%401324@146.190.71.187:3306/ofori'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
-#Initial the Table in DataBase
+#Initial the Table in DataBase  ⬇︎⬇︎⬇︎⬇︎
 
 #
 
@@ -49,10 +54,9 @@ class Audience(db.Model):
     Phone = db.Column(db.String(50), nullable=True)
 
 
-#Initial some get all function to check it connection
+#Initial some get all function to check it connection   ⬇︎⬇︎⬇︎⬇︎
 
 #
-
 
 #function to get all admin from Admin table
 @app.route('/getAdmins', methods=['GET'])
@@ -88,6 +92,11 @@ def get_Audience():
         'Event_id': audience.Event_id,
         'Phone': audience.Phone
     } for audience in audiences])
+
+
+#
+
+#       MySql setting done   ⬆︎⬆︎⬆︎⬆︎
 
     
 # API：Encrypting Data
@@ -144,10 +153,6 @@ def Admin_login():
 #
 
 # Function to get admin email
-def get_admin_email(admin_id):
-    admin = Admin.query.filter_by(Admin_id=admin_id).first()
-    return admin.Email if admin else None
-
 @app.route('/get_admin_email/<int:admin_id>', methods=['GET'])
 def get_admin_email_api(admin_id):
     admin = db.session.get(Admin, admin_id)
@@ -155,6 +160,22 @@ def get_admin_email_api(admin_id):
         return jsonify({'email': admin.Email}), 200
     else:
         return jsonify({'error': 'Admin not found'}), 404
+
+
+# Endpoint to send verification code
+@app.route('/send-verification-code', methods=['POST'])
+def send_verification_code():
+    email = request.json.get('email')
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
+    status = send_verification_email(email, code)      #call the function in veri_server.py file
+
+    if status == 202:  # 202 means the email was successfully accepted by SendGrid
+        return jsonify({'message': 'Verification code sent', 'code': code}), 200
+    else:
+        return jsonify({'error': 'Failed to send email'}), 500
 
 
 #
@@ -169,5 +190,5 @@ def get_admin_email_api(admin_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
 

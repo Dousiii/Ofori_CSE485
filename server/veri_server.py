@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, request
-import sendgrid
-from sendgrid.helpers.mail import Mail
 import os
 import random
+import sendgrid
+from flask import Flask
+from sendgrid.helpers.mail import Mail
 from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 
@@ -34,21 +35,5 @@ def send_verification_email(to_email, code):
         return None
 
 
-# Endpoint to send verification code
-@app.route('/send-verification-code', methods=['POST'])
-def send_verification_code():
-    email = request.json.get('email')
-    if not email:
-        return jsonify({'error': 'Email is required'}), 400
-
-    code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
-    status = send_verification_email(email, code)
-
-    if status == 202:  # 202 means the email was successfully accepted by SendGrid
-        return jsonify({'message': 'Verification code sent', 'code': code}), 200
-    else:
-        return jsonify({'error': 'Failed to send email'}), 500
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

@@ -1,37 +1,67 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useCallback } from 'react'; 
 import './verification.css'; 
 
 function Verification() {
-  const [counter, setCounter] = useState(30); 
-  const [isCounting, setIsCounting] = useState(false); 
+  const [counter, setCounter] = useState(30);   //set the timer to 30 seconds
+  const [isCounting, setIsCounting] = useState(false);  //check if timer end
   const [userEmail, setUserEmail] = useState('');
-  const [isEmailLoaded, setIsEmailLoaded] = useState(false);
+  const [isEmailLoaded, setIsEmailLoaded] = useState(false);  //load the email
   const [errorMessage, setErrorMessage] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationCode, setVerificationCode] = useState(''); //use to check user enter code
+  const [sentCode, setSentCode] = useState('');   //store the send code
 
-  const adminId = 1;
+  //just use for now, set the adminId from login page when user login
+  //will use User Session to get the id from login page in future
+  const adminId = 2;
 
-  const fetchAdminEmail = async () => {
+  //request the code and send to email, will call the function in server
+  const sendVerificationEmail = async (email) => {
+    try {
+      const response = await fetch('http://localhost:5000/send-verification-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+  
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setSentCode(data.code);   //set the code for check
+      } else {
+        setErrorMessage(data.error);
+      }
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+    }
+  };
+
+  //use adminId to get the email address
+  const fetchAdminEmail = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:5000/get_admin_email/${adminId}`); 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
       const data = await response.json();
+      //after get the email, set the email, send the code
       setUserEmail(data.email);
+      sendVerificationEmail(data.email);
       setIsEmailLoaded(true);
     } catch (error) {
       console.error('Error fetching admin email:', error);
       setIsEmailLoaded(true);
     }
-  };
+  }, [adminId]);
 
+  //set for timer countdown
   const startCountdown = () => {
-    setCounter(5);
+    setCounter(30);   //countdown from 30 seconds
     setIsCounting(true);
   };
 
+
   useEffect(() => {
+    //ensure the resend button and timer can work multiple time
     if (!isCounting) return;
 
     const timer = setInterval(() => {
@@ -48,18 +78,19 @@ function Verification() {
     return () => clearInterval(timer);
   }, [isCounting]);
 
+  //get the email address and start the timer when the page load
   useEffect(() => {
     fetchAdminEmail();
     startCountdown();
-  }, []);
+  }, [fetchAdminEmail]);
 
-  
+  //use to check if the code is correct
   const handleSubmit = (event) => {
     event.preventDefault(); 
-    if (verificationCode !== '123456') { 
+    if (verificationCode !== sentCode) { 
       setErrorMessage('The code is wrong, please try again or resend a new code');
     } else {
-      setErrorMessage(''); 
+      setErrorMessage('Your code is Correct!'); 
     }
   };
 
@@ -80,14 +111,14 @@ function Verification() {
               className="verify-input"
               required
               value={verificationCode} 
-              onChange={(e) => setVerificationCode(e.target.value)}
+              onChange={(e) => setVerificationCode(e.target.value)}   
             />
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            {errorMessage && <p className="error-message">{errorMessage}</p>} {/* check the code */}
           </div>
           <button type="submit" className="verify-email-button">Submit</button>
         </form>
 
-        <p className="resend-text">
+        <p className="resend-text"> {/* resend */}
           Code will be sent to Email: <strong>{isEmailLoaded ? userEmail : "Loading..."}</strong>
           <br />
           <br />
