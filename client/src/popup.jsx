@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './popup.css';  // 保持引入相应的样式
+import './popup.css';  
 
-function Popup() {  // 修改组件名称为 Popup
-  const [isOpen, setIsOpen] = useState(false);  // 状态控制
+function Popup() {  
+  const [isOpen, setIsOpen] = useState(false);  
 
   const openPopup = () => {
     setIsOpen(true);

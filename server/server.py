@@ -2,6 +2,7 @@ import random
 import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+import json
 from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
 from flask import Flask, request, jsonify
@@ -148,6 +149,7 @@ def Admin_login():
 
 
 
+
 #      Verification page function   ⬇︎⬇︎⬇︎⬇︎
 
 #
@@ -187,6 +189,37 @@ def send_verification_code():
 
 
 
+
+
+# Simple password reset function, using json file to store user information
+# In the future will change to database
+USERS_FILE = 'users.json'
+def read_users():
+    try:
+        with open(USERS_FILE, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def write_users(users):
+    with open(USERS_FILE, 'w') as file:
+        json.dump(users, file, indent=2)
+# Reset password API
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email') 
+    new_password = data.get('newPassword')
+
+    users = read_users()
+    user = next((u for u in users if u['email'] == email), None) 
+
+    if user:
+        user['password'] = new_password 
+        write_users(users)
+        return jsonify({"message": "Password updated successfully"}), 200
+    else:
+        return jsonify({"message": "Can not find your email"}), 404
 
 
 if __name__ == '__main__':

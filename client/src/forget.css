@@ -23,6 +23,7 @@
     font-size: 40px;
     color: #fc7bb1;
     margin-top: -20px; 
+    margin-bottom: 20px; 
 }
   
 /* input box and label styles */
@@ -48,6 +49,13 @@
     color: #d65fbc; 
     border-radius: 20px;
 }
+/* autofill style */
+.forget-input:-webkit-autofill {
+    background-color: #fff4fd !important;
+    -webkit-box-shadow: 0 0 0 1000px #fff4fd inset !important;
+    color: #d65fbc !important;
+    -webkit-text-fill-color: #d65fbc !important;
+}
   
 /* error message */
 .forget-error-message {
@@ -67,23 +75,51 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 30px;
+    margin-top: 40px;
 }
 .forget-reset-button:hover {
     background-color: #db6a99;
 }
 
-/* error message */
-.forget-error-message-container {
-    color: red;
-    text-align: center; 
-    margin-top: 30px;
-    margin-bottom: -20px;
-    background-color: #f8d7da;
-    padding: 10px;
-    border-radius: 5px; 
+/* Password toggle button */
+.input-with-toggle {
+    display: flex;
+    align-items: center;
+  }
+.password-toggle-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
 }
-.error-icon {
-    font-weight: bold;
-    margin-right: 5px;
+.password-toggle-icon {
+    width: 20px; 
+    height: auto; 
+    object-fit: contain; 
+}
+
+/* Message */
+.forget-message-container {
+    text-align: center;   
+    padding: 10px;       
+    margin-top: 20px;   
+    margin-bottom: -20px;   
+    border-radius: 5px;   
+    font-size: 14px;     
+}
+.forget-message-container.error {
+    background-color: #f8d7da; 
+    color: red; 
+    padding: 10px; 
+    margin-top: 20px; 
+    border-radius: 5px; 
+    text-align: center; 
+}
+.forget-message-container.success {
+    background-color: #d4edda; 
+    color: #155724; 
+    padding: 10px; 
+    margin-top: 20px; 
+    border-radius: 5px; 
+    text-align: center; 
 }
