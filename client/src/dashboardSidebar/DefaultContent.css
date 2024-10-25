@@ -49,6 +49,19 @@
     gap: 2rem;
     justify-content: space-between;
   }
+  .groupSearch{
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+  }
+  input{
+    height: 2rem;
+  }
+  .peopleInfo{
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
 
   .button-container {
     text-align: right; /* Aligns the button to the right */

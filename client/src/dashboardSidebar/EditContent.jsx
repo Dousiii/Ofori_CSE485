@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './UploadContent.css'; // Use your existing styles
+import { message, Modal} from 'antd';
 
 const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
   const [selectedEventId, setSelectedEventId] = useState(events[0]?.id || '');
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [eventData, setEventData] = useState({
     id: '',
     title: '',
@@ -42,13 +44,53 @@ const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onUpdateEvent(eventData);
-    console.log('Submitting event data:', eventData); // Log event data being submitted
+    message.success('Event updated successfully!');
+    setSelectedEventId('');
+    setEventData({
+      id: '',
+      title: '',
+      date: '',
+      time: '',
+      place: '',
+      description: '',
+    });
   };
 
-  const handleDelete = () => {
-    onDeleteEvent(selectedEventId);
-    console.log(`Event with ID ${selectedEventId} deleted.`); // Log deletion action
+  const showDeleteConfirm = () => {
+    setIsDeleteModalVisible(true);
   };
+  
+  const handleDeleteConfirm = () => {
+    onDeleteEvent(selectedEventId);
+    message.success('Event deleted successfully!');
+    setIsDeleteModalVisible(false);
+    setSelectedEventId('');
+    setEventData({
+      id: '',
+      title: '',
+      date: '',
+      time: '',
+      place: '',
+      description: '',
+    });
+  };
+  
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false);
+  };
+  
+  const handleDelete = () => {
+    showDeleteConfirm();
+  };
+
+  if (events.length === 0) {
+    return (
+      <div className="form">
+        <h2>Edit Event</h2>
+        <p>No events exist. Please add an event first.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="form">
@@ -116,6 +158,14 @@ const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
           Delete Event
         </button>
       </form>
+      <Modal
+        title="Confirm Delete"
+        visible={isDeleteModalVisible}
+        onOk={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      >
+        <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+      </Modal>
     </div>
   );
 };
