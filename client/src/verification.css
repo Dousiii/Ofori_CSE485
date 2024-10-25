@@ -1,7 +1,13 @@
-/* background */
+/* Reset body margin and padding */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Background styles */
 .verify-email-background {
     background-color: #f9dce8; 
-    height: 100vh; 
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,4 +104,32 @@
 .resend-code-button:hover {
     text-decoration: underline;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.countdown-display {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+.error-message {
+    color: red; 
+    margin-top: 5px;
+}
+  
   

@@ -1,24 +1,27 @@
-from flask import Flask, jsonify
+import random
+import os
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 import json
-
-from flask import request
 from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
+from flask import Flask, request, jsonify
+from veri_server import send_verification_email
+
 
 app = Flask(__name__)
 CORS(app)
 
-
+##MySql setting     ⬇︎⬇︎⬇︎⬇︎
 
 # MySQL Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ofori_database:oforiDatabase1234!@146.190.71.187/ofori'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Ofori%401324@146.190.71.187:3306/ofori'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
-#Initial the Table in DataBase
+#Initial the Table in DataBase  ⬇︎⬇︎⬇︎⬇︎
 
 #
 
@@ -52,10 +55,9 @@ class Audience(db.Model):
     Phone = db.Column(db.String(50), nullable=True)
 
 
-#Initial some get all function to check it connection
+#Initial some get all function to check it connection   ⬇︎⬇︎⬇︎⬇︎
 
 #
-
 
 #function to get all admin from Admin table
 @app.route('/getAdmins', methods=['GET'])
@@ -83,15 +85,19 @@ def get_events():
 #function to get all audiences from Audience table
 @app.route('/getAudiences', methods=['GET'])
 def get_Audience():
-    audiences = Audience.query.all()  # get all audience in table
-    return jsonify([
-        {
-            'Audience_id': audience.Audience_id,
-            'Name': audience.Name,
-            'Email': audience.Email,
-            'Event_id': audience.Event_id,
-            'Phone': audience.Phone
-        } for audience in audiences])
+    audiences = Audience.query.all()  #get all audience in table
+    return jsonify([{
+        'Audience_id': audience.Audience_id,
+        'Name': audience.Name,
+        'Email': audience.Email,
+        'Event_id': audience.Event_id,
+        'Phone': audience.Phone
+    } for audience in audiences])
+
+
+#
+
+#       MySql setting done   ⬆︎⬆︎⬆︎⬆︎
 
     
 # API：Encrypting Data
@@ -141,6 +147,50 @@ def Admin_login():
     else:
         return jsonify({"message": "Invalid email"}), 404
 
+
+
+
+#      Verification page function   ⬇︎⬇︎⬇︎⬇︎
+
+#
+
+# Function to get admin email
+@app.route('/get_admin_email/<int:admin_id>', methods=['GET'])
+def get_admin_email_api(admin_id):
+    admin = db.session.get(Admin, admin_id)
+    if admin:
+        return jsonify({'email': admin.Email}), 200
+    else:
+        return jsonify({'error': 'Admin not found'}), 404
+
+
+# Endpoint to send verification code
+@app.route('/send-verification-code', methods=['POST'])
+def send_verification_code():
+    email = request.json.get('email')
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
+    status = send_verification_email(email, code)      #call the function in veri_server.py file
+
+    if status == 202:  # 202 means the email was successfully accepted by SendGrid
+        return jsonify({'message': 'Verification code sent', 'code': code}), 200
+    else:
+        return jsonify({'error': 'Failed to send email'}), 500
+
+
+#
+
+#       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
+
+
+
+
+
+
+
+
 # Simple password reset function, using json file to store user information
 # In the future will change to database
 USERS_FILE = 'users.json'
@@ -171,6 +221,7 @@ def reset_password():
     else:
         return jsonify({"message": "Can not find your email"}), 404
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
 
