@@ -1,8 +1,18 @@
+.bgColor{
+    width: 100%;
+    background-color: #fad1d1;
+}
 .fixedButton{
     position: fixed;
     bottom: 30px;
     right: 30px;
     font-size: 50px;
+}
+.infoTitle{
+    text-align: center;
+    margin-top: 30px;
+    font-size: 28px;
+    font-weight: 600;
 }
 .pageHome{
     width: 1200px;
