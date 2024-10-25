@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import React from 'react'
 import "./UploadContent.css"
+import { message } from 'antd'
 
 const UploadContent = ({ addEvent }) => {
 
@@ -14,6 +15,7 @@ const UploadContent = ({ addEvent }) => {
   });
 
   const [minDate, setMinDate] = useState(""); // For preventing past date selection
+  const [showMessage, setShowMessage] = useState(false);
 
   // Get today's date for the 'min' attribute on date input
   useEffect(() => {
@@ -52,6 +54,8 @@ const UploadContent = ({ addEvent }) => {
 
     // Here you'd send the form data to your backend, including the video file
 
+    message.success('Event uploaded successfully!');
+    
     // Reset form data after submission
     setFormData({
       title: "",
@@ -62,6 +66,8 @@ const UploadContent = ({ addEvent }) => {
       video: null,
     });
   };
+
+
 
   return (
     <div>
