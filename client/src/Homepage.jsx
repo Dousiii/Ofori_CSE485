@@ -11,7 +11,11 @@ function Homepage() {
   const aatext = () => {
     return <DownCircleFilled />
   }
+  const aaButton = () => {
+    return   <Button  className="buttonSubmit" >enroll now</Button>
+  }
   return (
+    <div className="bgColor">
     <div className="pageHome">
       <h1 className="title">event title</h1>
       <div className="flexBox mt50 borderBottom">
@@ -23,7 +27,8 @@ function Homepage() {
             will help you walk with pride, knowing your hair is healthy,
             beautiful, and uniquely yours.
           </div>
-          <Button className="buttonSubmit">enroll now</Button>
+          <Link href="#componentsSubmit" title={aaButton()}/>
+        
         </div>
         <img className="rightImg" src={image} />
       </div>
@@ -49,8 +54,9 @@ function Homepage() {
           src="https://video.shipin520.com/videos/36/08/77/b_Z1mR3n9Nd2Eh1578360877.mp4"
           controls
         ></video>
-        <Button className="buttonSubmit" >enroll now</Button>
+         <Link href="#componentsSubmit" title={aaButton()}/>
       </div>
+      <div className="infoTitle">Ofori Event Enrol</div>
       <Form
         className="mt50"
         name="basic"
@@ -112,6 +118,7 @@ function Homepage() {
       <Anchor>
         <Link href="#componentsSubmit" className="fixedButton" title={aatext()}/>
       </Anchor>
+    </div>
     </div>
   );
 }
