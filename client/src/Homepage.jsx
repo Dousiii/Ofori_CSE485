@@ -56,7 +56,7 @@ function Homepage() {
         ></video>
          <Link href="#componentsSubmit" title={aaButton()}/>
       </div>
-      <div className="infoTitle">Ofori Event Enrol</div>
+      <div className="infoTitle">Ofori Event Enroll</div>
       <Form
         className="mt50"
         name="basic"
