@@ -63,14 +63,21 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.forgot-password-link a {
+.forgot-password-link-button {
+    background: none;
+    border: none;
     color: #fc7bb1;
     text-decoration: underline;
-    text-decoration-thickness: 1px; 
+    text-decoration-thickness: 1px;
     font-size: 14px;
+    cursor: pointer;
+    transition: text-decoration-thickness 0.2s ease;
 }
-.forgot-password-link a:hover {
-    text-decoration-thickness: 2px; 
+.forgot-password-link-button:hover {
+    text-decoration-thickness: 2px;
+}
+.forgot-password-link-button:focus {
+    outline: none;
 }
 
 /* login button */
