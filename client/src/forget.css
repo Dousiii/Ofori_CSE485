@@ -123,3 +123,8 @@
     border-radius: 5px; 
     text-align: center; 
 }
+
+.email-input {
+    font-weight: bold;
+    cursor: not-allowed;
+}
