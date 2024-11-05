@@ -6,7 +6,7 @@ import History from "./dashboardSidebar/History";
 import EditContent from "./dashboardSidebar/EditContent";
 import UploadContent from "./dashboardSidebar/UploadContent";
 import { initialEvents } from "./eventsData";
-import { message } from 'antd'; // Import the message component from antd
+import { Modal, message } from 'antd'; // Import the message component from antd
 
 
   const Panels = () => {
@@ -36,13 +36,13 @@ import { message } from 'antd'; // Import the message component from antd
     const renderContent = () => {
       switch (activeContent) {
         case "dashboard":
-          return <Content events={events}/>;
+          return <Content events={events} onDeleteEvent={deleteEvent}/>;
         case "edit":
-          return <EditContent events={events} onUpdateEvent={updateEvent} onDeleteEvent={deleteEvent} />;
+          return <EditContent events={events} onUpdateEvent={updateEvent} />;
         case "add":
           return <UploadContent addEvent={addEvent}/>;
         default:
-          return <Content events={events}/>;
+          return <Content events={events} onDeleteEvent={deleteEvent}/>;
       }
     };
 

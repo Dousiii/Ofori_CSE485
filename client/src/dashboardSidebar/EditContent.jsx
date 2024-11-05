@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './UploadContent.css'; // Use your existing styles
+import './EditContent.css'; // Use your existing styles
 import { message, Modal} from 'antd';
 
 const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
@@ -85,7 +85,7 @@ const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
 
   if (events.length === 0) {
     return (
-      <div className="form">
+      <div className="edit-form">
         <h2>Edit Event</h2>
         <p>No events exist. Please add an event first.</p>
       </div>
@@ -93,7 +93,7 @@ const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
   }
 
   return (
-    <div className="form">
+    <div className="edit-form">
       <h2>Edit Event</h2>
       <label htmlFor="eventSelect">Select Event:</label>
       <select id="eventSelect" value={selectedEventId} onChange={handleEventChange}>
@@ -154,18 +154,7 @@ const EditContent = ({ events, onUpdateEvent, onDeleteEvent }) => {
         ></textarea>
 
         <button type="submit">Update Event</button>
-        <button type="button" onClick={handleDelete} style={{ marginLeft: '10px', backgroundColor: 'red', color: 'white' }}>
-          Delete Event
-        </button>
       </form>
-      <Modal
-        title="Confirm Delete"
-        visible={isDeleteModalVisible}
-        onOk={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
-      >
-        <p>Are you sure you want to delete this event? This action cannot be undone.</p>
-      </Modal>
     </div>
   );
 };

@@ -1,6 +1,4 @@
-/* UploadContent.css */
-
-.upload-form {
+.edit-form {
     min-width: 600px;
     width: 50%;
     margin: 0 auto;
@@ -12,7 +10,7 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.upload-form label {
+.edit-form label {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
@@ -20,11 +18,11 @@
     color: #333;
 }
 
-.upload-form input[type="text"],
-.upload-form input[type="date"],
-.upload-form input[type="time"],
-.upload-form textarea,
-.upload-form input[type="file"] {
+.edit-form input[type="text"],
+.edit-form input[type="date"],
+.edit-form input[type="time"],
+.edit-form textarea,
+.edit-form select {
     width: 88%;
     padding: 10px;
     margin-bottom: 20px;
@@ -34,16 +32,12 @@
     color: #333;
 }
 
-.upload-form textarea {
+.edit-form textarea {
     resize: vertical;
     height: 400px;
 }
 
-.upload-form input[type="file"] {
-    padding: 0;
-}
-
-.upload-form button {
+.edit-form button {
     padding: 10px 15px;
     font-size: 16px;
     font-weight: 600;
@@ -55,28 +49,31 @@
     transition: background-color 0.3s ease;
 }
 
-.upload-form button:hover {
+.edit-form button:hover {
     background-color: #7a8fa0;
 }
 
-.upload-form input:focus,
-.upload-form textarea:focus {
+.edit-form button[type="submit"] {
+    background-color: #9abace;
+}
+
+.edit-form button[type="submit"]:hover {
+    background-color: #7a8fa0;
+}
+
+.edit-form button[type="button"] {
+    background-color: #f44336;
+    margin-left: 10px;
+}
+
+.edit-form button[type="button"]:hover {
+    background-color: #d32f2f;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus,
+.edit-form select:focus {
     outline: none;
     border-color: #9abace;
     box-shadow: 0 0 5px #658294;
-}
-
-.upload-form input[type="file"]::file-selector-button {
-    padding: 8px;
-    font-size: 14px;
-    background-color: #9abace;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.upload-form input[type="file"]::file-selector-button:hover {
-    background-color: #658294;
-}
-  
+} 

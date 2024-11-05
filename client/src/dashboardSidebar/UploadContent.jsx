@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import React from 'react'
 import "./UploadContent.css"
 import { message } from 'antd'
+import './EditContent.css';
 
 const UploadContent = ({ addEvent }) => {
 
@@ -70,8 +71,7 @@ const UploadContent = ({ addEvent }) => {
 
 
   return (
-    <div>
-    <form onSubmit={handleSubmit} className="form">
+    <form onSubmit={handleSubmit} className="upload-form">
 
         <label htmlFor="title">Title:</label>
         <input
@@ -144,7 +144,6 @@ const UploadContent = ({ addEvent }) => {
       <button type="submit">Publish Event</button>
 
     </form>
-    </div>
   );
 }
 
