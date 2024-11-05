@@ -161,6 +161,19 @@ def send_verification_code():
         return jsonify({'error': 'Failed to send email'}), 500
 
 
+@app.route('/get_admin_id', methods=['POST'])
+def get_admin_id():
+    data = request.json
+    email = data.get('email')
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        return jsonify({"admin_id": admin.Admin_id}), 200
+    else:
+        return jsonify({"error": "Admin not found"}), 404
+
+
 #
 
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎

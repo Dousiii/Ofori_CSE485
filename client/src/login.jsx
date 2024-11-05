@@ -22,6 +22,7 @@ function Login() {
             const result = await response.json();
 
             if (response.ok) {
+                sessionStorage.setItem('authAction', 'signIn');
                 sessionStorage.setItem('loggedInUserEmail', email); // login session
                 navigate('/verification');
             } else {
@@ -35,8 +36,9 @@ function Login() {
     };
 
     const handleForgotPassword = () => { // handleForgotPassword handles the navigation to the forget password page
+        sessionStorage.setItem('authAction', 'forgotPassword');
         sessionStorage.setItem('forgotPasswordEmail', email); // Store the email in sessionStorage
-        navigate('/forget'); // Navigate to the forget password page
+        navigate('/verification'); // Navigate to the forget password page
     };
 
     // show/hide password

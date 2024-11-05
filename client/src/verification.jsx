@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import './verification.css'; 
 
 function Verification() {
@@ -9,12 +10,33 @@ function Verification() {
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState(''); //use to check user enter code
   const [sentCode, setSentCode] = useState('');   //store the send code
-  const [initialCodeSent, setInitialCodeSent] = useState(false); // track initial send
+  const navigate = useNavigate();
+  const [adminId, setAdminId] = useState(null);
 
-  //just use for now, set the adminId from login page when user login
-  //will use User Session to get the id from login page in future
-  const adminId = 2;
-
+  //use the session email to get the adminID
+  const fetchAdminIdByEmail = useCallback(async () => {
+    const email = sessionStorage.getItem('loggedInUserEmail') || sessionStorage.getItem('forgotPasswordEmail');
+    if (!email) {
+      console.error('No email found in sessionStorage');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:5000/get_admin_id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setAdminId(data.admin_id); // set fetched adminId
+      } else {
+        console.error('Error fetching admin ID:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching admin ID:', error);
+    }
+  }, []);
+  
   //request the code and send to email, will call the function in server
   const sendVerificationEmail = useCallback(async () => {
     if (!userEmail) return;
@@ -39,6 +61,7 @@ function Verification() {
 
   //use adminId to get the email address
   const fetchAdminEmail = useCallback(async () => {
+    if (!adminId) return;
     try {
       const response = await fetch(`http://localhost:5000/get_admin_email/${adminId}`); 
       if (!response.ok) {
@@ -79,9 +102,17 @@ function Verification() {
     return () => clearInterval(timer);
   }, [isCounting]);
 
+  //get admidID first
   useEffect(() => {
-    fetchAdminEmail();
-  }, [fetchAdminEmail]);
+    fetchAdminIdByEmail();
+  }, [fetchAdminIdByEmail]);
+
+  //get email address
+  useEffect(() => {
+    if (adminId) {
+      fetchAdminEmail();
+    }
+  }, [adminId, fetchAdminEmail]);
 
   //get the email address and start the timer when the page load
   useEffect(() => {
@@ -97,7 +128,15 @@ function Verification() {
     if (verificationCode !== sentCode) { 
       setErrorMessage('The code is wrong, please try again or resend a new code');
     } else {
-      setErrorMessage('Your code is Correct!'); 
+      // Check which page to navigate to based on `authAction`
+      const authAction = sessionStorage.getItem('authAction');
+      if (authAction === 'signIn') {
+        navigate('/admin'); // Redirect to the admin page after Sign In
+      } else if (authAction === 'forgotPassword') {
+        navigate('/forget'); // Redirect to reset password page
+      } else {
+        console.error('Unknown action type');
+      }
     }
   };
 
@@ -119,6 +158,7 @@ function Verification() {
               required
               value={verificationCode} 
               onChange={(e) => setVerificationCode(e.target.value)}   
+              placeholder="Enter verification code"
             />
             {errorMessage && <p className="error-message">{errorMessage}</p>} {/* check the code */}
           </div>
