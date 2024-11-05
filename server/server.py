@@ -128,7 +128,7 @@ def admin_login():
         else:
             return jsonify({"message": "Invalid password"}), 401
     else:
-        return jsonify({"message": "Admin not found"}), 404
+        return jsonify({"message": "Email not found"}), 404
 
 
 #      Verification page function   ⬇︎⬇︎⬇︎⬇︎
@@ -166,41 +166,21 @@ def send_verification_code():
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
 
 
-
-
-
-
-
-
-# Simple password reset function, using json file to store user information
-# In the future will change to database
-USERS_FILE = 'users.json'
-def read_users():
-    try:
-        with open(USERS_FILE, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return []
-
-def write_users(users):
-    with open(USERS_FILE, 'w') as file:
-        json.dump(users, file, indent=2)
-# Reset password API
+# API reset password
 @app.route('/reset-password', methods=['POST'])
 def reset_password():
     data = request.json
-    email = data.get('email') 
-    new_password = data.get('newPassword')
-
-    users = read_users()
-    user = next((u for u in users if u['email'] == email), None) 
-
-    if user:
-        user['password'] = new_password 
-        write_users(users)
+    email = data.get('email')  # Get the email
+    new_password = data.get('newPassword')  # Get new password
+    # Search admin info
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        # Reset password
+        admin.Password = new_password
+        db.session.commit()  # Submit changes to the database
         return jsonify({"message": "Password updated successfully"}), 200
     else:
-        return jsonify({"message": "Can not find your email"}), 404
+        return jsonify({"message": "Email not found"}), 404
 
 
 if __name__ == '__main__':
