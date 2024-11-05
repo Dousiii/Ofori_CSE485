@@ -9,18 +9,20 @@ function Verification() {
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState(''); //use to check user enter code
   const [sentCode, setSentCode] = useState('');   //store the send code
+  const [initialCodeSent, setInitialCodeSent] = useState(false); // track initial send
 
   //just use for now, set the adminId from login page when user login
   //will use User Session to get the id from login page in future
   const adminId = 2;
 
   //request the code and send to email, will call the function in server
-  const sendVerificationEmail = async (email) => {
+  const sendVerificationEmail = useCallback(async () => {
+    if (!userEmail) return;
     try {
       const response = await fetch('http://localhost:5000/send-verification-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email:userEmail })
       });
   
       const data = await response.json();
@@ -33,7 +35,7 @@ function Verification() {
     } catch (error) {
       console.error('Error sending verification code:', error);
     }
-  };
+  },[userEmail]);
 
   //use adminId to get the email address
   const fetchAdminEmail = useCallback(async () => {
@@ -45,7 +47,6 @@ function Verification() {
       const data = await response.json();
       //after get the email, set the email, send the code
       setUserEmail(data.email);
-      sendVerificationEmail(data.email);
       setIsEmailLoaded(true);
     } catch (error) {
       console.error('Error fetching admin email:', error);
@@ -78,11 +79,17 @@ function Verification() {
     return () => clearInterval(timer);
   }, [isCounting]);
 
-  //get the email address and start the timer when the page load
   useEffect(() => {
     fetchAdminEmail();
-    startCountdown();
   }, [fetchAdminEmail]);
+
+  //get the email address and start the timer when the page load
+  useEffect(() => {
+    if (isEmailLoaded && userEmail) {
+      sendVerificationEmail();
+      startCountdown();
+    }
+  }, [isEmailLoaded, userEmail, sendVerificationEmail]);
 
   //use to check if the code is correct
   const handleSubmit = (event) => {
@@ -123,7 +130,7 @@ function Verification() {
           <br />
           <br />
           Didn't receive the code?{" "}
-          <button type="button" className="resend-code-button" onClick={() => { fetchAdminEmail(); startCountdown(); }} disabled={isCounting}>
+          <button type="button" className="resend-code-button" onClick={() => { sendVerificationEmail(); startCountdown(); }} disabled={isCounting}>
             {isCounting ? "Resend in " + counter + "s" : "Resend Code"}
           </button>
         </p>
