@@ -22,6 +22,7 @@ function Login() {
             const result = await response.json();
 
             if (response.ok) {
+                sessionStorage.setItem('authAction', 'signIn');
                 sessionStorage.setItem('loggedInUserEmail', email); // login session
                 navigate('/verification');
             } else {
@@ -34,9 +35,34 @@ function Login() {
         }
     };
 
-    const handleForgotPassword = () => { // handleForgotPassword handles the navigation to the forget password page
-        sessionStorage.setItem('forgotPasswordEmail', email); // Store the email in sessionStorage
-        navigate('/forget'); // Navigate to the forget password page
+    const handleForgotPassword = async () => {
+        //enter the email for reset
+        if (!email) {
+            setMessage('Please enter your email address for reset password');
+            setIsSuccess(false);
+            return;
+        }
+        //check if the email have access to reset password
+        try {
+            const response = await fetch('http://localhost:5000/check_email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const result = await response.json();
+            //if the email is in the system
+            if (response.ok && result.exists) {
+                sessionStorage.setItem('authAction', 'forgotPassword');
+                sessionStorage.setItem('forgotPasswordEmail', email);
+                navigate('/verification');
+            } else {
+                setMessage('You don’t have access to change the password');
+                setIsSuccess(false);
+            }
+        } catch (error) {
+            setMessage('Error: Could not reach server');
+            setIsSuccess(false);
+        }
     };
 
     // show/hide password

@@ -151,6 +151,22 @@ def send_verification_code():
     email = request.json.get('email')
     if not email:
         return jsonify({'error': 'Email is required'}), 400
+        
+
+    #Use for when API key is not set and use for testing, will delete in the future
+    #
+    #
+    #
+    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+    # Check if the API key is set
+    if not sendgrid_api_key:
+        # If there's no API key, return a mock code for development
+        return jsonify({'message': 'Verification code sent (mock)', 'code': '123456'}), 200
+    #
+    #
+    #
+    #
+
 
     code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
     status = send_verification_email(email, code)      #call the function in veri_server.py file
@@ -159,6 +175,31 @@ def send_verification_code():
         return jsonify({'message': 'Verification code sent', 'code': code}), 200
     else:
         return jsonify({'error': 'Failed to send email'}), 500
+
+
+@app.route('/get_admin_id', methods=['POST'])
+def get_admin_id():
+    data = request.json
+    email = data.get('email')
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        return jsonify({"admin_id": admin.Admin_id}), 200
+    else:
+        return jsonify({"error": "Admin not found"}), 404
+
+
+@app.route('/check_email', methods=['POST'])
+def check_email():
+    data = request.get_json()
+    email = data.get('email')
+    # Check if the email exists
+    user = Admin.query.filter_by(Email=email).first()
+    if user:
+        return jsonify({"exists": True}), 200
+    else:
+        return jsonify({"exists": False, "message": "Email does not exist"}), 404
 
 
 #
