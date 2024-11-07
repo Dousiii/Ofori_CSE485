@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import './forget.css';
+import { useNavigate } from 'react-router-dom';
 
 function Forget() {
     // email, password, and confirmPassword are states that save the user inputs for email, new password, and confirm password respectively
@@ -15,6 +16,16 @@ function Forget() {
     // showPassword and showConfirmPassword are used to control whether the passwords should be displayed as plain text or hidden
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const navigate = useNavigate(); // useNavigate hook for page navigation
+
+    // useEffect to load email from sessionStorage when the component is mounted
+    useEffect(() => {
+        const storedEmail = sessionStorage.getItem('forgotPasswordEmail'); // Retrieve the email from sessionStorage
+        if (storedEmail) {
+            setEmail(storedEmail); // Set the email state
+        }
+    }, []);
 
     // This function validates the password complexity based on common password requirements:
     // At least 7 characters, one uppercase letter, one lowercase letter, one number, and one special character
@@ -88,11 +99,11 @@ function Forget() {
             }),
         });
 
-        const result = await response.json();
         if (response.ok) {
-            setMessageType('success');  // Set message type to success
-            setMessage(result.message);
+            // If password reset is successful, navigate back to the login page
+            navigate('/login');
         } else {
+            const result = await response.json();
             setMessageType('error');  // Set message type to error
             setMessage(result.message);
         }
@@ -119,7 +130,7 @@ function Forget() {
                     type="text"
                     id="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    readOnly  // Set to read only
                     required
                     className="email-input forget-input"
                 />
@@ -175,7 +186,7 @@ function Forget() {
                 </div>
               </div>
 
-              {/* Unified message display for both error and success */}
+              {/* Unified message display for error only */}
               {message && (
                 <div className={`forget-message-container ${messageType === 'success' ? 'success' : 'error'}`}>
                   <span>{message}</span>
