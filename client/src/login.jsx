@@ -34,7 +34,6 @@ function Login() {
             setIsSuccess(false);
         }
     };
-
     const handleForgotPassword = async () => {
         //enter the email for reset
         if (!email) {
@@ -63,6 +62,7 @@ function Login() {
             setMessage('Error: Could not reach server');
             setIsSuccess(false);
         }
+
     };
 
     // show/hide password
