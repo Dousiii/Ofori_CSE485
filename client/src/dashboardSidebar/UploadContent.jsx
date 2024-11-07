@@ -47,6 +47,7 @@ const UploadContent = ({ addEvent }) => {
       date: formData.date,
       time: formData.time,
       place: formData.location,
+      description: formData.description,
       people: [],
     };
 
@@ -70,8 +71,9 @@ const UploadContent = ({ addEvent }) => {
 
 
   return (
-    <div>
-    <form onSubmit={handleSubmit} className="form">
+    <div className="upload-form">
+      <h2>Add New Event</h2>
+      <form onSubmit={handleSubmit} >
 
         <label htmlFor="title">Title:</label>
         <input
@@ -144,7 +146,7 @@ const UploadContent = ({ addEvent }) => {
       <button type="submit">Publish Event</button>
 
     </form>
-    </div>
+  </div>
   );
 }
 
