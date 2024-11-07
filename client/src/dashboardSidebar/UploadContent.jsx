@@ -48,6 +48,7 @@ const UploadContent = ({ addEvent }) => {
       date: formData.date,
       time: formData.time,
       place: formData.location,
+      description: formData.description,
       people: [],
     };
 
