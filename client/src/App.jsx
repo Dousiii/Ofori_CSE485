@@ -17,6 +17,7 @@ import Popup from "./popup";
 import Adminedit from "./Adminedit";
 import Adminupload from "./Adminupload";
 import EncryptionTest from "./EncryptionTest";
+import Preview from "./Preview";
 import "./App.css";
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
                     <Route
                         path="/aeupload"
                         element={<Adminupload />}
+                    />
+                    <Route
+                        path="/preview"
+                        element={<Preview />}
                     />
                 </Routes>
             </Router>

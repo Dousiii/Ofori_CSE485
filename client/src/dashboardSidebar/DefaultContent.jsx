@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import "./DefaultContent.css"
+import { Modal, message } from 'antd';
 
 
-const DefaultContent = ({ events }) => {
+const DefaultContent = ({ events, onDeleteEvent }) => {
 
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -27,6 +30,19 @@ const DefaultContent = ({ events }) => {
   const handleEventClick = (event) => {
     setSelectedEvent(event);
     setPeopleList(event.people);
+  };
+
+  const handleDeleteClick = (event, e) => {
+    e.stopPropagation(); // Prevent event click handler from firing
+    setEventToDelete(event);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDeleteEvent(eventToDelete.id);
+    setShowDeleteModal(false);
+    setEventToDelete(null);
+    message.success('Event deleted successfully!');
   };
 
   if (events.length === 0) {
@@ -62,12 +78,23 @@ const DefaultContent = ({ events }) => {
                 key={event.id}
                 className="event-card"
                 onClick={() => handleEventClick(event)}
-                style={{ cursor: 'pointer', padding: '10px', border: '1px solid #ccc', marginBottom: '10px' }}
               >
-                <h3>{event.title}</h3>
-                <p>Date: {event.date}</p>
-                <p>Time: {event.time}</p>
-                <p>Place: {event.place}</p>
+                <div className="event-content">
+                  <div className="event-details">
+                    <h3>{event.title}</h3>
+                    <p>Date: {event.date}</p>
+                    <p>Time: {event.time}</p>
+                    <p>Location: {event.place}</p>
+                  </div>
+                  <div className="delete-container">
+                    <button 
+                      className="delete-button"
+                      onClick={(e) => handleDeleteClick(event, e)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -89,6 +116,14 @@ const DefaultContent = ({ events }) => {
           </div>
         </div>
       </div>
+      <Modal
+        title="Confirm Delete"
+        visible={showDeleteModal}
+        onOk={handleDeleteConfirm}
+        onCancel={() => setShowDeleteModal(false)}
+      >
+        <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+      </Modal>
     </div>
   )
 }

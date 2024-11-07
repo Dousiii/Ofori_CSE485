@@ -114,40 +114,21 @@ def decrypt_endpoint():
     decrypted_data = decrypt_data(encrypted_data.encode())  # Using the decryption function
     return jsonify({'decrypted_data': decrypted_data})  # Returns the decrypted data
 
+# API: Admin login
 @app.route('/admin_login', methods=['POST'])
-def Admin_login():
-    data = request.json  # Get email and password from the front end
+def admin_login():
+    data = request.json  # Get email and password
     email = data.get('email')
     password = data.get('password')
-
-    # Query the admin's email in the database. If the database is connected, use the following line of code
-    # admin = Admin.query.filter_by(Email=email).first()
-
-    # This line of code simulates the admin's email address and password. 
-    # It is used to test the function when there is no connection to the database. It will be deleted later
-    mock_admin = {'Email': 'admin@example.com', 'Password': 'admin123'}
-
-    '''
-    # These codes are also used after connecting to the database
+    # Verify email address using database query
+    admin = Admin.query.filter_by(Email=email).first()
     if admin:
-        # Directly compare the password in the database with the password sent from the front end
         if admin.Password == password:
             return jsonify({"message": "Login successful", "admin_id": admin.Admin_id}), 200
         else:
             return jsonify({"message": "Invalid password"}), 401
     else:
-        return jsonify({"message": "Admin not found"}), 404
-    '''
-
-    if email == mock_admin['Email']:
-        if password == mock_admin['Password']:
-            return jsonify({"message": "Login successful", "admin_id": 1}), 200
-        else:
-            return jsonify({"message": "Invalid password"}), 401
-    else:
-        return jsonify({"message": "Invalid email"}), 404
-
-
+        return jsonify({"message": "Email not found"}), 404
 
 
 #      Verification page function   ⬇︎⬇︎⬇︎⬇︎
@@ -170,6 +151,22 @@ def send_verification_code():
     email = request.json.get('email')
     if not email:
         return jsonify({'error': 'Email is required'}), 400
+        
+
+    #Use for when API key is not set and use for testing, will delete in the future
+    #
+    #
+    #
+    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+    # Check if the API key is set
+    if not sendgrid_api_key:
+        # If there's no API key, return a mock code for development
+        return jsonify({'message': 'Verification code sent (mock)', 'code': '123456'}), 200
+    #
+    #
+    #
+    #
+
 
     code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
     status = send_verification_email(email, code)      #call the function in veri_server.py file
@@ -180,46 +177,51 @@ def send_verification_code():
         return jsonify({'error': 'Failed to send email'}), 500
 
 
+@app.route('/get_admin_id', methods=['POST'])
+def get_admin_id():
+    data = request.json
+    email = data.get('email')
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        return jsonify({"admin_id": admin.Admin_id}), 200
+    else:
+        return jsonify({"error": "Admin not found"}), 404
+
+
+@app.route('/check_email', methods=['POST'])
+def check_email():
+    data = request.get_json()
+    email = data.get('email')
+    # Check if the email exists
+    user = Admin.query.filter_by(Email=email).first()
+    if user:
+        return jsonify({"exists": True}), 200
+    else:
+        return jsonify({"exists": False, "message": "Email does not exist"}), 404
+
+
 #
 
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
 
 
-
-
-
-
-
-
-# Simple password reset function, using json file to store user information
-# In the future will change to database
-USERS_FILE = 'users.json'
-def read_users():
-    try:
-        with open(USERS_FILE, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return []
-
-def write_users(users):
-    with open(USERS_FILE, 'w') as file:
-        json.dump(users, file, indent=2)
-# Reset password API
+# API reset password
 @app.route('/reset-password', methods=['POST'])
 def reset_password():
     data = request.json
-    email = data.get('email') 
-    new_password = data.get('newPassword')
-
-    users = read_users()
-    user = next((u for u in users if u['email'] == email), None) 
-
-    if user:
-        user['password'] = new_password 
-        write_users(users)
+    email = data.get('email')  # Get the email
+    new_password = data.get('newPassword')  # Get new password
+    # Search admin info
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        # Reset password
+        admin.Password = new_password
+        db.session.commit()  # Submit changes to the database
         return jsonify({"message": "Password updated successfully"}), 200
     else:
-        return jsonify({"message": "Can not find your email"}), 404
+        return jsonify({"message": "Email not found"}), 404
 
 
 if __name__ == '__main__':
