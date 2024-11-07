@@ -84,7 +84,7 @@ const DefaultContent = ({ events, onDeleteEvent }) => {
                     <h3>{event.title}</h3>
                     <p>Date: {event.date}</p>
                     <p>Time: {event.time}</p>
-                    <p>Place: {event.place}</p>
+                    <p>Location: {event.place}</p>
                   </div>
                   <div className="delete-container">
                     <button 

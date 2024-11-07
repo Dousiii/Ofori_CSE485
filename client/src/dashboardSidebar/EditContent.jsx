@@ -76,7 +76,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
           required
         />
 
-        <label htmlFor="place">Place:</label>
+        <label htmlFor="place">Location:</label>
         <input
           type="text"
           id="place"

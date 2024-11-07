@@ -51,6 +51,7 @@ import { Modal, message } from 'antd'; // Import the message component from antd
         <Sidebar setActiveContent={setActiveContent}/>
         <div className="content-info">
           {renderContent()}
+          <button className="logout-button">Logout</button>
         </div>
       </div>
     );
