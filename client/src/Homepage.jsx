@@ -41,12 +41,13 @@ function Homepage() {
     <div className="bgColor">
       <div className="pageHome">
         <div className="headerTar ">
-          <div>bar</div>
+          <div> </div>
         </div>
         <div className="title">
-          <h2>event title</h2>
-          <div className="s12" style={{ marginTop: '10px' }}>event title</div>
-          <div className="s12">DD/MM/YY</div>
+          <h2>Ofori Event</h2>
+          <div className="s12" style={{ marginTop: '10px' }}>Location: Online</div>
+          <div className="s12">Date: Nov. 20th 2024</div>
+          <div className="s12">Time: 12:00</div>
         </div>
 
         <div className="videoBox">
@@ -123,12 +124,12 @@ function Homepage() {
         >
           <Row>
             <Col span={24}>
-              <Form.Item label="name" name="name">
+              <Form.Item label="Name" name="name">
                 <Input />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item label="phone number" name="phoneNumber" rules={[
+              <Form.Item label="Phone Number" name="phoneNumber" rules={[
                 () => ({
                   validator(_, value) {
                     if (value && value.length == 10) {
@@ -144,7 +145,7 @@ function Homepage() {
           </Row>
           <Row>
             <Col span={24}>
-              <Form.Item label="email" name="email" rules={[
+              <Form.Item label="Email" name="email" rules={[
                 () => ({
                   validator(_, value) {
                     if (value && validateExtension(value)) {
