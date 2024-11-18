@@ -9,7 +9,8 @@ import stopImg from "./assets/stop.png";
 
 function Homepage() {
   const [isPlay, setIsplay] = useState(false);
-  const [isPopupVisible, setIsPopupVisible] = useState(false); // Control pop-up window display status
+  const [isPopupVisibleLeave, setIsPopupVisibleLeave] = useState(false); // Pop-up window when leaving the page
+  const [isPopupVisibleTimer, setIsPopupVisibleTimer] = useState(false); // Random pop-up window for a few seconds
   const { Link } = Anchor;
   const videoRef = useRef();
 
@@ -49,14 +50,23 @@ function Homepage() {
     return regex.test(normalizedName);
   };
 
-  // Popup: popup when the user moves the mouse out of the page
+  // A pop-up window will appear after a few seconds
   useEffect(() => {
-    let hasPopupTriggered = false; // Used to record whether the pop-up window has been triggered
-    // Only pop up once
-  
+    const randomDelay = Math.floor(Math.random() * 5000) + 5000; // 5~10s pop up
+    const timer = setTimeout(() => {
+      setIsPopupVisibleTimer(true);
+    }, randomDelay);
+
+    return () => clearTimeout(timer); // Triggered only once
+  }, []);
+
+  // Pop-up window when the mouse moves out of the top of the page
+  useEffect(() => {
+    let hasPopupTriggered = false; // Triggered only once
+
     const handleMouseLeave = (e) => {
       if (!hasPopupTriggered && e.clientY <= 0) { // Detect if the mouse moves out of the top of the browser
-        setIsPopupVisible(true); // Show popup
+        setIsPopupVisibleLeave(true);
         hasPopupTriggered = true; // Mark as triggered
       }
     };
@@ -204,9 +214,10 @@ function Homepage() {
           <Link href="#componentsSubmit" className="fixedButton" title={aatext()} />
         </Anchor>
       </div>
-
-      {/* Pop up */}
-      {isPopupVisible && <Popup onClose={() => setIsPopupVisible(false)} />}
+        {/* Pop-up window when leaving the page */}
+        {isPopupVisibleLeave && <Popup onClose={() => setIsPopupVisibleLeave(false)} />}
+        {/* A pop-up window will appear after a few seconds */}
+        {isPopupVisibleTimer && <Popup onClose={() => setIsPopupVisibleTimer(false)} />}
     </div>
   );
 }
