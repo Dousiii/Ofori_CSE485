@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
+import image from "./assets/image.png";
 
 function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const { Link } = Anchor;
@@ -147,7 +148,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
             style={{ flexDirection: "column", alignItems: "center" }}>
             <video
                 className="videoBox"
-                src="https://video.shipin520.com/videos/36/08/77/b_Z1mR3n9Nd2Eh1578360877.mp4"
+                src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4"
                 controls>
             </video>
             <Link href="#componentsSubmit" title={enrollButton()}/>
@@ -161,8 +162,28 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
                 </div>
             </div>
 
+            <div className="bgBox  mt30" >
+                <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
+                    <div>
+                        Here you can put some infomation of yourself. <br/>
+                        Join our FREE 21-day summit for expert insights that will help you
+                        walk with pride, knowing your hair is healthy, beautiful, and
+                        uniquely yours. Join our FREE 21-day summit for expert insights that
+                        will help you walk with pride, knowing your hair is healthy,
+                        beautiful, and uniquely yours.
+                    </div>
+                    <div className="flexBox mt30">
+                        <img src={image} className="avater" />
+                        <div className="rightText">
+                            <div>Join our FREE </div>
+                            <div> summit for expert insigh</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
        
-            <div className="infoTitle">Ofori Event Enroll</div>
+            <div className="infoTitle">Sigu-Up for Join Event</div>
             <Form
                 className="mt50"
                 name="basic"
