@@ -7,6 +7,7 @@ from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
 from flask import Flask, request, jsonify
 from veri_server import send_verification_email
+from bcrypt import hashpw, gensalt, checkpw
 
 
 app = Flask(__name__)
@@ -117,16 +118,36 @@ def decrypt_endpoint():
 # API: Admin login
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
-    data = request.json  # Get email and password
+    data = request.json
     email = data.get('email')
-    password = data.get('password')
-    # Verify email address using database query
+    password = data.get('password')  # User's plain text password
     admin = Admin.query.filter_by(Email=email).first()
+
     if admin:
-        if admin.Password == password:
+        # Check hashed password
+        if checkpw(password.encode(), admin.Password.encode()):
             return jsonify({"message": "Login successful", "admin_id": admin.Admin_id}), 200
         else:
             return jsonify({"message": "Invalid password"}), 401
+    else:
+        return jsonify({"message": "Email not found"}), 404
+
+
+# API: Reset password
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email')
+    new_password = data.get('newPassword')  # User's plain text password
+
+    # Hash the new password
+    hashed_password = hashpw(new_password.encode(), gensalt())
+
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        admin.Password = hashed_password.decode()  # Save the hashed password
+        db.session.commit()
+        return jsonify({"message": "Password updated successfully"}), 200
     else:
         return jsonify({"message": "Email not found"}), 404
 
@@ -205,23 +226,6 @@ def check_email():
 #
 
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
-
-
-# API reset password
-@app.route('/reset-password', methods=['POST'])
-def reset_password():
-    data = request.json
-    email = data.get('email')  # Get the email
-    new_password = data.get('newPassword')  # Get new password
-    # Search admin info
-    admin = Admin.query.filter_by(Email=email).first()
-    if admin:
-        # Reset password
-        admin.Password = new_password
-        db.session.commit()  # Submit changes to the database
-        return jsonify({"message": "Password updated successfully"}), 200
-    else:
-        return jsonify({"message": "Email not found"}), 404
 
 
 if __name__ == '__main__':
