@@ -9,8 +9,9 @@ import stopImg from "./assets/stop.png";
 
 function Homepage() {
   const [isPlay, setIsplay] = useState(false);
-  const [isPopupVisibleLeave, setIsPopupVisibleLeave] = useState(false); // Pop-up window when leaving the page
-  const [isPopupVisibleTimer, setIsPopupVisibleTimer] = useState(false); // Random pop-up window for a few seconds
+  const [currentPopup, setCurrentPopup] = useState(null); // Current popup: 'leave', 'timer', or null
+  const [hasLeavePopupTriggered, setHasLeavePopupTriggered] = useState(false); // Move the mouse out of the pop-up window to trigger the marker
+  const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
   const { Link } = Anchor;
   const videoRef = useRef();
 
@@ -50,33 +51,36 @@ function Homepage() {
     return regex.test(normalizedName);
   };
 
-  // A pop-up window will appear after a few seconds
+  // Random pop-up logic
   useEffect(() => {
-    const randomDelay = Math.floor(Math.random() * 5000) + 5000; // 5~10s pop up
-    const timer = setTimeout(() => {
-      setIsPopupVisibleTimer(true);
-    }, randomDelay);
+    if (!currentPopup && !hasTimerPopupTriggered) {
+      const randomDelay = Math.floor(Math.random() * 5000) + 10000; // 10~15s pop up
+      const timer = setTimeout(() => {
+        setCurrentPopup("timer");
+        setHasTimerPopupTriggered(true); // Mark random pop-up window triggered
+      }, randomDelay);
 
-    return () => clearTimeout(timer); // Triggered only once
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [currentPopup, hasTimerPopupTriggered]);
 
-  // Pop-up window when the mouse moves out of the top of the page
+  // Mouse out triggers pop-up logic
   useEffect(() => {
-    let hasPopupTriggered = false; // Triggered only once
+    if (!currentPopup && !hasLeavePopupTriggered) {
+      const handleMouseLeave = (e) => {
+        if (e.clientY <= 0) {
+          setCurrentPopup("leave");
+          setHasLeavePopupTriggered(true); // Mark the mouse out of the pop-up window has been triggered
+        }
+      };
 
-    const handleMouseLeave = (e) => {
-      if (!hasPopupTriggered && e.clientY <= 0) { // Detect if the mouse moves out of the top of the browser
-        setIsPopupVisibleLeave(true);
-        hasPopupTriggered = true; // Mark as triggered
-      }
-    };
-  
-    document.addEventListener("mouseleave", handleMouseLeave);
-  
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave); // Cleanup event listeners
-    };
-  }, []);
+      document.addEventListener("mouseleave", handleMouseLeave);
+      return () => document.removeEventListener("mouseleave", handleMouseLeave);
+    }
+  }, [currentPopup, hasLeavePopupTriggered]);
+
+  // Reset state when closing popup
+  const closePopup = () => setCurrentPopup(null);
   
 
   return (
@@ -214,10 +218,9 @@ function Homepage() {
           <Link href="#componentsSubmit" className="fixedButton" title={aatext()} />
         </Anchor>
       </div>
-        {/* Pop-up window when leaving the page */}
-        {isPopupVisibleLeave && <Popup onClose={() => setIsPopupVisibleLeave(false)} />}
-        {/* A pop-up window will appear after a few seconds */}
-        {isPopupVisibleTimer && <Popup onClose={() => setIsPopupVisibleTimer(false)} />}
+        {/* pop up */}
+        {currentPopup === "leave" && <Popup onClose={closePopup} />}
+        {currentPopup === "timer" && <Popup onClose={closePopup} />}
     </div>
   );
 }
