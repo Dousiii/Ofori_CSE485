@@ -24,7 +24,7 @@ function Homepage() {
   };
 
   const aaButton = () => {
-    return <Button className="buttonSubmit">enroll Button</Button>;
+    return <Button className="buttonSubmit">Enroll Now</Button>;
   };
 
   const play = () => {
