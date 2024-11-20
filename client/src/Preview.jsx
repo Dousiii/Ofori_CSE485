@@ -2,30 +2,35 @@ import React, {useState, useRef, useEffect} from "react";
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
+import parse from "html-react-parser";
 import image from "./assets/image.png";
 
 function Preview({ eventTitle, eventDate, eventLocation, description, personalInfo }) {
     const { Link } = Anchor;
     const { Option } = Select;
 
-    const [fontSize, setFontSize] = useState("40px");   //set font size
     const [showDropdown, setShowDropdown] = useState(null); //set dropdown
-    const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // 
-    const [dateCustomFontSize, setDateCustomFontSize] = useState("");  //   
+    const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // use to custon title size
+    const [dateCustomFontSize, setDateCustomFontSize] = useState("");  // use to custon date size
+    const [locationCustomFontSize, setlocationCustomFontSize] = useState("");  //use to custon location size
+    const [descCustomFontSize, setDescCustomFontSize] = useState(""); //use to custon descrption size
+    const [persCustomFontSize, setPersCustomFontSize] = useState(""); //use to custon personal info size
     const [scaling, setScaling] = useState(false);  //set scaling
-    const [showBorder, setShowBorder] = useState(false);
-    const [isCustomClicked, setIsCustomClicked] = useState(false);
-    const [dateFontSize, setDateFontSize] = useState("20px");
-    const [locationFontSize, setLocationFontSize] = useState("20px");
-    const [descFontSize, setdescFontSize] = useState("20px");
-    const [persFontSize, setpersFontSize] = useState("17px");
-    const dropdownRef = useRef(null); // 
-    const customButtonRef = useRef(null); //
+    const [showBorder, setShowBorder] = useState(false); //set for show border
+    const [isCustomClicked, setIsCustomClicked] = useState(false); // use ti check if custom button click
+    const [fontSize, setFontSize] = useState("40px");   //set title font size
+    const [dateFontSize, setDateFontSize] = useState("20px");//set date font size
+    const [locationFontSize, setLocationFontSize] = useState("20px");//set location font size
+    const [descFontSize, setDescFontSize] = useState("20px");//set description font size
+    const [persFontSize, setPersFontSize] = useState("17px");//set personal info font size
+    const dropdownRef = useRef(null); // check for click, if user click outside of the box, dropdown cancel
+    const customButtonRef = useRef(null); // if user click save, dropdown cancel
+    const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
 
-    //
+
+    //check mouse click
     useEffect(() => {
         const handleGlobalClick = (e) => {
-            //
             if (
                 dropdownRef.current && !dropdownRef.current.contains(e.target) &&
                 customButtonRef.current && !customButtonRef.current.contains(e.target)
@@ -48,29 +53,47 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
     const handleCustomFontSizeChange = (box, e) => {
         const value = e.target.value;
         if (box === "title") {
-            setTitleCustomFontSize(value); // 
+            setTitleCustomFontSize(value); 
         } else if (box === "date") {
-            setDateCustomFontSize(value); // 
+            setDateCustomFontSize(value); 
+        } else if (box === "location") {
+            setlocationCustomFontSize(value);
+        } else if (box === "desc") {
+            setDescCustomFontSize(value);
+        } else if (box === "personal") {
+            setPersCustomFontSize(value);
         }
-    };
+    }
     
     //use to apply the font size that user custom
     const applyCustomFontSize = (box) => {
         let value = "";
         if (box === "title") {
-            value = titleCustomFontSize.trim(); // 
+            value = titleCustomFontSize.trim(); 
         } else if (box === "date") {
-            value = dateCustomFontSize.trim(); // 
+            value = dateCustomFontSize.trim();  
+        } else if (box === "location") {
+            value = locationCustomFontSize.trim();
+        } else if (box === "desc") {
+            value = descCustomFontSize.trim();
+        } else if (box === "personal") {
+            value = persCustomFontSize.trim();
         }
     
         if (value && !isNaN(parseFloat(value))) {
             if (!value.endsWith("px")) {
-                value += "px"; // 
+                value += "px"; 
             }
             if (box === "title") {
-                setFontSize(value); // 
+                setFontSize(value); 
             } else if (box === "date") {
-                setDateFontSize(value); // 
+                setDateFontSize(value); 
+            } else if (box === "location") {
+                setLocationFontSize(value);
+            } else if (box === "desc") {
+                setDescFontSize(value)
+            } else if (box === "personal") {
+                setPersFontSize(value);
             }
             setScaling(false);
             setShowDropdown(null); 
@@ -144,7 +167,10 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                 toggleBorder(); 
                 setIsCustomClicked((prevState) => !prevState); 
                 setShowDropdown(null);
-            }}>Custom</button>
+                setIsCustomMode((prevState) => !prevState); 
+                }}>
+                {isCustomMode ? "Save Change" : "Custom" }
+            </button>
             <div className={`eventinfoBox ${showBorder ? "withBorder" : "noBorder"}`}>
                 <div className={`eventTitleBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`} 
                      onClick={(e) => {if (isCustomClicked) {
@@ -258,6 +284,38 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                     >
                     The Event Location is: 
                     {eventLocation}
+
+                    {showDropdown === "location" && (
+                        <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
+                            <Select
+                                defaultValue={locationFontSize}
+                                style={{ width: 120 }}
+                                onChange={(value) => setLocationFontSize(value)}
+                                dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Space style={{ padding: "5px", display: "flex", flexDirection: "column" }}>
+                                    <Input
+                                        value={locationCustomFontSize}
+                                        onChange={(e) => handleCustomFontSizeChange("location", e)}
+                                        style={{ width: 80 }}
+                                        placeholder="e.g., 18px"
+                                    />
+                                    <Button onClick={() => applyCustomFontSize("location")}  type="primary" style={{ marginTop: "5px" }}>
+                                        Apply
+                                    </Button>
+                                    </Space>
+                                </>
+                                )}
+                            >
+                            <Option value="15px">15px</Option>
+                            <Option value="20px">20px</Option>
+                            <Option value="25px">25px</Option>
+                            <Option value="30px">30px</Option>
+                            <Option value="35px">35px</Option>
+                        </Select> 
+                        </div>
+                    )}
                 </div>
 
             </div>
@@ -267,7 +325,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                 style={{ flexDirection: "column", alignItems: "center" }}>
                 <video
                     className="videoBox"
-                    src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4"
+                    src="/video/a.mp4"
                     controls>
                 </video>
                 <Link href="#componentsSubmit" title={enrollButton()}/>
@@ -286,8 +344,46 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                         transform: isCustomClicked && showDropdown === "desc" && scaling ? "scale(1.05)" : "scale(1)", // Apply scaling when dropdown is open
                         transition: "transform 0.2s", // Smooth transition for scaling
                         cursor: isCustomClicked ? "pointer" : "default",
+                        position: "relative",
                     }}
-                    dangerouslySetInnerHTML={{ __html: description }} >
+                    >
+                        {parse(description)}
+
+                    {showDropdown === "desc" && (
+                        <div ref={dropdownRef} 
+                             className="fontSizeDropdown" 
+                             onClick={handleDropdownClick} 
+                             style={{ display: "inline-block", marginLeft: "10px", marginTop: "-50px"
+                                    }}>
+                            <Select
+                                defaultValue={descFontSize}
+                                style={{ width: 120 }}
+                                onChange={(value) => setDescFontSize(value)}
+                                dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Space style={{ padding: "5px", display: "flex", flexDirection: "column" }}>
+                                    <Input
+                                        value={descCustomFontSize}
+                                        onChange={(e) => handleCustomFontSizeChange("desc", e)}
+                                        style={{ width: 80 }}
+                                        placeholder="e.g., 18px"
+                                    />
+                                    <Button onClick={() => applyCustomFontSize("desc")}  type="primary" style={{ marginTop: "5px" }}>
+                                        Apply
+                                    </Button>
+                                    </Space>
+                                </>
+                                )}
+                            >
+                            <Option value="15px">15px</Option>
+                            <Option value="17px">17px</Option>
+                            <Option value="20px">20px</Option>
+                            <Option value="25px">25px</Option>
+                            <Option value="30px">30px</Option>
+                        </Select> 
+                        </div>
+                    )}
                 </div>
                 <div className="flexCenterBox">
                     <Link href="#componentsSubmit" title={enrollButton()} />
@@ -297,7 +393,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
 
 
             <div className="bgBox  mt30" >
-                <div className={`w1200 personalInfoBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
+                <div className={`personalInfoBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                     onClick={(e) => {if (isCustomClicked) {
                         handlePersonalInfoClick("personal");
                         e.stopPropagation();
@@ -311,17 +407,53 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                         flexDirection: "column",
                         alignItems: "center"
                     }}
-                    dangerouslySetInnerHTML={{ __html: personalInfo }} >
-                </div> 
+                     >
+                        {parse(personalInfo)}
 
-                <div className="flexBox mt30">
-                    <img src={image} className="avater" />
-                    <div className="rightText">
-                        <div>Join our FREE </div>
-                        <div> summit for expert insigh</div>
+                        {showDropdown === "personal" && (
+                        <div ref={dropdownRef} 
+                             className="fontSizeDropdown" 
+                             onClick={handleDropdownClick} 
+                             style={{ display: "inline-block", marginLeft: "10px", marginTop: "-50px"
+                                    }}>
+                            <Select
+                                defaultValue={persFontSize}
+                                style={{ width: 120 }}
+                                onChange={(value) => setPersFontSize(value)}
+                                dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Space style={{ padding: "5px", display: "flex", flexDirection: "column" }}>
+                                    <Input
+                                        value={persCustomFontSize}
+                                        onChange={(e) => handleCustomFontSizeChange("personal", e)}
+                                        style={{ width: 80 }}
+                                        placeholder="e.g., 18px"
+                                    />
+                                    <Button onClick={() => applyCustomFontSize("personal")}  type="primary" style={{ marginTop: "5px" }}>
+                                        Apply
+                                    </Button>
+                                    </Space>
+                                </>
+                                )}
+                            >
+                            <Option value="15px">15px</Option>
+                            <Option value="17px">17px</Option>
+                            <Option value="20px">20px</Option>
+                            <Option value="25px">25px</Option>
+                            <Option value="30px">30px</Option>
+                        </Select> 
+                        </div>
+                    )}
+
+                    <div className="flexBox mt30">
+                        <img src={image} className="avater" />
+                        <div className="rightText">
+                            <div>Join our FREE </div>
+                            <div> summit for expert insigh</div>
+                        </div>
                     </div>
-                </div>
-                
+                </div>   
             </div>
 
        

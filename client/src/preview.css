@@ -97,13 +97,28 @@
     transition: box-shadow 0.2s ease-in-out;
     position: relative;
 }
-
-。personalInfoBox {
+.personalInfoBox {
     border: 2px solid #C88686FF; 
     padding: 10px; 
     cursor: pointer;
     transition: box-shadow 0.2s ease-in-out;
     position: relative;
+    max-width: 1200px !important;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #C88686FF;
+    line-height: 30px;
+}
+
+.personalImaBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px; /* Space between the image and text */
+    width: 100%;
+
 }
 
 .noBorder {
