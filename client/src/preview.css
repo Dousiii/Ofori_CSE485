@@ -8,11 +8,25 @@
     padding: 20px; 
     box-sizing: border-box; 
     flex-direction: column;
+    position: relative;
 }
 
-* {
-    margin: 0;
-    padding: 0;
+.customButton {
+    position: absolute; 
+    top: -60px; 
+    right: -6px; 
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #efa0a0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.customButton:hover {
+    background-color: #6eb9ef;
 }
 
 .fontSizeDropdown {
@@ -27,8 +41,7 @@
     z-index: 10;
 }
 
-.eventinfoBox {
-    border: 3px solid #C88686FF;  
+.eventinfoBox { 
     padding: 20px;  
     margin: 20px 0;  
     text-align: center;  
@@ -41,7 +54,6 @@
 }
 
 .eventTitleBox {
-    border: 3px solid #C88686FF;  
     padding: 20px;  
     margin: 20px 0;  
     text-align: center;  
@@ -53,14 +65,7 @@
     position: relative;
 }
 
-.eventTitleBox:hover {
-    transform: scale(1.05);
-    background-color: yellow;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
 .eventDateBox {
-    border: 3px solid #C88686FF;  
     padding: 10px;  
     text-align: center; 
     background-color: white;  
@@ -71,14 +76,7 @@
     position: relative;
 }
 
-.eventDateBox:hover {
-    transform: scale(1.05);
-    background-color: yellow;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
 .eventLocationBox {
-    border: 3px solid #C88686FF; 
     padding: 10px; 
     text-align: center; 
     background-color: white; 
@@ -88,12 +86,6 @@
     position: relative;
 }
 
-.eventLocationBox:hover {
-    transform: scale(1.05);
-    background-color: yellow;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
 .descriptionBox {
     border: 2px solid #C88686FF; 
     padding: 10px;  
@@ -101,6 +93,33 @@
     font-size: 20px; 
     max-width: 1200px !important;
     color: #C88686FF;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+    position: relative;
+}
+
+。personalInfoBox {
+    border: 2px solid #C88686FF; 
+    padding: 10px; 
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+    position: relative;
+}
+
+.noBorder {
+    border: none;
+}
+
+.withBorder {
+    border: 3px solid #C88686FF; 
+}
+
+.hoverEnabled:hover {
+    background-color: yellow !important;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.2s ease;
+    cursor: pointer !important;
+    border-color: #C88686FF !important;
 }
 
 .fixedButton{
@@ -123,6 +142,7 @@
     align-items: center;
     flex-direction: column;
     padding: 20px;
+    position: relative;
 }
 
 @media (max-width: 768px) {
