@@ -227,6 +227,80 @@ def check_email():
 
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
 
+# Add new endpoint for creating events
+@app.route('/createEvent', methods=['POST'])
+def create_event():
+    try:
+        data = request.json
+        new_event = Event(
+            Title=data['title'],
+            Date=data['date'],
+            Location=data['location'],
+            Total_audi=0  # Initialize with 0 audience
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Event created successfully',
+            'event': {
+                'Event_id': new_event.Event_id,
+                'Title': new_event.Title,
+                'Date': new_event.Date,
+                'Location': new_event.Location,
+                'Total_audi': new_event.Total_audi
+            }
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/deleteEvent/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    try:
+        # First delete all associated audiences
+        Audience.query.filter_by(Event_id=event_id).delete()
+        
+        # Then delete the event
+        event = Event.query.get(event_id)
+        if event:
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({'message': 'Event deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Event not found'}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/updateEvent/<int:event_id>', methods=['PUT'])
+def update_event(event_id):
+    try:
+        data = request.json
+        event = Event.query.get(event_id)
+        
+        if not event:
+            return jsonify({'error': 'Event not found'}), 404
+            
+        event.Title = data['title']
+        event.Date = data['date']
+        event.Location = data['location']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Event updated successfully',
+            'event': {
+                'Event_id': event.Event_id,
+                'Title': event.Title,
+                'Date': event.Date,
+                'Location': event.Location,
+                'Total_audi': event.Total_audi
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
