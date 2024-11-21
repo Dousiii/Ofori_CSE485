@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import './EditContent.css'; // Use your existing styles
-import { message, Modal} from 'antd';
+import './EditContent.css';
+import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
-  const newestEvent = events[events.length - 1]; // Get the newest event
+  const newestEvent = events[events.length - 1];
   const [eventData, setEventData] = useState({
-    id: '',
-    title: '',
-    date: '',
+    Event_id: '',
+    Title: '',
+    Date: '',
+    Location: '',
     time: '',
-    place: '',
     description: '',
   });
 
   useEffect(() => {
     if (newestEvent) {
-      setEventData(newestEvent);
+      setEventData({
+        Event_id: newestEvent.Event_id,
+        Title: newestEvent.Title,
+        Date: newestEvent.Date,
+        Location: newestEvent.Location,
+        time: '',
+        description: '',
+      });
     }
   }, [newestEvent]);
 
@@ -27,10 +34,34 @@ const EditContent = ({ events, onUpdateEvent }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onUpdateEvent(eventData);
-    message.success('Event updated successfully!');
+    
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/updateEvent/${eventData.Event_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: eventData.Title,
+          date: eventData.Date,
+          location: eventData.Location,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onUpdateEvent(data.event);
+        message.success('Event updated successfully!');
+      } else {
+        message.error('Failed to update event: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error updating event:', error);
+      message.error('Failed to update event');
+    }
   };
 
   if (events.length === 0) {
@@ -44,24 +75,24 @@ const EditContent = ({ events, onUpdateEvent }) => {
 
   return (
     <div className="edit-form">
-      <h2>Edit Latest Event: {newestEvent.title}</h2>
+      <h2>Edit Latest Event: {newestEvent.Title}</h2>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title:</label>
+        <label htmlFor="Title">Title:</label>
         <input
           type="text"
-          id="title"
-          name="title"
-          value={eventData.title}
+          id="Title"
+          name="Title"
+          value={eventData.Title}
           onChange={handleChange}
           required
         />
 
-        <label htmlFor="date">Date:</label>
+        <label htmlFor="Date">Date:</label>
         <input
           type="date"
-          id="date"
-          name="date"
-          value={eventData.date}
+          id="Date"
+          name="Date"
+          value={eventData.Date}
           onChange={handleChange}
           required
         />
@@ -73,15 +104,14 @@ const EditContent = ({ events, onUpdateEvent }) => {
           name="time"
           value={eventData.time}
           onChange={handleChange}
-          required
         />
 
-        <label htmlFor="place">Location:</label>
+        <label htmlFor="Location">Location:</label>
         <input
           type="text"
-          id="place"
-          name="place"
-          value={eventData.place}
+          id="Location"
+          name="Location"
+          value={eventData.Location}
           onChange={handleChange}
           required
         />
@@ -92,7 +122,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
           name="description"
           value={eventData.description}
           onChange={handleChange}
-        ></textarea>
+        />
 
         <button type="submit">Update Event</button>
       </form>
