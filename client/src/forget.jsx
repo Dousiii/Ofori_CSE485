@@ -69,45 +69,42 @@ function Forget() {
     // If there is a match and the password is valid, it clears the error message and sends the request to reset the password.
     // If the password does not meet the requirements, it sets an appropriate error message.
     const handleResetPassword = async (e) => {
-        e.preventDefault();
-
-        // Validate password complexity
-        const passwordValidationError = validatePassword(password);
-        if (passwordValidationError) {
-            setMessageType('error');
-            setMessage(passwordValidationError);  // Set error message if password is invalid
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            setMessageType('error');  // Set message type to error
-            setMessage("Passwords do not match");
-            return;
-        }
-
-        setMessage('');  // Clear any previous messages
-
-        // Send POST request to the backend
-        const response = await fetch('http://localhost:5000/reset-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email,
-                newPassword: password,
-            }),
-        });
-
-        if (response.ok) {
-            // If password reset is successful, navigate back to the login page
-            navigate('/login');
-        } else {
-            const result = await response.json();
-            setMessageType('error');  // Set message type to error
-            setMessage(result.message);
-        }
-    };
+      e.preventDefault();
+  
+      const passwordValidationError = validatePassword(password);
+      if (passwordValidationError) {
+          setMessageType('error');
+          setMessage(passwordValidationError);
+          return;
+      }
+  
+      if (password !== confirmPassword) {
+          setMessageType('error');
+          setMessage("Passwords do not match");
+          return;
+      }
+  
+      setMessage('');
+  
+      try {
+          const response = await fetch('http://localhost:5000/reset-password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, newPassword: password }),
+          });
+  
+          if (response.ok) {
+              navigate('/login');
+          } else {
+              const result = await response.json();
+              setMessageType('error');
+              setMessage(result.message);
+          }
+      } catch (error) {
+          setMessageType('error');
+          setMessage('Error: Could not reset password');
+      }
+  };
 
     // Functions to toggle password visibility
     const toggleShowPassword = () => {

@@ -182,3 +182,50 @@
   .event-card:hover {
     background-color: #f5f5f5;
   }
+
+  .audience-list {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+  }
+
+  .audience-item {
+    padding: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .audience-item:last-child {
+    border-bottom: none;
+  }
+
+  .audience-item p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .selected {
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+  }
+
+  .peopleInfo {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+  }
+
+  .peopleInfo:hover {
+    background-color: #f5f5f5;
+  }
+
+  .peopleInfo p {
+    margin: 5px 0;
+    color: #666;
+  }
+
+  .peopleInfo strong {
+    color: #333;
+  }

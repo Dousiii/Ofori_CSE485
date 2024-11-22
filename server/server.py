@@ -7,6 +7,7 @@ from flask_cors import CORS
 from encryption import encrypt_data, decrypt_data
 from flask import Flask, request, jsonify
 from veri_server import send_verification_email
+from bcrypt import hashpw, gensalt, checkpw
 
 
 app = Flask(__name__)
@@ -73,6 +74,7 @@ def get_admins():
 #function to get all events from Event table
 @app.route('/getEvents', methods=['GET'])
 def get_events():
+    return jsonify([{"Event_id":3,"Location":"De3mo","Title":"d3dd","Date":"cassacs"},{"Event_id":4,"Location":"D3emo","Title":"dd3d","Date":"cassacs"},{"Event_id":32,"Date":"cassacs","Location":"D3emo","Title":"dd3d"}])
     events = Event.query.all()  #get all events
     return jsonify([{
         'Event_id': event.Event_id,
@@ -117,16 +119,36 @@ def decrypt_endpoint():
 # API: Admin login
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
-    data = request.json  # Get email and password
+    data = request.json
     email = data.get('email')
-    password = data.get('password')
-    # Verify email address using database query
+    password = data.get('password')  # User's plain text password
     admin = Admin.query.filter_by(Email=email).first()
+
     if admin:
-        if admin.Password == password:
+        # Check hashed password
+        if checkpw(password.encode(), admin.Password.encode()):
             return jsonify({"message": "Login successful", "admin_id": admin.Admin_id}), 200
         else:
             return jsonify({"message": "Invalid password"}), 401
+    else:
+        return jsonify({"message": "Email not found"}), 404
+
+
+# API: Reset password
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email = data.get('email')
+    new_password = data.get('newPassword')  # User's plain text password
+
+    # Hash the new password
+    hashed_password = hashpw(new_password.encode(), gensalt())
+
+    admin = Admin.query.filter_by(Email=email).first()
+    if admin:
+        admin.Password = hashed_password.decode()  # Save the hashed password
+        db.session.commit()
+        return jsonify({"message": "Password updated successfully"}), 200
     else:
         return jsonify({"message": "Email not found"}), 404
 
@@ -206,23 +228,124 @@ def check_email():
 
 #       Verifivation page function   ⬆︎⬆︎⬆︎⬆︎
 
+# Add new endpoint for creating events
+@app.route('/createEvent', methods=['POST'])
+def create_event():
+    try:
+        data = request.json
+        new_event = Event(
+            Title=data['title'],
+            Date=data['date'],
+            Location=data['location'],
+            Total_audi=0  # Initialize with 0 audience
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Event created successfully',
+            'event': {
+                'Event_id': new_event.Event_id,
+                'Title': new_event.Title,
+                'Date': new_event.Date,
+                'Location': new_event.Location,
+                'Total_audi': new_event.Total_audi
+            }
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
-# API reset password
-@app.route('/reset-password', methods=['POST'])
-def reset_password():
-    data = request.json
-    email = data.get('email')  # Get the email
-    new_password = data.get('newPassword')  # Get new password
-    # Search admin info
-    admin = Admin.query.filter_by(Email=email).first()
-    if admin:
-        # Reset password
-        admin.Password = new_password
-        db.session.commit()  # Submit changes to the database
-        return jsonify({"message": "Password updated successfully"}), 200
-    else:
-        return jsonify({"message": "Email not found"}), 404
+@app.route('/deleteEvent/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    try:
+        # First delete all associated audiences
+        Audience.query.filter_by(Event_id=event_id).delete()
+        
+        # Then delete the event
+        event = Event.query.get(event_id)
+        if event:
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({'message': 'Event deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Event not found'}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
+@app.route('/updateEvent/<int:event_id>', methods=['PUT'])
+def update_event(event_id):
+    try:
+        data = request.json
+        event = Event.query.get(event_id)
+        
+        if not event:
+            return jsonify({'error': 'Event not found'}), 404
+            
+        event.Title = data['title']
+        event.Date = data['date']
+        event.Location = data['location']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Event updated successfully',
+            'event': {
+                'Event_id': event.Event_id,
+                'Title': event.Title,
+                'Date': event.Date,
+                'Location': event.Location,
+                'Total_audi': event.Total_audi
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/addUserInfo', methods=['POST'])
+def add_user_info():
+    try:
+        # Get data from POST request
+        data = request.json
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not (username and email and password):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Check if the email already exists
+        existing_admin = Admin.query.filter_by(Email=email).first()
+        if existing_admin:
+            return jsonify({"error": "An admin with this email already exists"}), 409
+
+        # Hash the password
+        hashed_password = hashpw(password.encode(), gensalt())
+
+        # Create new Admin instance
+        new_admin = Admin(
+            Username=username,
+            Email=email,
+            Password=hashed_password.decode()  # Decode to string to store in DB
+        )
+
+        # Add to database
+        db.session.add(new_admin)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Admin user created successfully",
+            "Admin": {
+                "Admin_id": new_admin.Admin_id,
+                "Username": new_admin.Username,
+                "Email": new_admin.Email
+            }
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

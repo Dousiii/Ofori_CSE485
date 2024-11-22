@@ -28,44 +28,50 @@ const UploadContent = ({ addEvent }) => {
 
   // Handle input changes for form fields
   const handleChange = (event) => {
-    const { name, value, type, files } = event.target;
-
-    // Handle file input for video upload
-    if (type === "file") {
-      setFormData((prevFormData) => ({ ...prevFormData, video: files[0] }));
-    } else {
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-    }
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
   };
 
   // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const newEvent = {
-      id: Date.now(),
-      title: formData.title,
-      date: formData.date,
-      time: formData.time,
-      place: formData.location,
-      description: formData.description,
-      people: [],
-    };
-
-    addEvent(newEvent);
-
-    // Here you'd send the form data to your backend, including the video file
-
-    message.success('Event uploaded successfully!');
     
-    // Reset form data after submission
-    setFormData({
-      title: "",
-      date: "",
-      time: "",
-      location: "",
-      description: "",
-      video: null,
-    });
+    try {
+      const response = await fetch('http://127.0.0.1:5000/createEvent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          date: formData.date,
+          location: formData.location,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Add event to local state
+        addEvent(data.event);
+        message.success('Event created successfully!');
+        
+        // Reset form
+        setFormData({
+          title: "",
+          date: "",
+          time: "",
+          location: "",
+          description: "",
+          video: null,
+        });
+      } else {
+        message.error('Failed to create event: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+      message.error('Failed to create event');
+    }
   };
 
 
