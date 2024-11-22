@@ -1,23 +1,57 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Col, Row, Form, Input, Button, Anchor } from "antd";
-import { DownCircleFilled } from '@ant-design/icons';
+import { Col, Row, Form, Input, Button, Anchor, message } from "antd";
+import { DownCircleFilled, FrownFilled } from '@ant-design/icons';
 import "./style/homePage.css";
 import Popup from "./popup"; // Pop up page
 import image from "./assets/image.png";
 import playImg from "./assets/play.png";
 import stopImg from "./assets/stop.png";
+import demoImg from "./assets/demo.png";
+import http from "./http";
 
 function Homepage() {
   const [isPlay, setIsplay] = useState(false);
+  const [locate,setLocate] = useState("Demo");
+  const [ddTime,setDdTime] = useState("Demo");
+  const [title,setTitle] = useState("Demo");
   const [currentPopup, setCurrentPopup] = useState(null); // Current popup: 'leave', 'timer', or null
   const [hasLeavePopupTriggered, setHasLeavePopupTriggered] = useState(false); // Move the mouse out of the pop-up window to trigger the marker
   const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
   const { Link } = Anchor;
   const videoRef = useRef();
 
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+
+  const playSubmit = (e) => {
+    console.log(e);
+    // form.validateFields()
+    //   .then(values => {
+    //     console.log("Form Values:", values);
+        http.post('/addUserInfo', {
+          username: e.password.name,
+          password: e.password.phoneNumber,  // Assuming you use phone number as password
+          email: e.password.email
+        }).then(response => {
+          message.success('User added successfully!');
+        }).catch(error => {
+          message.error('Failed to add user.');
+          console.error('API error:', error);
+        });
+  };
+
+ // const [location, setLocation] = useRef("Demo");
+
   const onFinish = async (e) => {
     console.log(e);
   };
+
+  // const timeInfo = http.get('/getEvents').then(response => {
+  //   console.log(response.data);
+  //  }).catch(error => {
+  //   console.error('Failed to fetch resources:', error);
+  //  });
 
   const aatext = () => {
     return <DownCircleFilled />;
@@ -26,6 +60,27 @@ function Homepage() {
   const aaButton = () => {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
+
+  const locationInfo = http.get('/getEvents').then(response => {
+      console.log(response.data);
+      let dataList = response.data;
+      for (let i = 0; i < dataList.length;i++)
+      {
+        if(dataList[i].Event_id===3)
+        {
+          setLocate(dataList[i].Location);
+          setDdTime(dataList[i].Date);
+          setTitle(dataList[i].Title);
+          return "ok";
+        }
+      }
+     
+      return "kok";
+      }).catch(error => {
+     console.error('Failed to fetch resources:', error);
+     setLocate("daa");
+     return "demo";
+  });
 
   const play = () => {
     videoRef.current.play();
@@ -90,9 +145,9 @@ function Homepage() {
           <div> </div>
         </div>
         <div className="title">
-          <h2>Ofori Event</h2>
-          <div className="s12" style={{ marginTop: '10px' }}>Location: Online</div>
-          <div className="s12">Date: Nov. 20th 2024</div>
+          <h2>{title}</h2>
+          <div className="s12" style={{ marginTop: '10px' }}>Location: {locate}</div>
+          <div className="s12">Date:  {ddTime}</div>
           <div className="s12">Time: 12:00</div>
         </div>
 
@@ -159,7 +214,7 @@ function Homepage() {
           <Row>
             <Col span={24}>
               <Form.Item label="Name" name="name">
-                <Input />
+                <Input  value={name}  />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -177,7 +232,7 @@ function Homepage() {
                   }),
                 ]}
               >
-                <Input />
+                <Input value={phone} />
               </Form.Item>
             </Col>
           </Row>
@@ -197,12 +252,12 @@ function Homepage() {
                   }),
                 ]}
               >
-                <Input />
+                <Input value={email} />
               </Form.Item>
             </Col>
           </Row>
           <div className="flexCenterBox ">
-            <Button htmlType="submit" className="buttonSubmit" id="componentsSubmit">
+            <Button htmlType="submit" onSubmit={playSubmit} className="buttonSubmit" id="componentsSubmit">
               Submit
             </Button>
           </div>
@@ -221,7 +276,14 @@ function Homepage() {
         {/* pop up */}
         {currentPopup === "leave" && <Popup onClose={closePopup} />}
         {currentPopup === "timer" && <Popup onClose={closePopup} />}
+      <div>
+      <h3>OFORI BEAUTY
+      Daniella Adisson is the CEO and founder of Ofori Beauty, a company providing highly informative hair and skin care classes for various skin types. Her passion for skincare has led her to launch Ofori Beauty in efforts to enhance the confidence and quality of life of those struggling with their hair and skin.</h3>
+      <h3>Dr. Ebony shares how hair is an integral part of identity, especially for Black women facing microaggressions in schools and workplaces. By embracing natural hair and changing how we speak about it, we challenge societal pressures and inspire others to celebrate self-acceptance and authentic expression.Precious stresses the importance of addressing hair and scalp issues immediately to prevent further damage and protect your follicles. She emphasizes that reducing tension on hair, along with maintaining a healthy diet, hydration, and proper medications, all contribute to optimal hair growth. #NaturalHair #SelfAcceptance #Empowerment #AuthenticBeauty @drebonyonline LINK IN BIO!!</h3>
+      <img src={demoImg} />
+      </div>
     </div>
+
   );
 }
 
