@@ -74,6 +74,7 @@ def get_admins():
 #function to get all events from Event table
 @app.route('/getEvents', methods=['GET'])
 def get_events():
+    return jsonify([{"Event_id":3,"Location":"De3mo","Title":"d3dd","Date":"cassacs"},{"Event_id":4,"Location":"D3emo","Title":"dd3d","Date":"cassacs"},{"Event_id":32,"Date":"cassacs","Location":"D3emo","Title":"dd3d"}])
     events = Event.query.all()  #get all events
     return jsonify([{
         'Event_id': event.Event_id,
@@ -298,6 +299,50 @@ def update_event(event_id):
                 'Total_audi': event.Total_audi
             }
         }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/addUserInfo', methods=['POST'])
+def add_user_info():
+    try:
+        # Get data from POST request
+        data = request.json
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not (username and email and password):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Check if the email already exists
+        existing_admin = Admin.query.filter_by(Email=email).first()
+        if existing_admin:
+            return jsonify({"error": "An admin with this email already exists"}), 409
+
+        # Hash the password
+        hashed_password = hashpw(password.encode(), gensalt())
+
+        # Create new Admin instance
+        new_admin = Admin(
+            Username=username,
+            Email=email,
+            Password=hashed_password.decode()  # Decode to string to store in DB
+        )
+
+        # Add to database
+        db.session.add(new_admin)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Admin user created successfully",
+            "Admin": {
+                "Admin_id": new_admin.Admin_id,
+                "Username": new_admin.Username,
+                "Email": new_admin.Email
+            }
+        }), 201
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
