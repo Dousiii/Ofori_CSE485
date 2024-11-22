@@ -182,14 +182,14 @@ function Homepage() {
         <div className="bgBox  mt30" >
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div>
-              Join our FREE 21-day summit for expert insights that will help you
-              walk with pride, knowing your hair is healthy, beautiful, and
-              uniquely yours. Join our FREE 21-day summit for expert insights that
-              will help you walk with pride, knowing your hair is healthy,
-              beautiful, and uniquely yours.
+                          Daniella Adisson is the CEO and founder of Ofori Beauty, a company
+                          providing highly informative hair and skin care classes for various
+                          skin types. Her passion for skincare has led her to launch Ofori
+                          Beauty in efforts to enhance the confidence and quality of life of
+                          those struggling with their hair and skin.
             </div>
             <div className="flexBox mt30">
-              <img src={image} className="avater" />
+              <img src={demoImg} />
               <div className="rightText">
                 <div>Join our FREE </div>
                 <div> summit for expert insigh</div>
@@ -262,13 +262,7 @@ function Homepage() {
             </Button>
           </div>
         </Form>
-        <div className="mt50 footerTitle " style={{ fontSize: '16px' }}>Resources</div>
-        <div className="footerTitle" style={{ fontSize: '24px', fontWeight: 600, marginTop: "10px" }}>Things you can do next</div>
-        <div className="resourtes w1200">
-          <div className="resourtesContent"></div>
-          <div className="resourtesContent"></div>
-          <div className="resourtesContent"></div>
-        </div>
+        
         <Anchor>
           <Link href="#componentsSubmit" className="fixedButton" title={aatext()} />
         </Anchor>
@@ -276,12 +270,7 @@ function Homepage() {
         {/* pop up */}
         {currentPopup === "leave" && <Popup onClose={closePopup} />}
         {currentPopup === "timer" && <Popup onClose={closePopup} />}
-      <div>
-      <h3>OFORI BEAUTY
-      Daniella Adisson is the CEO and founder of Ofori Beauty, a company providing highly informative hair and skin care classes for various skin types. Her passion for skincare has led her to launch Ofori Beauty in efforts to enhance the confidence and quality of life of those struggling with their hair and skin.</h3>
-      <h3>Dr. Ebony shares how hair is an integral part of identity, especially for Black women facing microaggressions in schools and workplaces. By embracing natural hair and changing how we speak about it, we challenge societal pressures and inspire others to celebrate self-acceptance and authentic expression.Precious stresses the importance of addressing hair and scalp issues immediately to prevent further damage and protect your follicles. She emphasizes that reducing tension on hair, along with maintaining a healthy diet, hydration, and proper medications, all contribute to optimal hair growth. #NaturalHair #SelfAcceptance #Empowerment #AuthenticBeauty @drebonyonline LINK IN BIO!!</h3>
-      <img src={demoImg} />
-      </div>
+      
     </div>
 
   );
