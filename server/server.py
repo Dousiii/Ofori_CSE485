@@ -74,7 +74,7 @@ def get_admins():
 #function to get all events from Event table
 @app.route('/getEvents', methods=['GET'])
 def get_events():
-    return jsonify([{"Event_id":3,"Location":"De3mo","Title":"d3dd","Date":"cassacs"},{"Event_id":4,"Location":"D3emo","Title":"dd3d","Date":"cassacs"},{"Event_id":32,"Date":"cassacs","Location":"D3emo","Title":"dd3d"}])
+    
     events = Event.query.all()  #get all events
     return jsonify([{
         'Event_id': event.Event_id,
@@ -233,12 +233,19 @@ def check_email():
 def create_event():
     try:
         data = request.json
+        
+        # Fetch the current highest Event ID
+        highest_event = Event.query.order_by(Event.Event_id.desc()).first()
+        next_event_id = highest_event.Event_id + 1 if highest_event else 1
+        
         new_event = Event(
+            Event_id=next_event_id,  # Assign the next available ID
             Title=data['title'],
             Date=data['date'],
             Location=data['location'],
             Total_audi=0  # Initialize with 0 audience
         )
+        
         db.session.add(new_event)
         db.session.commit()
         

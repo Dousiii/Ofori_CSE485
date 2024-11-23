@@ -24,6 +24,8 @@ function Homepage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
+  const [newestEvent, setNewestEvent] = useState(null);
+
   const playSubmit = (e) => {
     console.log(e);
     // form.validateFields()
@@ -60,19 +62,15 @@ function Homepage() {
   const aaButton = () => {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
-
   const locationInfo = http.get('/getEvents').then(response => {
       console.log(response.data);
       let dataList = response.data;
-      for (let i = 0; i < dataList.length;i++)
-      {
-        if(dataList[i].Event_id===3)
-        {
-          setLocate(dataList[i].Location);
-          setDdTime(dataList[i].Date);
-          setTitle(dataList[i].Title);
-          return "ok";
-        }
+      if (dataList.length > 0) {
+        let lastEvent = dataList[dataList.length - 1];
+        setLocate(lastEvent.Location);
+        setDdTime(lastEvent.Date);
+        setTitle(lastEvent.Title);
+        return "ok";
       }
      
       return "kok";
@@ -137,6 +135,26 @@ function Homepage() {
   // Reset state when closing popup
   const closePopup = () => setCurrentPopup(null);
   
+
+  useEffect(() => {
+    const fetchNewestEvent = async () => {
+      try {
+        const response = await http.get('/getEvents');
+        console.log(response.data);
+        const events = response.data;
+
+        if (events.length > 0) {
+          // Sort events by date in descending order and select the newest one
+          const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+          setNewestEvent(sortedEvents[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+      }
+    };
+
+    fetchNewestEvent();
+  }, []);
 
   return (
     <div className="bgColor">
