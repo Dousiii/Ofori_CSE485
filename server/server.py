@@ -310,49 +310,54 @@ def update_event(event_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/addUserInfo', methods=['POST'])
-def add_user_info():
+@app.route('/addAudienceInfo', methods=['POST'])
+def add_audience_info():
     try:
         # Get data from POST request
         data = request.json
-        username = data.get('username')
+        event_id = data.get('event_id')
+        name = data.get('name')
         email = data.get('email')
-        password = data.get('password')
+        phone = data.get('phone')
 
-        if not (username and email and password):
+        if not (event_id and name and email):
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Check if the email already exists
-        existing_admin = Admin.query.filter_by(Email=email).first()
-        if existing_admin:
-            return jsonify({"error": "An admin with this email already exists"}), 409
+        # Check if the Event exists
+        event = Event.query.filter_by(Event_id=event_id).first()
+        if not event:
+            return jsonify({"error": "Event not found"}), 404
 
-        # Hash the password
-        hashed_password = hashpw(password.encode(), gensalt())
+        # Check if the email already exists for the given Event
+        existing_audience = Audience.query.filter_by(Event_id=event_id, Email=email).first()
 
-        # Create new Admin instance
-        new_admin = Admin(
-            Username=username,
+        # Create new Audience instance
+        new_audience = Audience(
+            Event_id=event_id,
+            Name=name,
             Email=email,
-            Password=hashed_password.decode()  # Decode to string to store in DB
+            Phone=phone  # Optional field
         )
 
         # Add to database
-        db.session.add(new_admin)
+        db.session.add(new_audience)
         db.session.commit()
 
         return jsonify({
-            "message": "Admin user created successfully",
-            "Admin": {
-                "Admin_id": new_admin.Admin_id,
-                "Username": new_admin.Username,
-                "Email": new_admin.Email
+            "message": "Audience member added successfully",
+            "Audience": {
+                "Audience_id": new_audience.Audience_id,
+                "Event_id": new_audience.Event_id,
+                "Name": new_audience.Name,
+                "Email": new_audience.Email,
+                "Phone": new_audience.Phone
             }
         }), 201
 
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

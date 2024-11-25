@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {message } from "antd";
 import http from './http';
 import './popup.css';  
 
@@ -8,16 +9,30 @@ function Popup({ onClose }) {
   const [email, setEmail] = useState('');
 
   const playSubmit = (e) => {
-    e.preventDefault(); // Prevent the form from submitting traditionally
-    console.log("Name:", name);
-    console.log("Phone:", phone);
-    console.log("Email:", email);
-    http.post('/addUserInfo',{
-      username:name,
-      password:phone,
-      email: email
+    e.preventDefault(); // Prevent default form submission behavior
+
+    // Send data to API
+    http.post('/addAudienceInfo', {
+      event_id: 3, // Setting Event_id to 3
+      name: name,
+      email: email,
+      phone: phone
+    })
+    .then(() => {
+      message.success('Audience member added successfully!');
+      // Reset form fields
+      setName('');
+      setPhone('');
+      setEmail('');
+      // Close the popup
+      onClose();
+    })
+    .catch((error) => {
+      message.error('Failed to add audience member.');
+      console.error('API error:', error);
     });
   };
+
 
   return (
     <div className="popup-overlay">
@@ -70,7 +85,7 @@ function Popup({ onClose }) {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <button type="submit" className="pop-submit-button">JOIN NOW →</button>
+            <button type="submit"  className="pop-submit-button">JOIN NOW →</button>
           </form>
           <button onClick={onClose} className="close-popup-button">×</button>
         </div>

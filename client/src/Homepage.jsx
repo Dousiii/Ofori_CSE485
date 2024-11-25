@@ -19,6 +19,7 @@ function Homepage() {
   const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
   const { Link } = Anchor;
   const videoRef = useRef();
+  const [form] = Form.useForm();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -26,21 +27,21 @@ function Homepage() {
 
   const [newestEvent, setNewestEvent] = useState(null);
 
-  const playSubmit = (e) => {
-    console.log(e);
-    // form.validateFields()
-    //   .then(values => {
-    //     console.log("Form Values:", values);
-        http.post('/addUserInfo', {
-          username: e.password.name,
-          password: e.password.phoneNumber,  // Assuming you use phone number as password
-          email: e.password.email
-        }).then(response => {
-          message.success('User added successfully!');
-        }).catch(error => {
-          message.error('Failed to add user.');
-          console.error('API error:', error);
-        });
+  const playSubmit = (values) => {
+    http.post('/addAudienceInfo', {
+      event_id: 3, // Setting Event_id to 3
+      name: values.name,
+      email: values.email,
+      phone: values.phoneNumber
+    })
+      .then(() => {
+        message.success('Audience member added successfully!');
+        form.resetFields(); // Reset the form after successful submission
+      })
+      .catch((error) => {
+        message.error('Failed to add audience member.');
+        console.error('API error:', error);
+      });
   };
 
  // const [location, setLocation] = useRef("Demo");
@@ -217,9 +218,10 @@ function Homepage() {
         </div>
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
+          form = {form}
           className=" borderBottom "
           name="basic"
-          onFinish={onFinish}
+          onFinish={playSubmit}
           style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
           size="large"
           labelCol={{
@@ -275,7 +277,7 @@ function Homepage() {
             </Col>
           </Row>
           <div className="flexCenterBox ">
-            <Button htmlType="submit" onSubmit={playSubmit} className="buttonSubmit" id="componentsSubmit">
+            <Button htmlType="submit" type="primary" className="buttonSubmit" id="componentsSubmit">
               Submit
             </Button>
           </div>
