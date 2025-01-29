@@ -2,6 +2,7 @@
 body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 /* Background styles */
@@ -32,6 +33,7 @@ body {
     font-family: sans-serif;
     color: #fc7bb1;
     margin-top: -20px;
+    margin-bottom: 10px;
 }
   
 /* explanatory text style */
@@ -131,5 +133,41 @@ body {
     color: red; 
     margin-top: 5px;
 }
-  
-  
+
+/* Mobile version */
+@media (max-width: 480px) {
+    body {
+        overflow: auto; 
+    }
+    
+    .verify-email-background {
+        padding: 10px;
+    }
+
+    .verify-email-container {
+        padding: 40px;
+        width: 95%;
+        max-width: 400px;
+    }
+
+    .verify-email-title {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .verify-email-button {
+        width: 80%;
+        max-width: 200px;
+        padding: 12px;
+    }
+
+    .resend-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 5px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+}
