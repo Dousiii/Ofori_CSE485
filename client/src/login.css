@@ -1,11 +1,12 @@
 /* background */
 .login-background {
-    background-color: #f9dce8; 
-    height: 100vh;
+    background-color: #f9dce8;
+    height: 100dvh; 
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 0; 
+    overflow: hidden; 
   }
 
 /* login framework */
@@ -24,6 +25,7 @@
     font-family: sans-serif;
     color: #fc7bb1;
     margin-top: -20px; 
+    margin-bottom: 15px;
 }
 
 /* input box and label styles */
@@ -79,6 +81,12 @@
 .forgot-password-link-button:focus {
     outline: none;
 }
+/* mobile version Forgot Password, hidden by default */
+.forgot-password-mobile {
+    display: none;
+    text-align: center;
+    margin-top: 10px;
+}
 
 /* login button */
 .login-button {
@@ -112,4 +120,83 @@
     margin-top: 20px; 
     border-radius: 5px; 
     text-align: center; 
+}
+
+/* ========== Mobile version ========== */
+@media (max-width: 768px) {
+    .login-background {
+        background-color: #f9dce8;
+        height: 100vh; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        overflow: hidden; 
+    }
+
+    .login-container {
+        width: 85%; 
+        max-width: 360px; 
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .login-title {
+        font-size: 32px;
+        font-family: sans-serif;
+        color: #fc7bb1;
+        margin-top: 15px;  
+        margin-bottom: 20px; 
+    }
+
+    .login-input-container {
+        margin-bottom: 12px;
+        text-align: left;
+    }
+    .login-input-container label {
+        display: block;
+        font-size: 14px;
+        font-weight: bold;
+        color: #fc7bb1;
+        margin-bottom: 5px;
+    }
+    .login-input-container input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ffaee8;
+        border-radius: 20px;
+        background-color: #fff4fd;
+        color: #d65fbc;
+        box-sizing: border-box;
+    }
+
+    .login-button {
+        width: 80%; 
+        max-width: 200px;
+        padding: 12px;
+        font-size: 16px;
+        background-color: #fc7bb1;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+    .login-button:hover {
+        background-color: #db6a99;
+    }
+
+    .forgot-password-link {
+        display: none; 
+    }
+    .forgot-password-mobile {
+        display: block;
+        margin-bottom: 10px;
+        margin-top: 20px;
+    }
 }

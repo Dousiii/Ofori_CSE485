@@ -127,6 +127,16 @@ function Login() {
                         </button>
                     </div>
                     <button type="submit" className="login-button">Sign in</button>
+                    {/* Mobile version of button */}
+                    <div className="forgot-password-mobile">
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="forgot-password-link-button"
+                        >
+                            Forgot Password?
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
