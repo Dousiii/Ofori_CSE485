@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from 'react-router-dom';
 import React from 'react'
 import "./UploadContent.css"
 import { message } from 'antd'
 
 const UploadContent = ({ addEvent }) => {
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -74,7 +75,10 @@ const UploadContent = ({ addEvent }) => {
     }
   };
 
-
+  const handlePreview = () => {
+    sessionStorage.setItem('authAction', 'add');
+    navigate('/preview', { state: { formData } });
+  };
 
   return (
     <div className="upload-form">
@@ -150,7 +154,13 @@ const UploadContent = ({ addEvent }) => {
         />
 
       <button type="submit">Publish Event</button>
-
+      <button 
+          type="preview" 
+          style={{ marginLeft: "30px" }} 
+          onClick={handlePreview}
+        >
+          Preview Event
+        </button>
     </form>
   </div>
   );

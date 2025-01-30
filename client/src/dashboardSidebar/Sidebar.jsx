@@ -10,18 +10,18 @@ const Sidebar = ({ setActiveContent }) => {
         Ofori
       </div>
       <div className="icon">
-      <a href='#' className="card" onClick={() => setActiveContent("dashboard")}>
-        <FaHome />
-        Dashboard
-      </a>
-      <a href='#' className="card" onClick={() => setActiveContent("edit")}>
-        <CiEdit />
-        Edit
-      </a>
-      <a href='#' className="card"onClick={()  => setActiveContent("add")}>
-        <CiSquarePlus />
-        Add
-      </a>
+        <a href='#' className="card" onClick={() => setActiveContent("dashboard")}>
+          <FaHome />
+          Dashboard
+        </a>
+        <a href='#edit' className="card" onClick={() => setActiveContent("edit")}>
+          <CiEdit />
+          Edit
+        </a>
+        <a href='#add' className="card"onClick={()  => setActiveContent("add")}>
+          <CiSquarePlus />
+          Add
+        </a>
       </div>
     </div>
   )

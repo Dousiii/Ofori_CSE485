@@ -1,4 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
+import { useNavigate } from 'react-router-dom';
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
@@ -6,6 +7,7 @@ import parse from "html-react-parser";
 import image from "./assets/image.png";
 
 function Preview({ eventTitle, eventDate, eventLocation, description, personalInfo }) {
+    const navigate = useNavigate();
     const { Link } = Anchor;
     const { Option } = Select;
 
@@ -158,11 +160,23 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
         return   <Button  className="buttonSubmit" >Enroll Now</Button>
     }
 
+    const handleBack = () => {
+        const authAction = sessionStorage.getItem('authAction');
+        if (authAction === 'edit') {
+            navigate('/admin#edit'); // Redirect to the admin page after Sign In
+          } else if (authAction === 'add') {
+            navigate('/admin#add'); // Redirect to reset password page
+          } else {
+            console.error('Unknown action type');
+          }
+      };
+
 
     return (
         <div className="previewHome">
         <h2 style={{ textAlign: "center", marginBottom: "50px", fontSize: "40px", marginTop: "30px" }}>This is a preview page</h2>
         <div className="bgBorder">
+            <button onClick={handleBack} className="backButton">Back</button>
             <button ref={customButtonRef} className="customButton" onClick={() => {
                 toggleBorder(); 
                 setIsCustomClicked((prevState) => !prevState); 
