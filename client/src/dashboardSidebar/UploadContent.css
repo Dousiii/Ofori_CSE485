@@ -55,7 +55,7 @@
     font-size: 16px;
     font-weight: 600;
     color: white;
-    background-color: #9abace;
+    background-color: #3da642;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -63,7 +63,15 @@
 }
 
 .upload-form button:hover {
-    background-color: #7a8fa0;
+    background-color: #72c276;
+}
+
+.upload-form button[type="preview"] {
+    background-color: #5084e5;
+}
+
+.upload-form button[type="preview"]:hover {
+    background-color: rgb(82, 166, 205);
 }
 
 .upload-form input:focus,

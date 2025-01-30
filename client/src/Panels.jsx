@@ -83,6 +83,28 @@ const Panels = () => {
     }
   };
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1); // Get the part after '#' (edit, add, etc.)
+      if (hash) {
+        setActiveContent(hash);
+      } else {
+        setActiveContent("dashboard"); // Default to dashboard if no hash
+      }
+    };
+
+    // Set initial activeContent based on current URL hash
+    handleHashChange();
+
+    // Add event listener for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Clean up the event listener when component is unmounted
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
   return (
     <div className="dashboard">
       <Sidebar setActiveContent={setActiveContent}/>

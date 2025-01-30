@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './EditContent.css';
 import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
+  const navigate = useNavigate();
   const newestEvent = events[events.length - 1];
   const [eventData, setEventData] = useState({
     Event_id: '',
@@ -62,6 +64,11 @@ const EditContent = ({ events, onUpdateEvent }) => {
       console.error('Error updating event:', error);
       message.error('Failed to update event');
     }
+  };
+
+  const handlePreview = () => {
+    sessionStorage.setItem('authAction', 'edit');
+    navigate('/preview', { state: { eventData } });
   };
 
   if (events.length === 0) {
@@ -125,6 +132,13 @@ const EditContent = ({ events, onUpdateEvent }) => {
         />
 
         <button type="submit">Update Event</button>
+        <button 
+          type="preview" 
+          style={{ marginLeft: "30px" }} 
+          onClick={handlePreview}
+        >
+          Preview Event
+        </button>
       </form>
     </div>
   );

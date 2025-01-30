@@ -61,11 +61,19 @@
 }
 
 .edit-form button[type="submit"] {
-    background-color: #9abace;
+    background-color: #3da642;
+}
+
+.edit-form button[type="preview"] {
+    background-color: #5084e5;
 }
 
 .edit-form button[type="submit"]:hover {
-    background-color: #7a8fa0;
+    background-color: #72c276;
+}
+
+.edit-form button[type="preview"]:hover {
+    background-color: rgb(82, 166, 205);
 }
 
 .edit-form button[type="button"] {
