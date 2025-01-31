@@ -1,18 +1,18 @@
-/* Reset body margin and padding */
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
 /* Background styles */
 .verify-email-background {
-    background-color: #f9dce8; 
+    position: absolute; 
+    top: 50%;
+    left: 50%;
+    width: 100vw;
     height: 100vh;
+    background-color: #f9dce8; 
     display: flex;
     justify-content: center;
     align-items: center;
+    transform: translate(-50%, -50%);
     padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 /* framework */
@@ -135,11 +135,8 @@ body {
 }
 
 /* Mobile version */
-@media (max-width: 480px) {
-    body {
-        overflow: auto; 
-    }
-    
+@media (max-width: 780px) {
+
     .verify-email-background {
         padding: 10px;
     }
