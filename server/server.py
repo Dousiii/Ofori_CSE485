@@ -44,6 +44,9 @@ class Event(db.Model):
     Date = db.Column(db.String(10), nullable=False)
     Location = db.Column(db.String(500), nullable=False)
     Total_audi = db.Column(db.Integer)
+    Video_url = db.Column(db.String(500), nullable=False)   #add ⬇︎
+    Description = db.Column(db.Text)    
+    Time = db.Column(db.Time)
 
 # Audience Table
 class Audience(db.Model):
@@ -54,6 +57,23 @@ class Audience(db.Model):
     Name = db.Column(db.String(100), nullable=False)
     Email = db.Column(db.String(200), nullable=False)
     Phone = db.Column(db.String(50), nullable=True)
+
+#add ⬇︎
+# Introduction Table
+class Introduction(db.Model):
+    __tablename__ = 'Introduction'
+
+    Intro_id = db.Column(db.Integer, primary_key=True)
+    Intro_text = db.Column(db.Text, nullable=False)
+    Image_url = db.Column(db.String(500))
+
+# Pop_up Table
+class Pop_up(db.Model):
+    __tablename__ = 'pop_up'
+
+    Pop_id = db.Column(db.Integer, primary_key=True)
+    Title = db.Column(db.String(255), nullable=False)
+    Description = db.Column(db.Text, nullable=False)
 
 
 #Initial some get all function to check it connection   ⬇︎⬇︎⬇︎⬇︎
@@ -81,7 +101,10 @@ def get_events():
         'Title': event.Title,
         'Date': event.Date,
         'Location': event.Location,
-        'Total_audi': event.Total_audi
+        'Total_audi': event.Total_audi,
+        'Description': event.Description,
+        'Video_url': event.Video_url,
+        'Time': event.Time
     } for event in events])
 
 #function to get all audiences from Audience table
