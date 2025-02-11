@@ -34,6 +34,15 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
 
   const handleDeleteClick = (event, e) => {
     e.stopPropagation();
+    
+    // Check if this is the latest event
+    const isLatestEvent = sortedEvents.length > 0 && sortedEvents[0].Event_id === event.Event_id;
+    
+    if (isLatestEvent) {
+      message.warning('Cannot delete the current event! You can upload a new event to delete this one.');
+      return;
+    }
+    
     setEventToDelete(event);
     setShowDeleteModal(true);
   };

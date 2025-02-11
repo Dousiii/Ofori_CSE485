@@ -11,8 +11,8 @@ const EditContent = ({ events, onUpdateEvent }) => {
     Title: '',
     Date: '',
     Location: '',
-    time: '',
-    description: '',
+    Time: '',
+    Description: '',
   });
 
   useEffect(() => {
@@ -22,8 +22,8 @@ const EditContent = ({ events, onUpdateEvent }) => {
         Title: newestEvent.Title,
         Date: newestEvent.Date,
         Location: newestEvent.Location,
-        time: '',
-        description: '',
+        Time: newestEvent.Time || '',
+        Description: newestEvent.Description || '',
       });
     }
   }, [newestEvent]);
@@ -49,6 +49,8 @@ const EditContent = ({ events, onUpdateEvent }) => {
           title: eventData.Title,
           date: eventData.Date,
           location: eventData.Location,
+          time: eventData.Time,
+          description: eventData.Description,
         }),
       });
 
@@ -104,12 +106,12 @@ const EditContent = ({ events, onUpdateEvent }) => {
           required
         />
 
-        <label htmlFor="time">Time:</label>
+        <label htmlFor="Time">Time:</label>
         <input
           type="time"
-          id="time"
-          name="time"
-          value={eventData.time}
+          id="Time"
+          name="Time"
+          value={eventData.Time}
           onChange={handleChange}
         />
 
@@ -125,9 +127,9 @@ const EditContent = ({ events, onUpdateEvent }) => {
 
         <label htmlFor="description">Description:</label>
         <textarea
-          id="description"
-          name="description"
-          value={eventData.description}
+          id="Description"
+          name="Description"
+          value={eventData.Description}
           onChange={handleChange}
         />
 

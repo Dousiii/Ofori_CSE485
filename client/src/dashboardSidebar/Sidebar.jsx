@@ -1,6 +1,7 @@
 import React from 'react'
 import {FaHome} from "react-icons/fa";
 import { CiEdit, CiSquarePlus } from "react-icons/ci";
+import { IoInformationCircleOutline } from "react-icons/io5";
 import "./Sidebar.css";
 
 const Sidebar = ({ setActiveContent }) => {
@@ -18,9 +19,13 @@ const Sidebar = ({ setActiveContent }) => {
           <CiEdit />
           Edit
         </a>
-        <a href='#add' className="card"onClick={()  => setActiveContent("add")}>
+        <a href='#add' className="card" onClick={() => setActiveContent("add")}>
           <CiSquarePlus />
           Add
+        </a>
+        <a href='#introduction' className="card" onClick={() => setActiveContent("introduction")}>
+          <IoInformationCircleOutline />
+          Introduction
         </a>
         <a href='#popup-editor' className="card" onClick={() => setActiveContent("popup-editor")}>
           <CiSquarePlus />
