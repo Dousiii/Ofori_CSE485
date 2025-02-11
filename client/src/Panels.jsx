@@ -7,12 +7,15 @@ import UploadContent from "./dashboardSidebar/UploadContent";
 import IntroductionContent from "./dashboardSidebar/IntroductionContent";
 import Popup from "./popup";
 import { Modal, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const Panels = () => {
   const [activeContent, setActiveContent] = useState("dashboard");
   const [events, setEvents] = useState([]);
   const [audiences, setAudiences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +30,18 @@ const Panels = () => {
     };
     fetchData();
   }, []);
+
+  //use to prevent go to the page without login
+  /*
+  useEffect(() => {
+    if (Cookies.get("skipVerification")) {
+      navigate("/admin"); // Directly go to admin page
+      return;
+    }
+    
+    // Proceed to verification if no cookie
+    navigate("/login");
+  }, []); */
 
   const fetchEvents = async () => {
     try {

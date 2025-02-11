@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import Cookies from 'js-cookie';
 
 function Login() {
     const [email, setEmail] = useState(''); // email: stores the email address entered by the user
@@ -24,9 +25,16 @@ function Login() {
             const result = await response.json();
 
             if (response.ok) {
+                sessionStorage.clear(); 
                 sessionStorage.setItem('authAction', 'signIn');
                 sessionStorage.setItem('loggedInUserEmail', email); // login session
-                navigate('/verification');
+                if (Cookies.get("skipVerification")) {
+                    navigate("/admin"); // Directly go to admin page
+                    return;
+                  }
+                  
+                  // Proceed to verification if no cookie
+                  navigate("/verification");
             } else {
                 setMessage(result.message);
                 setIsSuccess(false);
@@ -54,6 +62,7 @@ function Login() {
             const result = await response.json();
 
             if (response.ok && result.exists) {
+                sessionStorage.clear(); 
                 sessionStorage.setItem('authAction', 'forgotPassword');
                 sessionStorage.setItem('forgotPasswordEmail', email);
                 navigate('/verification');

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { message } from "antd";
 import http from './http';
+import Cookies from 'js-cookie';
 import './popup.css';
 
 function Popup({ onClose, isEditing = false, onExit }) {
@@ -41,6 +42,18 @@ function Popup({ onClose, isEditing = false, onExit }) {
       console.error('API error:', error);
     });
   };
+
+   //use to prevent go to the page without login
+  /*
+  useEffect(() => {
+    if (Cookies.get("skipVerification")) {
+      navigate("/admin"); // Directly go to admin page
+      return;
+    }
+    
+    // Proceed to verification if no cookie
+    navigate("/login");
+  }, []); */
 
   return (
     <div className={`popup-overlay ${isEditing ? "editing-mode" : ""}`}>
