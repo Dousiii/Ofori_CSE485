@@ -4,6 +4,7 @@ import Sidebar from './dashboardSidebar/Sidebar';
 import Content from "./dashboardSidebar/DefaultContent";
 import EditContent from "./dashboardSidebar/EditContent";
 import UploadContent from "./dashboardSidebar/UploadContent";
+import IntroductionContent from "./dashboardSidebar/IntroductionContent";
 import { Modal, message } from 'antd';
 
 const Panels = () => {
@@ -78,6 +79,8 @@ const Panels = () => {
         return <EditContent events={events} onUpdateEvent={updateEvent} />;
       case "add":
         return <UploadContent addEvent={addEvent}/>;
+      case "introduction":
+        return <IntroductionContent />;
       default:
         return <Content events={events} audiences={audiences} onDeleteEvent={deleteEvent}/>;
     }
