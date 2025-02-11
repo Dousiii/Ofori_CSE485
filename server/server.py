@@ -105,7 +105,7 @@ def get_events():
         'Total_audi': event.Total_audi,
         'Description': event.Description,
         'Video_url': event.Video_url,
-        'Time': event.Time
+        'Time': str(event.Time) if event.Time else None  # Convert time to string
     } for event in events])
 
 #function to get all audiences from Audience table
@@ -296,7 +296,10 @@ def create_event():
             Title=data['title'],
             Date=data['date'],
             Location=data['location'],
-            Total_audi=0  # Initialize with 0 audience
+            Total_audi=0,
+            Video_url=data.get('video_url', ''),  # Default empty string if not provided
+            Description=data.get('description', ''),  # Default empty string if not provided
+            Time=data.get('time')
         )
         
         db.session.add(new_event)
@@ -309,7 +312,10 @@ def create_event():
                 'Title': new_event.Title,
                 'Date': new_event.Date,
                 'Location': new_event.Location,
-                'Total_audi': new_event.Total_audi
+                'Total_audi': new_event.Total_audi,
+                'Video_url': new_event.Video_url,
+                'Description': new_event.Description,
+                'Time': str(new_event.Time) if new_event.Time else None
             }
         }), 201
     except Exception as e:
@@ -346,6 +352,8 @@ def update_event(event_id):
         event.Title = data['title']
         event.Date = data['date']
         event.Location = data['location']
+        event.Time = data.get('time')
+        event.Description = data.get('description', '')
         
         db.session.commit()
         
@@ -356,7 +364,9 @@ def update_event(event_id):
                 'Title': event.Title,
                 'Date': event.Date,
                 'Location': event.Location,
-                'Total_audi': event.Total_audi
+                'Total_audi': event.Total_audi,
+                'Time': str(event.Time) if event.Time else None,
+                'Description': event.Description
             }
         }), 200
     except Exception as e:
@@ -411,6 +421,49 @@ def add_audience_info():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/getIntroduction', methods=['GET'])
+def get_introduction():
+    try:
+        # Get the latest introduction
+        intro = Introduction.query.order_by(Introduction.Intro_id.desc()).first()
+        
+        if intro:
+            return jsonify({
+                'intro_id': intro.Intro_id,
+                'intro_text': intro.Intro_text,
+                'image_url': intro.Image_url
+            }), 200
+        else:
+            return jsonify({
+                'intro_text': '',
+                'image_url': ''
+            }), 200
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/updateIntroduction', methods=['PUT'])
+def update_introduction():
+    try:
+        data = request.json
+        
+        # Get the first introduction or create one if it doesn't exist
+        intro = Introduction.query.first()
+        if not intro:
+            intro = Introduction(Intro_text=data['intro_text'])
+            db.session.add(intro)
+        else:
+            intro.Intro_text = data['intro_text']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Introduction updated successfully',
+            'intro_text': intro.Intro_text
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -1,31 +1,40 @@
 import React, { useState } from 'react';
-import {message } from "antd";
+import { message } from "antd";
 import http from './http';
-import './popup.css';  
 import Cookies from 'js-cookie';
+import './popup.css';
 
-function Popup({ onClose }) {
+function Popup({ onClose, isEditing = false, onExit }) {
+  const [title, setTitle] = useState(() => localStorage.getItem("popupTitle") || "Are you sure you want to miss out on HEALTHY BEAUTY?");
+  const [text, setText] = useState(() => localStorage.getItem("popupText") || 
+    "Join us to learn how to embrace beauty in a healthy way and say goodbye to unhealthy beauty practices!\n\nGet personalized beauty guidance for free and confidently reveal your true self..."
+  );
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  const playSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+  // Save the edited content
+  const handleSave = () => {
+    localStorage.setItem("popupTitle", title);
+    localStorage.setItem("popupText", text);
+    message.success("Changes Saved!");
+  };
 
-    // Send data to API
+  const playSubmit = (e) => {
+    e.preventDefault();
+
     http.post('/addAudienceInfo', {
-      event_id: 3, // Setting Event_id to 3
+      event_id: 3,
       name: name,
       email: email,
       phone: phone
     })
     .then(() => {
       message.success('Audience member added successfully!');
-      // Reset form fields
       setName('');
       setPhone('');
       setEmail('');
-      // Close the popup
       onClose();
     })
     .catch((error) => {
@@ -47,61 +56,88 @@ function Popup({ onClose }) {
   }, []); */
 
   return (
-    <div className="popup-overlay">
+    <div className={`popup-overlay ${isEditing ? "editing-mode" : ""}`}>
       <div className="popup-container">
+        <button onClick={onClose} className="close-popup-button">×</button>
+
         <div className="popup-left">
           <img src="/Image/poppic.png" alt="Poppic" className="image-placeholder" />
         </div>
+        
         <div className="popup-right">
-          <h2 className="popup-title">
-            <span className="pop-highlight pop-big-A">A</span>re you sure you want to miss out on
-            <span className="pop-highlight"> HEALTHY BEAUTY</span>?
+          {/* Title */}
+          <h2 
+            className={`popup-title ${isEditing ? "editable" : ""}`}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onBlur={(e) => setTitle(e.target.innerText)}
+          >
+            {title}
           </h2>
+
           <div className="pop-separator"></div>
-          <p className="popup-tagline">
-            Join us to learn how to embrace beauty in a healthy way and say goodbye to unhealthy beauty practices!<br /> 
-            <br /> 
-            Get personalized beauty guidance for free and confidently reveal your true self...
+
+          {/* Editable text area */}
+          <p 
+            className={`popup-tagline ${isEditing ? "editable" : ""}`}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onBlur={(e) => setText(e.target.innerHTML.replace(/\n/g, '<br>'))}
+            dangerouslySetInnerHTML={{ __html: text }} // Parse the <br> line
+          >
           </p>
-          <form className="optin-form" onSubmit={playSubmit}> {/* form now has onSubmit */}
+
+          {/* Input information is allowed only when not in edit mode */}
+          <form className="optin-form" onSubmit={playSubmit}>
             <div className="pop-input-container">
               <input 
                 type="text" 
-                id="name" 
-                name="name" 
                 placeholder="Full Name" 
                 required 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
+                disabled={isEditing}
               />
             </div>
             <div className="pop-input-container">
               <input 
                 type="tel" 
-                id="phone" 
-                name="phone" 
                 placeholder="Phone Number" 
                 required 
                 value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
+                disabled={isEditing}
               />
             </div>
             <div className="pop-input-container">
               <input 
                 type="email" 
-                id="email" 
-                name="email" 
                 placeholder="Email" 
                 required 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isEditing}
               />
             </div>
-            <button type="submit"  className="pop-submit-button">JOIN NOW →</button>
+
+            <button 
+              type="submit" 
+              className="pop-submit-button" 
+              disabled={isEditing}
+            >
+              JOIN NOW →
+            </button>
           </form>
-          <button onClick={onClose} className="close-popup-button">×</button>
         </div>
       </div>
+
+      {/* Save and exit buttons */}
+      {isEditing && (
+        <div className="popup-actions">
+          <button className="save-btn" onClick={handleSave}>Save Changes</button>
+          <button className="exit-btn" onClick={() => onExit("dashboard")}>Exit</button>
+        </div>
+      )}
     </div>
   );
 }

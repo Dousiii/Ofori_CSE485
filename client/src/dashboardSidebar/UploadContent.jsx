@@ -47,6 +47,8 @@ const UploadContent = ({ addEvent }) => {
           title: formData.title,
           date: formData.date,
           location: formData.location,
+          time: formData.time,
+          description: formData.description,
         }),
       });
 
