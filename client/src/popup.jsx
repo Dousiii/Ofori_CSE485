@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {message } from "antd";
 import http from './http';
 import './popup.css';  
+import Cookies from 'js-cookie';
 
 function Popup({ onClose }) {
   const [name, setName] = useState('');
@@ -33,6 +34,17 @@ function Popup({ onClose }) {
     });
   };
 
+   //use to prevent go to the page without login
+  /*
+  useEffect(() => {
+    if (Cookies.get("skipVerification")) {
+      navigate("/admin"); // Directly go to admin page
+      return;
+    }
+    
+    // Proceed to verification if no cookie
+    navigate("/login");
+  }, []); */
 
   return (
     <div className="popup-overlay">

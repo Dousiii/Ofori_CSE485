@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import './verification.css'; 
+import Cookies from 'js-cookie';
 
 function Verification() {
-  const [counter, setCounter] = useState(30);   //set the timer to 30 seconds
+  const [counter, setCounter] = useState(60);   //set the timer to 60 seconds
   const [isCounting, setIsCounting] = useState(false);  //check if timer end
   const [userEmail, setUserEmail] = useState('');
   const [isEmailLoaded, setIsEmailLoaded] = useState(false);  //load the email
@@ -12,6 +13,7 @@ function Verification() {
   const [sentCode, setSentCode] = useState('');   //store the send code
   const navigate = useNavigate();
   const [adminId, setAdminId] = useState(null);
+  const [skipVerification, setSkipVerification] = useState(false);
 
   //use the session email to get the adminID
   const fetchAdminIdByEmail = useCallback(async () => {
@@ -79,10 +81,19 @@ function Verification() {
 
   //set for timer countdown
   const startCountdown = () => {
-    setCounter(30);   //countdown from 30 seconds
+    setCounter(60);   //countdown from 60 seconds
     setIsCounting(true);
   };
 
+  useEffect(() => {
+    const authAction = sessionStorage.getItem('authAction');
+  
+    if (!authAction) {
+      sessionStorage.removeItem('loggedInUserEmail');
+      sessionStorage.removeItem('forgotPasswordEmail');
+      navigate('/login', { replace: true });  // Use replace to prevent back navigation
+    }
+  }, []);  
 
   useEffect(() => {
     //ensure the resend button and timer can work multiple time
@@ -105,7 +116,7 @@ function Verification() {
   //get admidID first
   useEffect(() => {
     fetchAdminIdByEmail();
-  }, [fetchAdminIdByEmail]);
+  }, [sessionStorage.getItem('loggedInUserEmail')]);
 
   //get email address
   useEffect(() => {
@@ -123,22 +134,42 @@ function Verification() {
   }, [isEmailLoaded, userEmail, sendVerificationEmail]);
 
   //use to check if the code is correct
-  const handleSubmit = (event) => {
-    event.preventDefault(); 
-    if (verificationCode !== sentCode) { 
-      setErrorMessage('The code is wrong, please try again or resend a new code');
-    } else {
-      // Check which page to navigate to based on `authAction`
-      const authAction = sessionStorage.getItem('authAction');
-      if (authAction === 'signIn') {
-        navigate('/admin'); // Redirect to the admin page after Sign In
-      } else if (authAction === 'forgotPassword') {
-        navigate('/forget'); // Redirect to reset password page
-      } else {
-        console.error('Unknown action type');
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await fetch("http://localhost:5000/verify-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userEmail, code: verificationCode }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      if (skipVerification) {
+        //Cookies.set("skipVerification", "true", { expires: 7, secure: true }); #cookies for 7 days
+        Cookies.set('skipVerification', 'true', { expires: 2 / 1440 }); // 2 minute 
       }
+
+      const authAction = sessionStorage.getItem("authAction");
+      if (authAction === "signIn") {
+        sessionStorage.clear(); 
+        navigate("/admin");
+      } else if (authAction === "forgotPassword") {
+        sessionStorage.clear(); 
+        navigate("/forget");
+      }
+    } else {
+      setErrorMessage(data.error);
     }
-  };
+  } catch (error) {
+    console.error("Error verifying code:", error);
+    setErrorMessage("An error occurred. Please try again.");
+  }
+};
+
+  
 
   return (
     <div className="verify-email-background">
@@ -161,6 +192,16 @@ function Verification() {
               placeholder="Enter verification code"
             />
             {errorMessage && <p className="error-message">{errorMessage}</p>} {/* check the code */}
+          </div>
+          {/* Skip verification for 7 days checkbox */}
+          <div className="skip-verification-container">
+            <input
+              type="checkbox"
+              id="skipVerification"
+              checked={skipVerification}
+              onChange={(e) => setSkipVerification(e.target.checked)}
+            />
+            <label htmlFor="skipVerification">Skip verification for 7 days</label>
           </div>
           <button type="submit" className="verify-email-button">Submit</button>
         </form>

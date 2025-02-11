@@ -5,6 +5,7 @@ import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
 import parse from "html-react-parser";
 import image from "./assets/image.png";
+import Cookies from 'js-cookie';
 
 function Preview({ eventTitle, eventDate, eventLocation, description, personalInfo }) {
     const navigate = useNavigate();
@@ -29,6 +30,17 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
     const customButtonRef = useRef(null); // if user click save, dropdown cancel
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
 
+    //use to prevent go to the page without login
+    /*
+    useEffect(() => {
+        if (Cookies.get("skipVerification")) {
+        navigate("/admin"); // Directly go to admin page
+        return;
+        }
+        
+        // Proceed to verification if no cookie
+        navigate("/login");
+    }, []); */
 
     //check mouse click
     useEffect(() => {

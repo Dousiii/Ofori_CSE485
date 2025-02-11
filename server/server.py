@@ -8,6 +8,7 @@ from encryption import encrypt_data, decrypt_data
 from flask import Flask, request, jsonify
 from veri_server import send_verification_email
 from bcrypt import hashpw, gensalt, checkpw
+import time
 
 
 app = Flask(__name__)
@@ -189,7 +190,8 @@ def get_admin_email_api(admin_id):
     else:
         return jsonify({'error': 'Admin not found'}), 404
 
-
+# Dictionary to store verification codes and expiration times
+verification_data = {}
 # Endpoint to send verification code
 @app.route('/send-verification-code', methods=['POST'])
 def send_verification_code():
@@ -206,21 +208,49 @@ def send_verification_code():
     # Check if the API key is set
     if not sendgrid_api_key:
         # If there's no API key, return a mock code for development
-        return jsonify({'message': 'Verification code sent (mock)', 'code': '123456'}), 200
+        code = '123456'
+        expiry_time = time.time() + 60  #+300 (5 minutes)
+        verification_data[email] = {"code": code, "expires_at": expiry_time}
+        return jsonify({'message': 'Verification code sent (mock)', 'code': '123456', 'expires_at': expiry_time}), 200
     #
     #
     #
     #
 
-
+    
     code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
+    expiry_time = time.time() + 60  #+300 (5 minutes)
+    verification_data[email] = {"code": code, "expires_at": expiry_time}
     status = send_verification_email(email, code)      #call the function in veri_server.py file
 
     if status == 202:  # 202 means the email was successfully accepted by SendGrid
-        return jsonify({'message': 'Verification code sent', 'code': code}), 200
+        return jsonify({'message': 'Verification code sent', 'code': code, 'expires_at': expiry_time}), 200
     else:
         return jsonify({'error': 'Failed to send email'}), 500
 
+@app.route('/verify-code', methods=['POST'])
+def verify_code():
+    data = request.json
+    email = data.get('email')
+    user_code = data.get('code')
+
+    if not email or not user_code:
+        return jsonify({"error": "Email and code are required"}), 400
+
+    stored_data = verification_data.get(email)
+
+    if not stored_data:
+        return jsonify({"error": "No code found. Request a new one."}), 400
+
+    # Check if the code has expired
+    if time.time() > stored_data["expires_at"]:
+        return jsonify({"error": "Verification code expired. Request a new one."}), 400
+
+    # Check if the code matches
+    if stored_data["code"] == user_code:
+        return jsonify({"message": "Verification successful"}), 200
+    else:
+        return jsonify({"error": "Invalid code"}), 400
 
 @app.route('/get_admin_id', methods=['POST'])
 def get_admin_id():

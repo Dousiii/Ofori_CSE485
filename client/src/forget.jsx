@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import './forget.css';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 function Forget() {
     // email, password, and confirmPassword are states that save the user inputs for email, new password, and confirm password respectively
@@ -26,6 +27,18 @@ function Forget() {
             setEmail(storedEmail); // Set the email state
         }
     }, []);
+
+    //use to prevent go to the page without login
+    /*
+    useEffect(() => {
+      if (Cookies.get("skipVerification")) {
+        navigate("/admin"); // Directly go to admin page
+        return;
+      }
+      
+      // Proceed to verification if no cookie
+      navigate("/login");
+    }, []); */
 
     // This function validates the password complexity based on common password requirements:
     // At least 7 characters, one uppercase letter, one lowercase letter, one number, and one special character

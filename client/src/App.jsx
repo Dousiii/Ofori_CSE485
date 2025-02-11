@@ -58,14 +58,6 @@ function App() {
                         element={<EncryptionTest />}
                     />
                     <Route
-                        path="/aedit"
-                        element={<Adminedit />}
-                    />
-                    <Route
-                        path="/aeupload"
-                        element={<Adminupload />}
-                    />
-                    <Route
                         path="/preview"
                         element={<Preview />}
                     />
