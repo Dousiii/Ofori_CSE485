@@ -27,7 +27,7 @@ const Sidebar = ({ setActiveContent }) => {
           <IoInformationCircleOutline />
           Introduction
         </a>
-        <a href='#popup-editor' className="card" onClick={() => setActiveContent("popup-editor")}>
+        <a href='#popupeditor' className="card" onClick={() => setActiveContent("popupeditor")}>
           <CiSquarePlus />
           Popup
         </a>

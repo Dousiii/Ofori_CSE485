@@ -5,7 +5,7 @@ import Content from "./dashboardSidebar/DefaultContent";
 import EditContent from "./dashboardSidebar/EditContent";
 import UploadContent from "./dashboardSidebar/UploadContent";
 import IntroductionContent from "./dashboardSidebar/IntroductionContent";
-import Popup from "./popup";
+import PopupContent from "./dashboardSidebar/PopupContent";
 import { Modal, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -97,10 +97,10 @@ const Panels = () => {
         return <UploadContent addEvent={addEvent}/>;
       case "introduction":
         return <IntroductionContent />;
+      case "popupeditor":
+        return <PopupContent />;
       default:
         return <Content events={events} audiences={audiences} onDeleteEvent={deleteEvent}/>;
-      case "popup-editor":
-        return <Popup isEditing={true} onExit={() => setActiveContent("dashboard")} />;
     }
   };
 
