@@ -50,20 +50,12 @@
   font-size: 1.8rem;
   color: #333;
   margin-bottom: 10px;
-  margin-top: 30px;
+  margin-top: 40px;
   text-align: center;
 }
 
-.pop-big-A {
-  font-size: 2.7rem;
-  font-weight: bold;
-  color: #fe64ae;
-  line-height: 1;
-  vertical-align: middle;
-}
-
 .pop-highlight {
-  color: #fe64ae;
+  color: #000000;
   font-weight: bold;
 }
 
@@ -71,7 +63,7 @@
   display: block;
   height: 4px;
   background-color: #fe64ae;
-  width: 80px;
+  width: 300px;
   margin: 12px auto;
   flex-shrink: 0;
 }
@@ -81,7 +73,8 @@
   color: #555;
   text-align: center;
   line-height: 1.5;
-  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-bottom: 30px;
 }
 
 .optin-form {
@@ -111,6 +104,12 @@
   border-color: #fe64ae;
   box-shadow: 0 0 5px rgba(255, 0, 122, 0.5);
   outline: none;
+}
+
+.editable:hover {
+  background-color: rgba(255, 224, 240, 0.5); 
+  outline: 2px solid #fe64ae;
+  border-radius: 5px;
 }
 
 .pop-submit-button {
@@ -152,6 +151,60 @@
 
 .close-popup-button:hover {
   background-color: #e60070;
+}
+
+.popup-overlay.editing-mode {
+  background-color: transparent;
+}
+
+.editable {
+  border: none;
+  outline: none;
+  padding: 0; 
+}
+
+.editable:hover {
+  border: 1px dashed gray;
+}
+
+.popup-actions {
+  position: absolute;
+  top: 10px;
+  right: 50px; 
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn {
+  background-color: #fe64ae;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-btn:hover {
+  background-color: #e60070;
+}
+
+.exit-btn {
+  background-color: #555;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.exit-btn:hover {
+  background-color: #333;
 }
 
 @media screen and (max-width: 768px) {
