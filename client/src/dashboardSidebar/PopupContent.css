@@ -1,0 +1,31 @@
+.popupContent_form {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative; 
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;
+}
+
+.popupContent{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 80vw;
+    max-width: 800px;
+    aspect-ratio: 3 / 2;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.popupButton {
+    display: flex;
+    gap: 10px; 
+    margin-top: 20px; 
+}

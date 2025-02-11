@@ -176,7 +176,7 @@
 }
 
 .save-btn {
-  background-color: #fe64ae;
+  background-color: #3da642;
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -188,7 +188,7 @@
 }
 
 .save-btn:hover {
-  background-color: #e60070;
+  background-color: #72c276;
 }
 
 .exit-btn {

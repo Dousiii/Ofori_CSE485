@@ -83,7 +83,7 @@ const Panels = () => {
       case "introduction":
         return <IntroductionContent />;
       case "popupeditor":
-        return <PopupContent isEditing={true} onExit={() => setActiveContent("dashboard")} />;
+        return <PopupContent />;
       default:
         return <Content events={events} audiences={audiences} onDeleteEvent={deleteEvent}/>;
     }
