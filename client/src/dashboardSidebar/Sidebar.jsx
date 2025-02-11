@@ -22,6 +22,10 @@ const Sidebar = ({ setActiveContent }) => {
           <CiSquarePlus />
           Add
         </a>
+        <a href='#popup-editor' className="card" onClick={() => setActiveContent("popup-editor")}>
+          <CiSquarePlus />
+          Popup
+        </a>
       </div>
     </div>
   )
