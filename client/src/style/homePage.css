@@ -17,7 +17,8 @@
     width: 100%;
     /* background-color: #fad1d1; */
     background-color: white;
-
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .fixedButton {
@@ -146,6 +147,7 @@
     max-width: 1200px; 
     margin: 0 auto;
     height: auto;
+    position: relative;
 }
 
 .videoItem {
@@ -154,7 +156,7 @@
     object-fit: fill;
 }
 
-.stopClass :hover {
+.stopClass:hover {
     cursor: pointer;
 }
 
@@ -176,4 +178,31 @@
 .footerTitle{
     width: 1200px;
     margin: 0 auto;
+}
+.fromBox{
+    width: 1200px !important; 
+    margin: 50px auto;
+    margin-bottom: 0
+}
+@media screen and (max-width: 768px) {
+    .img1{
+        width: 100%;
+    }
+    .fromBox{
+        width: 100% !important; 
+        margin-bottom: 0
+    }
+    .w1200{
+        width: 100% !important; 
+        padding: 0;
+    }
+    .phoneFlex{
+        flex-direction: column;
+    }
+    body{
+        padding: 0 !important;
+    }
+    .videoBox{
+        padding-top: 20px;
+    }
 }

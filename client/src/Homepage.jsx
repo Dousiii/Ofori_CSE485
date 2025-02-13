@@ -207,8 +207,8 @@ function Homepage() {
                           Beauty in efforts to enhance the confidence and quality of life of
                           those struggling with their hair and skin.
             </div>
-            <div className="flexBox mt30">
-              <img src={demoImg} />
+            <div className="flexBox mt30 phoneFlex">
+              <img src={demoImg}  className="img1"/>
               <div className="rightText">
                 <div>Join our FREE </div>
                 <div> summit for expert insigh</div>
@@ -219,10 +219,10 @@ function Homepage() {
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}
-          className=" borderBottom "
+          className=" borderBottom  fromBox"
           name="basic"
           onFinish={playSubmit}
-          style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
+          style={{  }}
           size="large"
           labelCol={{
             span: 9,
