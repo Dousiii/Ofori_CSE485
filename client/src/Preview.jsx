@@ -14,7 +14,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const { Link } = Anchor;
     const { Option } = Select;
     const [isPlay, setIsplay] = useState(true);
-
     const [showDropdown, setShowDropdown] = useState(null); //set dropdown
     const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // use to custon title size
     const [dateCustomFontSize, setDateCustomFontSize] = useState("");  // use to custon date size
@@ -36,30 +35,36 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const [dynamicPersonalInfo, setDynamicPersonalInfo] = useState("");
     const location = useLocation();
     const introText = location.state?.introText || '';
+    const introSectionRef = useRef(null);
 
     useEffect(() => {
         const checkSourceAndLoad = async () => {
           const authAction = sessionStorage.getItem('authAction');
     
           //check if from intro page
-          if (authAction === 'intro' && location.state?.introText) {
-            setDynamicPersonalInfo(location.state.introText);
-          } else {
-            //if not, load from database
+        if (authAction === 'intro'){
+            setTimeout(() => {
+                introSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            if (location.state?.introText) {
+                setDynamicPersonalInfo(location.state.introText);
+            } 
+        }else {
+        //if not, load from database
             try {
-              const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-              const data = await response.json();
-    
-              if (response.ok) {
+                const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+                const data = await response.json();
+
+                if (response.ok) {
                 setDynamicPersonalInfo(data.intro_text);
-              } else {
+                } else {
                 message.error('Failed to load introduction');
-              }
+                }
             } catch (error) {
-              console.error('Error fetching introduction:', error);
-              message.error('Failed to load introduction');
+                console.error('Error fetching introduction:', error);
+                message.error('Failed to load introduction');
             }
-          }
+        }
         };
     
         checkSourceAndLoad();
@@ -226,15 +231,17 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         <div className="previewHome">
             <h2 style={{ textAlign: "center", marginBottom: "50px", fontSize: "40px", marginTop: "30px" }}>This is a preview page</h2>
             <div className="bgBorder">
-                <button onClick={handleBack} className="backButton">Back</button>
-                <button ref={customButtonRef} className="customButton" onClick={() => {
-                    toggleBorder();
-                    setIsCustomClicked((prevState) => !prevState);
-                    setShowDropdown(null);
-                    setIsCustomMode((prevState) => !prevState);
-                }}>
-                    {isCustomMode ? "Save Change" : "Custom Font Size"}
-                </button>
+                <div className="fixedBorderContainer">
+                    <button onClick={handleBack} className="backButton">Back</button>
+                    <button ref={customButtonRef} className="customButton" onClick={() => {
+                        toggleBorder();
+                        setIsCustomClicked((prevState) => !prevState);
+                        setShowDropdown(null);
+                        setIsCustomMode((prevState) => !prevState);
+                    }}>
+                        {isCustomMode ? "Save Change" : "Custom Font Size"}
+                    </button>
+                </div>
                 <div className={`eventinfoBox ${showBorder ? "withBorder" : "noBorder"}`}>
                     <div className={`eventTitleBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {
@@ -473,7 +480,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
 
 
 
-                <div className="mt30 introduction_p" >
+                <div className="mt30 introduction_p" ref={introSectionRef}>
                     <img src={image}  className="mt30 demo"/> 
                     <div className={`personalInfoBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {

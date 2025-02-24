@@ -12,12 +12,9 @@
 }
 
 .customButton {
-    position: absolute; 
-    top: -60px; 
-    right: -6px; 
-    padding: 10px 20px;
+    padding: 11px 30px;
     font-size: 14px;
-    background-color: rgb(235, 111, 111);
+    background-color: #5084e5;
     color: white;
     border: none;
     border-radius: 5px;
@@ -26,9 +23,6 @@
 }
 
 .backButton {
-    position: absolute; 
-    top: -60px; 
-    left: -6px; 
     padding: 11px 30px;
     font-size: 14px;
     background-color: rgb(235, 111, 111);
@@ -269,3 +263,12 @@
     height: 400px;  
     object-fit: cover;  
 }
+
+.fixedBorderContainer {
+    position: fixed;
+    z-index: 999; 
+    top: 100px;       
+    z-index: 1000;   
+    display: flex;
+    gap: 30px;
+  }
