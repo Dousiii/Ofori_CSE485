@@ -6,9 +6,10 @@ import "./preview.css";
 import playImg from "./assets/play.png";
 import stopImg from "./assets/stop.png";
 import parse from "html-react-parser";
-import image from "./assets/image.png";
+import image from "./assets/demo.png";
+import { message } from 'antd';
 
-function Preview({ eventTitle, eventDate, eventLocation, description, personalInfo }) {
+function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const navigate = useNavigate();
     const { Link } = Anchor;
     const { Option } = Select;
@@ -32,6 +33,27 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
     const customButtonRef = useRef(null); // if user click save, dropdown cancel
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
     const videoRef = useRef();
+    const [dynamicPersonalInfo, setDynamicPersonalInfo] = useState("");
+
+    useEffect(() => {
+        const fetchIntroduction = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/getIntroduction'); 
+                const data = await response.json();
+                
+                if (response.ok) {
+                    setDynamicPersonalInfo(data.intro_text);  
+                } else {
+                    message.error('Failed to load introduction');  
+                }
+            } catch (error) {
+                console.error('Error fetching introduction:', error);  
+                message.error('Failed to load introduction');  
+            }
+        };
+
+        fetchIntroduction();  
+    }, []);
 
     //check mouse click
     useEffect(() => {
@@ -181,7 +203,10 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
             navigate('/admin#edit'); // Redirect to the admin page after Sign In
         } else if (authAction === 'add') {
             navigate('/admin#add'); // Redirect to reset password page
-        } else {
+        } else if (authAction === 'intro') {
+            navigate('/admin#introduction'); // Redirect to introduction page
+        }
+        else {
             console.error('Unknown action type');
         }
     };
@@ -198,7 +223,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                     setShowDropdown(null);
                     setIsCustomMode((prevState) => !prevState);
                 }}>
-                    {isCustomMode ? "Save Change" : "Custom"}
+                    {isCustomMode ? "Save Change" : "Custom Font Size"}
                 </button>
                 <div className={`eventinfoBox ${showBorder ? "withBorder" : "noBorder"}`}>
                     <div className={`eventTitleBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
@@ -356,14 +381,15 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                 </div>
 
                 <div
-                    className="flexCenterBox mt50 borderBottom "
+                    className="flexCenterBox mt50 borderBottom videoBox"
                     style={{ flexDirection: "column", alignItems: "center", position: "relative" }}>
 
                     <video
-
+                        autoPlay
                         muted
+                        controls
                         onEnded={onVideoEnd}
-                        className="videoBox"
+                        className="videoItem"
                         ref={videoRef}
                     >
                         <source src="/video/a.mp4" type="video/mp4"></source>
@@ -437,7 +463,8 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
 
 
 
-                <div className="bgBox  mt30" >
+                <div className="mt30 introduction_p" >
+                    <img src={image}  className="mt30 demo"/> 
                     <div className={`personalInfoBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {
                             if (isCustomClicked) {
@@ -455,7 +482,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                             alignItems: "center"
                         }}
                     >
-                        {parse(personalInfo)}
+                        {parse(dynamicPersonalInfo.replace(/\n/g, "<br />"))}
 
                         {showDropdown === "personal" && (
                             <div ref={dropdownRef}
@@ -492,15 +519,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description, personalIn
                                     <Option value="30px">30px</Option>
                                 </Select>
                             </div>
-                        )}
-
-                        <div className="flexBox mt30">
-                            <img src={image} className="avater" />
-                            <div className="rightText">
-                                <div>Join our FREE </div>
-                                <div> summit for expert insigh</div>
-                            </div>
-                        </div>
+                        )}  
                     </div>
                 </div>
 
@@ -589,15 +608,7 @@ Preview.defaultProps = {
         <br /><br />
         Ultimately, hair and skin beauty aren’t just about outward appearances—they reflect the overall health and 
         care we invest in ourselves. Embracing this journey of self-care supports a lasting, radiant look that is authentic 
-        and empowering.`,
-    personalInfo: `
-        Here you can put some infomation of yourself. <br/>
-        Join our FREE 21-day summit for expert insights that will help you
-        walk with pride, knowing your hair is healthy, beautiful, and
-        uniquely yours. Join our FREE 21-day summit for expert insights that
-        will help you walk with pride, knowing your hair is healthy,
-        beautiful, and uniquely yours.
-    `
+        and empowering.`
 };
 
 export default Preview;

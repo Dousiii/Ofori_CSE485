@@ -198,7 +198,8 @@ function Homepage() {
           </div>
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
-        <div className="bgBox  mt30" >
+        <div className="introduction_p  mt30" >
+        <img src={demoImg}  className="mt30 demo"/> 
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div>
                           Daniella Adisson is the CEO and founder of Ofori Beauty, a company
@@ -207,13 +208,7 @@ function Homepage() {
                           Beauty in efforts to enhance the confidence and quality of life of
                           those struggling with their hair and skin.
             </div>
-            <div className="flexBox mt30 phoneFlex">
-              <img src={demoImg}  className="img1"/>
-              <div className="rightText">
-                <div>Join our FREE </div>
-                <div> summit for expert insigh</div>
-              </div>
-            </div>
+            
           </div>
         </div>
         <div className="infoTitle">Sigu-Up for Join Event</div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './IntroductionContent.css';
 import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const IntroductionContent = () => {
   const [introText, setIntroText] = useState('');
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchIntroduction = async () => {
       try {
@@ -27,6 +29,11 @@ const IntroductionContent = () => {
 
   const handleChange = (e) => {
     setIntroText(e.target.value);
+  };
+
+  const handlePreview = () => {
+    sessionStorage.setItem('authAction', 'intro');
+    navigate('/preview');
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +80,13 @@ const IntroductionContent = () => {
         </div>
 
         <button type="submit">Save Changes</button>
+        <button 
+          type="preview" 
+          style={{ marginLeft: "30px" }} 
+          onClick={handlePreview}
+        >
+          Preview Event
+        </button>
       </form>
     </div>
   );

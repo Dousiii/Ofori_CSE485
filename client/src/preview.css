@@ -125,6 +125,9 @@
     margin: 0 auto;
     color: #C88686FF;
     line-height: 30px;
+    width: 60%;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .personalImaBox {
@@ -244,4 +247,25 @@
 }
 .stopClass1:hover{
     cursor: pointer;
+}
+
+.introduction_p {
+    padding: 20px 30px;
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto;     
+    color: #C88686FF;
+    line-height: 30px;
+    background-color: #f3dcdc;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;  
+    align-items: center;
+    gap: 20px;
+}
+
+.demo {
+    width: 30%;  
+    height: 400px;  
+    object-fit: cover;  
 }
