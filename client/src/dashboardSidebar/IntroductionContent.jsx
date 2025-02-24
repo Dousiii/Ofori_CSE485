@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import './IntroductionContent.css';
 import { message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const IntroductionContent = () => {
   const [introText, setIntroText] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
     const fetchIntroduction = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setIntroText(data.intro_text);
-        } else {
+      if (location.state?.introText) {
+        setIntroText(location.state.introText);
+      } else {
+        try {
+          const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+          const data = await response.json();
+          
+          if (response.ok) {
+            setIntroText(data.intro_text);
+          } else {
+            message.error('Failed to load introduction');
+          }
+        } catch (error) {
+          console.error('Error fetching introduction:', error);
           message.error('Failed to load introduction');
         }
-      } catch (error) {
-        console.error('Error fetching introduction:', error);
-        message.error('Failed to load introduction');
       }
     };
 
     fetchIntroduction();
-  }, []);
+  }, [location.state]);
 
   const handleChange = (e) => {
     setIntroText(e.target.value);
@@ -33,7 +38,7 @@ const IntroductionContent = () => {
 
   const handlePreview = () => {
     sessionStorage.setItem('authAction', 'intro');
-    navigate('/preview');
+    navigate('/preview', { state: { introText } });
   };
 
   const handleSubmit = async (e) => {
@@ -85,7 +90,7 @@ const IntroductionContent = () => {
           style={{ marginLeft: "30px" }} 
           onClick={handlePreview}
         >
-          Preview Event
+          Preview Introduction
         </button>
       </form>
     </div>

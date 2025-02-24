@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
@@ -34,26 +34,36 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
     const videoRef = useRef();
     const [dynamicPersonalInfo, setDynamicPersonalInfo] = useState("");
+    const location = useLocation();
+    const introText = location.state?.introText || '';
 
     useEffect(() => {
-        const fetchIntroduction = async () => {
+        const checkSourceAndLoad = async () => {
+          const authAction = sessionStorage.getItem('authAction');
+    
+          //check if from intro page
+          if (authAction === 'intro' && location.state?.introText) {
+            setDynamicPersonalInfo(location.state.introText);
+          } else {
+            //if not, load from database
             try {
-                const response = await fetch('http://127.0.0.1:5000/getIntroduction'); 
-                const data = await response.json();
-                
-                if (response.ok) {
-                    setDynamicPersonalInfo(data.intro_text);  
-                } else {
-                    message.error('Failed to load introduction');  
-                }
+              const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+              const data = await response.json();
+    
+              if (response.ok) {
+                setDynamicPersonalInfo(data.intro_text);
+              } else {
+                message.error('Failed to load introduction');
+              }
             } catch (error) {
-                console.error('Error fetching introduction:', error);  
-                message.error('Failed to load introduction');  
+              console.error('Error fetching introduction:', error);
+              message.error('Failed to load introduction');
             }
+          }
         };
-
-        fetchIntroduction();  
-    }, []);
+    
+        checkSourceAndLoad();
+      }, [location.state]);
 
     //check mouse click
     useEffect(() => {
@@ -204,7 +214,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         } else if (authAction === 'add') {
             navigate('/admin#add'); // Redirect to reset password page
         } else if (authAction === 'intro') {
-            navigate('/admin#introduction'); // Redirect to introduction page
+            navigate('/admin#introduction', { state: { introText } }); // Redirect to introduction page
         }
         else {
             console.error('Unknown action type');
