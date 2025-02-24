@@ -157,8 +157,9 @@ const handleSubmit = async (event) => {
         sessionStorage.clear(); 
         navigate("/admin");
       } else if (authAction === "forgotPassword") {
+        const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
         sessionStorage.clear(); 
-        navigate("/forget");
+        navigate("/forget", { state: { email: forgotPasswordEmail } });
       }
     } else {
       setErrorMessage(data.error);

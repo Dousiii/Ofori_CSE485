@@ -1,62 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { message } from "antd";
-import http from './http';
-import Cookies from 'js-cookie';
 import './popup.css';
 
-function Popup({ onClose, isEditing = false, onExit }) {
-  const [title, setTitle] = useState(() => localStorage.getItem("popupTitle") || "Are you sure you want to miss out on HEALTHY BEAUTY?");
-  const [text, setText] = useState(() => localStorage.getItem("popupText") || 
-    "Join us to learn how to embrace beauty in a healthy way and say goodbye to unhealthy beauty practices!\n\nGet personalized beauty guidance for free and confidently reveal your true self..."
-  );
-
+function Popup({ onClose }) {
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  // Save the edited content
-  const handleSave = () => {
-    localStorage.setItem("popupTitle", title);
-    localStorage.setItem("popupText", text);
-    message.success("Changes Saved!");
-  };
+  useEffect(() => {
+    axios.get("http://localhost:5000/getPopup")
+      .then(response => {
+        setTitle(response.data.title || "Are you sure you want to miss out on HEALTHY BEAUTY?");
+        setText(response.data.description || "Join us to learn...");
+      })
+      .catch(error => {
+        console.error("Failed to fetch popup content", error);
+        message.error("Failed to load popup content");
+      });
+  }, []);
 
   const playSubmit = (e) => {
     e.preventDefault();
 
-    http.post('/addAudienceInfo', {
+    axios.post("http://localhost:5000/addAudienceInfo", {
       event_id: 3,
       name: name,
       email: email,
       phone: phone
     })
     .then(() => {
-      message.success('Audience member added successfully!');
+      message.success("Audience member added successfully!");
       setName('');
       setPhone('');
       setEmail('');
       onClose();
     })
     .catch((error) => {
-      message.error('Failed to add audience member.');
-      console.error('API error:', error);
+      message.error("Failed to add audience member.");
+      console.error("API error:", error);
     });
   };
 
-   //use to prevent go to the page without login
-  /*
-  useEffect(() => {
-    if (Cookies.get("skipVerification")) {
-      navigate("/admin"); // Directly go to admin page
-      return;
-    }
-    
-    // Proceed to verification if no cookie
-    navigate("/login");
-  }, []); */
-
   return (
-    <div className={`popup-overlay ${isEditing ? "editing-mode" : ""}`}>
+    <div className="popup-overlay">
       <div className="popup-container">
         <button onClick={onClose} className="close-popup-button">×</button>
 
@@ -66,28 +55,17 @@ function Popup({ onClose, isEditing = false, onExit }) {
         
         <div className="popup-right">
           {/* Title */}
-          <h2 
-            className={`popup-title ${isEditing ? "editable" : ""}`}
-            contentEditable={isEditing}
-            suppressContentEditableWarning
-            onBlur={(e) => setTitle(e.target.innerText)}
-          >
-            {title}
-          </h2>
+          <h2 className="popup-title">{title}</h2>
 
           <div className="pop-separator"></div>
 
-          {/* Editable text area */}
+          {/* Description with line breaks */}
           <p 
-            className={`popup-tagline ${isEditing ? "editable" : ""}`}
-            contentEditable={isEditing}
-            suppressContentEditableWarning
-            onBlur={(e) => setText(e.target.innerHTML.replace(/\n/g, '<br>'))}
-            dangerouslySetInnerHTML={{ __html: text }} // Parse the <br> line
-          >
-          </p>
+              className="popup-tagline" 
+              style={{ whiteSpace: "pre-line" }}
+              dangerouslySetInnerHTML={{ __html: text }}
+            />
 
-          {/* Input information is allowed only when not in edit mode */}
           <form className="optin-form" onSubmit={playSubmit}>
             <div className="pop-input-container">
               <input 
@@ -96,7 +74,6 @@ function Popup({ onClose, isEditing = false, onExit }) {
                 required 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
-                disabled={isEditing}
               />
             </div>
             <div className="pop-input-container">
@@ -106,7 +83,6 @@ function Popup({ onClose, isEditing = false, onExit }) {
                 required 
                 value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
-                disabled={isEditing}
               />
             </div>
             <div className="pop-input-container">
@@ -116,28 +92,15 @@ function Popup({ onClose, isEditing = false, onExit }) {
                 required 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={isEditing}
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="pop-submit-button" 
-              disabled={isEditing}
-            >
+            <button type="submit" className="pop-submit-button">
               JOIN NOW →
             </button>
           </form>
         </div>
       </div>
-
-      {/* Save and exit buttons */}
-      {isEditing && (
-        <div className="popup-actions">
-          <button className="save-btn" onClick={handleSave}>Save Changes</button>
-          <button className="exit-btn" onClick={() => onExit("dashboard")}>Exit</button>
-        </div>
-      )}
     </div>
   );
 }

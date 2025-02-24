@@ -465,6 +465,39 @@ def update_introduction():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+# Modify pop-up page function
+@app.route('/getPopup', methods=['GET'])
+def get_popup():
+    popup = Pop_up.query.filter_by(Pop_id=1).first() 
+    if popup:
+        return jsonify({
+            'title': popup.Title,
+            'description': popup.Description
+        }), 200 
+    else:
+        return jsonify({'error': 'Popup not found'}), 404 
+    
+
+@app.route('/updatePopup', methods=['PUT'])
+def update_popup():
+    try:
+        data = request.json 
+        popup = Pop_up.query.filter_by(Pop_id=1).first()
+        
+        if not popup:
+            popup = Pop_up(Pop_id=1, Title=data['title'], Description=data['description'])
+            db.session.add(popup) 
+        else: 
+            popup.Title = data['title']
+            popup.Description = data['description']
+        
+        db.session.commit() 
+        return jsonify({'message': 'Popup updated successfully'}), 200  
+    except Exception as e:
+        db.session.rollback() 
+        return jsonify({'error': str(e)}), 500 
+    
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
