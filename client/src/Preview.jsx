@@ -9,23 +9,27 @@ import parse from "html-react-parser";
 import image from "./assets/demo.png";
 import { message } from 'antd';
 
+const isValidURL = (str) => {
+    const pattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
+    return pattern.test(str);
+};
+
 function Preview() {
     const navigate = useNavigate();
     const { Link } = Anchor;
     const { Option } = Select;
-    const [isPlay, setIsplay] = useState(true);
     const [showDropdown, setShowDropdown] = useState(null); //set dropdown
-    const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // use to custon title size
-    const [locationCustomFontSize, setlocationCustomFontSize] = useState("");  //use to custon location size
-    const [descCustomFontSize, setDescCustomFontSize] = useState(""); //use to custon descrption size
-    const [persCustomFontSize, setPersCustomFontSize] = useState(""); //use to custon personal info size
+    const [titleCustomFontSize, setTitleCustomFontSize] = useState(localStorage.getItem("titleCustomFontSize") || ""); // use to custon title size
+    const [locationCustomFontSize, setlocationCustomFontSize] = useState(localStorage.getItem("locationCustomFontSize") || ""); //use to custon location size
+    const [descCustomFontSize, setDescCustomFontSize] = useState(localStorage.getItem("descCustomFontSize") || ""); //use to custon descrption size
+    const [persCustomFontSize, setPersCustomFontSize] = useState(localStorage.getItem("persCustomFontSize") || "");//use to custon personal info size
     const [scaling, setScaling] = useState(false);  //set scaling
     const [showBorder, setShowBorder] = useState(false); //set for show border
     const [isCustomClicked, setIsCustomClicked] = useState(false); // use ti check if custom button click
-    const [fontSize, setFontSize] = useState("40px");   //set title font size
-    const [locationFontSize, setLocationFontSize] = useState("20px");//set location font size
-    const [descFontSize, setDescFontSize] = useState("20px");//set description font size
-    const [persFontSize, setPersFontSize] = useState("17px");//set personal info font size
+    const [fontSize, setFontSize] = useState(localStorage.getItem("fontSize") || "40px");   //set title font size
+    const [locationFontSize, setLocationFontSize] = useState(localStorage.getItem("locationFontSize") || "20px");//set location font size
+    const [descFontSize, setDescFontSize] = useState(localStorage.getItem("descFontSize") || "20px");//set description font size
+    const [persFontSize, setPersFontSize] = useState(localStorage.getItem("persFontSize") || "17px");//set personal info font size
     const dropdownRef = useRef(null); // check for click, if user click outside of the box, dropdown cancel
     const customButtonRef = useRef(null); // if user click save, dropdown cancel
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
@@ -92,7 +96,54 @@ function Preview() {
             setEventLocation(location.state.formData.location);
             setDescription(location.state.formData.description); 
         }
-      }, []);
+    }, []);
+
+    // Save to localStorage when "Save Change" button is clicked
+  const handleSaveChange = () => {
+    if (isCustomMode) {
+        setFontSize((prev) => {
+            localStorage.setItem("fontSize", prev);
+            return prev;
+          });
+      
+          setLocationFontSize((prev) => {
+            localStorage.setItem("locationFontSize", prev);
+            return prev;
+          });
+      
+          setDescFontSize((prev) => {
+            localStorage.setItem("descFontSize", prev);
+            return prev;
+          });
+      
+          setPersFontSize((prev) => {
+            localStorage.setItem("persFontSize", prev);
+            return prev;
+          });
+      
+          setTitleCustomFontSize((prev) => {
+            localStorage.setItem("titleCustomFontSize", prev);
+            return prev;
+          });
+      
+          setlocationCustomFontSize((prev) => {
+            localStorage.setItem("locationCustomFontSize", prev);
+            return prev;
+          });
+      
+          setDescCustomFontSize((prev) => {
+            localStorage.setItem("descCustomFontSize", prev);
+            return prev;
+          });
+      
+          setPersCustomFontSize((prev) => {
+            localStorage.setItem("persCustomFontSize", prev);
+            return prev;
+          });
+      
+          setIsCustomMode(false); // exit custom mode
+    }
+  };
 
     //check mouse click
     useEffect(() => {
@@ -128,19 +179,7 @@ function Preview() {
             setPersCustomFontSize(value);
         }
     }
-    const play = () => {
-        videoRef.current.play();
-        setIsplay(false);
-    };
 
-    const stop = () => {
-        videoRef.current.pause();
-        setIsplay(true);
-    };
-
-    const onVideoEnd = () => {
-        setIsplay(true);
-    };
     //use to apply the font size that user custom
     const applyCustomFontSize = (box) => {
         let value = "";
@@ -160,12 +199,16 @@ function Preview() {
             }
             if (box === "title") {
                 setFontSize(value);
+                setTitleCustomFontSize("");
             } else if (box === "location") {
                 setLocationFontSize(value);
+                setlocationCustomFontSize("");
             } else if (box === "desc") {
                 setDescFontSize(value)
+                setDescCustomFontSize("");
             } else if (box === "personal") {
                 setPersFontSize(value);
+                setPersCustomFontSize("");
             }
             setScaling(false);
             setShowDropdown(null);
@@ -194,12 +237,6 @@ function Preview() {
 
     //use to handle when the title box click
     const handleTitleBoxClick = (box) => {
-        // show the drop down
-        toggleDropdown(box);
-    };
-
-
-    const handleDateBoxClick = (box) => {
         // show the drop down
         toggleDropdown(box);
     };
@@ -252,10 +289,16 @@ function Preview() {
                 <div className="fixedBorderContainer">
                     <button onClick={handleBack} className="backButton">Back</button>
                     <button ref={customButtonRef} className="customButton" onClick={() => {
-                        toggleBorder();
-                        setIsCustomClicked((prevState) => !prevState);
-                        setShowDropdown(null);
-                        setIsCustomMode((prevState) => !prevState);
+                        if (isCustomMode) {
+                            handleSaveChange(); // Save when in custom mode
+                            setIsCustomMode(false); // Switch back to "Custom Font Size" after saving
+                          } else {
+                            // If not in custom mode, enter custom mode to edit font size
+                            setIsCustomMode(true); 
+                          }
+                          toggleBorder();
+                          setIsCustomClicked((prevState) => !prevState);
+                          setShowDropdown(null);
                     }}>
                         {isCustomMode ? "Save Change" : "Custom Font Size"}
                     </button>
@@ -281,7 +324,7 @@ function Preview() {
                         {showDropdown === "title" && (
                             <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
                                 <Select
-                                    defaultValue={fontSize}
+                                    value={fontSize}
                                     style={{ width: 120 }}
                                     onChange={(value) => setFontSize(value)}
                                     dropdownRender={(menu) => (
@@ -326,7 +369,19 @@ function Preview() {
                             cursor: isCustomClicked ? "pointer" : "default",
                         }}>
                         The Event Location is: 
-                        {eventLocation}
+                        {" "}
+                        {isValidURL(eventLocation) ? (
+                            <a 
+                                href={eventLocation.startsWith("http") ? eventLocation : `https://${eventLocation}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={{ color: "blue", textDecoration: "underline" }}
+                            >
+                                {eventLocation}
+                            </a>
+                        ) : (
+                            eventLocation
+                        )}
                         <div></div>
                         The Event Date is: 
                         {eventDate}
@@ -376,15 +431,11 @@ function Preview() {
                         autoPlay
                         muted
                         controls
-                        onEnded={onVideoEnd}
                         className="videoItem"
                         ref={videoRef}
                     >
                         <source src="/video/a.mp4" type="video/mp4"></source>
                     </video>
-                    {
-                        isPlay === true ? <img src={playImg} className="stopClass1" onClick={play} /> : <img src={stopImg} className="stopClass1" onClick={stop} />
-                    }
                     <Link href="#componentsSubmit" title={enrollButton()} />
                 </div>
 
