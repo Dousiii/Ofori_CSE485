@@ -7,6 +7,7 @@ const IntroductionContent = () => {
   const [introText, setIntroText] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  const [imageUrl, setImageUrl] = useState('');
 
   const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
   const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
@@ -24,6 +25,7 @@ const IntroductionContent = () => {
           
           if (response.ok) {
             setIntroText(data.intro_text);
+            setImageUrl(data.image_url);
           } else {
             message.error('Failed to load introduction');
           }
@@ -38,7 +40,12 @@ const IntroductionContent = () => {
   }, [location.state]);
 
   const handleChange = (e) => {
-    setIntroText(e.target.value);
+    const { name, value } = e.target;
+    if (name === 'introText') {
+      setIntroText(value);
+    } else if (name === 'imageUrl') {
+      setImageUrl(value);
+    }
   };
 
   const handlePreview = () => {
@@ -61,7 +68,8 @@ const IntroductionContent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          intro_text: introText
+          intro_text: introText,
+          image_url: imageUrl
         }),
       });
 
@@ -82,19 +90,28 @@ const IntroductionContent = () => {
     <div className="intro-form">
       <h2>Edit Introduction</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="description">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={introText}
-            onChange={handleChange}
-            placeholder="Enter introduction text..."
-            required
-          />
-        </div>
+        <div className='form-group'>
+        <label htmlFor="introText">Introduction Text:</label>
+        <textarea
+          id="introText"
+          name="introText"
+          value={introText}
+          onChange={handleChange}
+          required
+        />
 
-        <button type="submit">Save Changes</button>
+        <label htmlFor="imageUrl">Image URL:</label>
+        <input
+          type="text"
+          id="imageUrl"
+          name="imageUrl"
+          value={imageUrl}
+          onChange={handleChange}
+          placeholder="Enter image URL..."
+          required
+        />
+
+        <button type="submit">Update Introduction</button>
         <button 
           type="preview" 
           style={{ marginLeft: "30px" }} 
@@ -102,6 +119,7 @@ const IntroductionContent = () => {
         >
           Preview Introduction
         </button>
+        </div>
       </form>
     </div>
   );

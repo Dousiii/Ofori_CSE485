@@ -22,7 +22,6 @@ function Homepage() {
   const [title,setTitle] = useState("");
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
-  const [introduction, setIntroduction] = useState("");
   const [currentPopup, setCurrentPopup] = useState(null); // Current popup: 'leave', 'timer', or null
   const [hasLeavePopupTriggered, setHasLeavePopupTriggered] = useState(false); // Move the mouse out of the pop-up window to trigger the marker
   const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
@@ -50,9 +49,15 @@ function Homepage() {
     if (persFontSize) setPersFontSize(persFontSize);
   }, []); // This runs only once when the Home page is loaded
 
+  const [introData, setIntroData] = useState({
+    intro_text: "",
+    image_url: ""
+  });
+
+
   const playSubmit = (values) => {
     http.post('/addAudienceInfo', {
-      event_id: 3, // Setting Event_id to 3
+      event_id: 17, // Setting Event_id to current
       name: values.name,
       email: values.email,
       phone: values.phoneNumber
@@ -81,26 +86,6 @@ function Homepage() {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
 
-  useEffect(() => {
-    const fetchIntroduction = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setIntroduction(data.intro_text);
-        } else {
-          message.error('Failed to load introduction');
-        }
-      } catch (error) {
-        console.error('Error fetching introduction:', error);
-        message.error('Failed to load introduction');
-      }
-    };
-
-    fetchIntroduction();
-  }, []);
-
   const locationInfo = http.get('/getEvents').then(response => {
       console.log(response.data);
       let dataList = response.data;
@@ -113,12 +98,8 @@ function Homepage() {
         setDescription(lastEvent.Description);
         return "ok";
       }
-     
-      return "kok";
       }).catch(error => {
      console.error('Failed to fetch resources:', error);
-     setLocate("daa");
-     return "demo";
   });
 
   const play = () => {
@@ -175,26 +156,22 @@ function Homepage() {
 
   // Reset state when closing popup
   const closePopup = () => setCurrentPopup(null);
-  
 
   useEffect(() => {
-    const fetchNewestEvent = async () => {
+    const fetchIntroduction = async () => {
       try {
-        const response = await http.get('/getEvents');
-        console.log(response.data);
-        const events = response.data;
-
-        if (events.length > 0) {
-          // Sort events by date in descending order and select the newest one
-          const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
-          setNewestEvent(sortedEvents[0]);
+        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+        const data = await response.json();
+        
+        if (response.ok) {
+          setIntroData(data);
         }
       } catch (error) {
-        console.error('Failed to fetch events:', error);
+        console.error('Error fetching introduction:', error);
       }
     };
 
-    fetchNewestEvent();
+    fetchIntroduction();
   }, []);
 
   return (
@@ -232,8 +209,8 @@ function Homepage() {
             onEnded={onVideoEnd}
             className="videoItem"
             ref={videoRef}
+            src={newestEvent?.Video_url || ""}
           >
-            <source src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4" type="video/mp4"></source>
           </video>
         </div>
         <div className="w1200 borderBottom">
@@ -247,21 +224,20 @@ function Homepage() {
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
         <div className="introduction_p  mt30" >
-        <img src={demoImg}  className="mt30 demo"/> 
+          <img src={introData.image_url}  className="mt30 demo"/> 
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div style={{ fontSize:  persFontSize }}>
-            {parse(introduction.replace(/\n/g, "<br />"))}
+            {parse(introData.intro_text.replace(/\n/g, "<br />"))}
             </div>
-            
           </div>
         </div>
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}
-          className=" borderBottom  fromBox"
+          className=" borderBottom "
           name="basic"
           onFinish={playSubmit}
-          style={{  }}
+          style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
           size="large"
           labelCol={{
             span: 9,
