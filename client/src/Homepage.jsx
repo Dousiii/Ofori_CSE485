@@ -33,7 +33,7 @@ function Homepage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  const [newestEvent, setNewestEvent] = useState(null);
+  const [video, setVideo] = useState(null);
 
   //set font size
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("admin_fontSize") || "40px");
@@ -96,6 +96,7 @@ function Homepage() {
         setTitle(lastEvent.Title);
         setTime(lastEvent.Time);
         setDescription(lastEvent.Description);
+        setVideo(lastEvent.Video_url);
         return "ok";
       }
       }).catch(error => {
@@ -209,7 +210,7 @@ function Homepage() {
             onEnded={onVideoEnd}
             className="videoItem"
             ref={videoRef}
-            src={newestEvent?.Video_url || ""}
+            src={video || ""}
           >
           </video>
         </div>
