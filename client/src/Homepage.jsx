@@ -27,9 +27,14 @@ function Homepage() {
 
   const [newestEvent, setNewestEvent] = useState(null);
 
+  const [introData, setIntroData] = useState({
+    intro_text: "",
+    image_url: ""
+  });
+
   const playSubmit = (values) => {
     http.post('/addAudienceInfo', {
-      event_id: 3, // Setting Event_id to 3
+      event_id: 17, // Setting Event_id to current
       name: values.name,
       email: values.email,
       phone: values.phoneNumber
@@ -63,23 +68,6 @@ function Homepage() {
   const aaButton = () => {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
-  const locationInfo = http.get('/getEvents').then(response => {
-      console.log(response.data);
-      let dataList = response.data;
-      if (dataList.length > 0) {
-        let lastEvent = dataList[dataList.length - 1];
-        setLocate(lastEvent.Location);
-        setDdTime(lastEvent.Date);
-        setTitle(lastEvent.Title);
-        return "ok";
-      }
-     
-      return "kok";
-      }).catch(error => {
-     console.error('Failed to fetch resources:', error);
-     setLocate("daa");
-     return "demo";
-  });
 
   const play = () => {
     videoRef.current.play();
@@ -141,20 +129,39 @@ function Homepage() {
     const fetchNewestEvent = async () => {
       try {
         const response = await http.get('/getEvents');
-        console.log(response.data);
         const events = response.data;
 
         if (events.length > 0) {
-          // Sort events by date in descending order and select the newest one
           const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
           setNewestEvent(sortedEvents[0]);
+          setLocate(sortedEvents[0].Location);
+          setDdTime(sortedEvents[0].Date);
+          setTitle(sortedEvents[0].Title);
         }
       } catch (error) {
         console.error('Failed to fetch events:', error);
+        // Don't set to "daa" here, keep the previous valid state
       }
     };
 
     fetchNewestEvent();
+  }, []);
+
+  useEffect(() => {
+    const fetchIntroduction = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+        const data = await response.json();
+        
+        if (response.ok) {
+          setIntroData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching introduction:', error);
+      }
+    };
+
+    fetchIntroduction();
   }, []);
 
   return (
@@ -177,8 +184,8 @@ function Homepage() {
             onEnded={onVideoEnd}
             className="videoItem"
             ref={videoRef}
+            src={newestEvent?.Video_url || ""}
           >
-            <source src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4" type="video/mp4"></source>
           </video>
           {
             isPlay === true ? <img src={playImg} className="stopClass" onClick={play} /> : <img src={stopImg} className="stopClass" onClick={stop} />
@@ -201,28 +208,25 @@ function Homepage() {
         <div className="bgBox  mt30" >
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div>
-                          Daniella Adisson is the CEO and founder of Ofori Beauty, a company
-                          providing highly informative hair and skin care classes for various
-                          skin types. Her passion for skincare has led her to launch Ofori
-                          Beauty in efforts to enhance the confidence and quality of life of
-                          those struggling with their hair and skin.
+              {introData.intro_text}
             </div>
-            <div className="flexBox mt30 phoneFlex">
-              <img src={demoImg}  className="img1"/>
+              <img 
+                src={introData.image_url} 
+                style={{ width: '40%', height: 'auto' }}
+              />
               <div className="rightText">
                 <div>Join our FREE </div>
                 <div> summit for expert insigh</div>
-              </div>
             </div>
           </div>
         </div>
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}
-          className=" borderBottom  fromBox"
+          className=" borderBottom "
           name="basic"
           onFinish={playSubmit}
-          style={{  }}
+          style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
           size="large"
           labelCol={{
             span: 9,

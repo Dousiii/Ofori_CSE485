@@ -12,7 +12,7 @@ const UploadContent = ({ addEvent }) => {
     time: "",
     location: "",
     description: "",
-    video: null,
+    video_url: "",
   });
 
   const [minDate, setMinDate] = useState(""); // For preventing past date selection
@@ -49,6 +49,7 @@ const UploadContent = ({ addEvent }) => {
           location: formData.location,
           time: formData.time,
           description: formData.description,
+          video_url: formData.video_url
         }),
       });
 
@@ -66,7 +67,7 @@ const UploadContent = ({ addEvent }) => {
           time: "",
           location: "",
           description: "",
-          video: null,
+          video_url: "",
         });
       } else {
         message.error('Failed to create event: ' + data.error);
@@ -145,13 +146,14 @@ const UploadContent = ({ addEvent }) => {
         />
 
 
-        <label htmlFor="video">Upload Video:</label>
+        <label htmlFor="video_url">Video URL:</label>
         <input
-          type="file"
-          id="video"
-          name="video"
-          accept="video/*"
+          type="text"
+          id="video_url"
+          name="video_url"
+          value={formData.video_url}
           onChange={handleChange}
+          placeholder="Enter video URL..."
           required
         />
 

@@ -41,13 +41,13 @@ class Event(db.Model):
     __tablename__ = 'Event'
 
     Event_id = db.Column(db.Integer, primary_key=True)
-    Title = db.Column(db.String(200), nullable=False)
-    Date = db.Column(db.String(10), nullable=False)
-    Location = db.Column(db.String(500), nullable=False)
-    Total_audi = db.Column(db.Integer)
-    Video_url = db.Column(db.String(500), nullable=False)   #add ⬇︎
-    Description = db.Column(db.Text)    
+    Title = db.Column(db.String(100), nullable=False)
+    Date = db.Column(db.Date, nullable=False)
     Time = db.Column(db.Time)
+    Location = db.Column(db.String(100))
+    Description = db.Column(db.Text)
+    Video_url = db.Column(db.String(500))
+    Total_audi = db.Column(db.Integer, default=0)
 
 # Audience Table
 class Audience(db.Model):
@@ -297,9 +297,9 @@ def create_event():
             Date=data['date'],
             Location=data['location'],
             Total_audi=0,
-            Video_url=data.get('video_url', ''),  # Default empty string if not provided
             Description=data.get('description', ''),  # Default empty string if not provided
-            Time=data.get('time')
+            Time=data.get('time'),
+            Video_url=data.get('video_url', '')  # Only set Video_url once
         )
         
         db.session.add(new_event)
@@ -313,9 +313,9 @@ def create_event():
                 'Date': new_event.Date,
                 'Location': new_event.Location,
                 'Total_audi': new_event.Total_audi,
-                'Video_url': new_event.Video_url,
                 'Description': new_event.Description,
-                'Time': str(new_event.Time) if new_event.Time else None
+                'Time': str(new_event.Time) if new_event.Time else None,
+                'Video_url': new_event.Video_url
             }
         }), 201
     except Exception as e:
@@ -450,16 +450,21 @@ def update_introduction():
         # Get the first introduction or create one if it doesn't exist
         intro = Introduction.query.first()
         if not intro:
-            intro = Introduction(Intro_text=data['intro_text'])
+            intro = Introduction(
+                Intro_text=data['intro_text'],
+                Image_url=data.get('image_url', '')
+            )
             db.session.add(intro)
         else:
             intro.Intro_text = data['intro_text']
+            intro.Image_url = data.get('image_url', '')
         
         db.session.commit()
         
         return jsonify({
             'message': 'Introduction updated successfully',
-            'intro_text': intro.Intro_text
+            'intro_text': intro.Intro_text,
+            'image_url': intro.Image_url
         }), 200
     except Exception as e:
         db.session.rollback()
