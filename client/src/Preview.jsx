@@ -9,14 +9,13 @@ import parse from "html-react-parser";
 import image from "./assets/demo.png";
 import { message } from 'antd';
 
-function Preview({ eventTitle, eventDate, eventLocation, description }) {
+function Preview() {
     const navigate = useNavigate();
     const { Link } = Anchor;
     const { Option } = Select;
     const [isPlay, setIsplay] = useState(true);
     const [showDropdown, setShowDropdown] = useState(null); //set dropdown
     const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // use to custon title size
-    const [dateCustomFontSize, setDateCustomFontSize] = useState("");  // use to custon date size
     const [locationCustomFontSize, setlocationCustomFontSize] = useState("");  //use to custon location size
     const [descCustomFontSize, setDescCustomFontSize] = useState(""); //use to custon descrption size
     const [persCustomFontSize, setPersCustomFontSize] = useState(""); //use to custon personal info size
@@ -24,7 +23,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const [showBorder, setShowBorder] = useState(false); //set for show border
     const [isCustomClicked, setIsCustomClicked] = useState(false); // use ti check if custom button click
     const [fontSize, setFontSize] = useState("40px");   //set title font size
-    const [dateFontSize, setDateFontSize] = useState("20px");//set date font size
     const [locationFontSize, setLocationFontSize] = useState("20px");//set location font size
     const [descFontSize, setDescFontSize] = useState("20px");//set description font size
     const [persFontSize, setPersFontSize] = useState("17px");//set personal info font size
@@ -36,6 +34,13 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const location = useLocation();
     const introText = location.state?.introText || '';
     const introSectionRef = useRef(null);
+    const { eventData } = location.state || {};
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDate, setEventDate] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventTime, setEventTime] = useState('');
+    const [description, setDescription] = useState('');
+    const { formData } = location.state || {};
 
     useEffect(() => {
         const checkSourceAndLoad = async () => {
@@ -68,7 +73,26 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         };
     
         checkSourceAndLoad();
-      }, [location.state]);
+    }, [location.state]);
+
+    useEffect(() => {
+        if(location.state?.eventData)
+        {
+            setEventTitle(location.state.eventData.Title);
+            setEventDate(location.state.eventData.Date);
+            setEventTime(location.state.eventData.Time);
+            setEventLocation(location.state.eventData.Location);
+            setDescription(location.state.eventData.Description); 
+        }
+        else if(location.state?.formData)
+        {
+            setEventTitle(location.state.formData.title);
+            setEventDate(location.state.formData.date);
+            setEventTime(location.state.formData.time);
+            setEventLocation(location.state.formData.location);
+            setDescription(location.state.formData.description); 
+        }
+      }, []);
 
     //check mouse click
     useEffect(() => {
@@ -96,8 +120,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         const value = e.target.value;
         if (box === "title") {
             setTitleCustomFontSize(value);
-        } else if (box === "date") {
-            setDateCustomFontSize(value);
         } else if (box === "location") {
             setlocationCustomFontSize(value);
         } else if (box === "desc") {
@@ -124,8 +146,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         let value = "";
         if (box === "title") {
             value = titleCustomFontSize.trim();
-        } else if (box === "date") {
-            value = dateCustomFontSize.trim();
         } else if (box === "location") {
             value = locationCustomFontSize.trim();
         } else if (box === "desc") {
@@ -140,8 +160,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
             }
             if (box === "title") {
                 setFontSize(value);
-            } else if (box === "date") {
-                setDateFontSize(value);
             } else if (box === "location") {
                 setLocationFontSize(value);
             } else if (box === "desc") {
@@ -215,9 +233,9 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
     const handleBack = () => {
         const authAction = sessionStorage.getItem('authAction');
         if (authAction === 'edit') {
-            navigate('/admin#edit'); // Redirect to the admin page after Sign In
+            navigate('/admin#edit', { state: { eventData } }); // Redirect to the edit
         } else if (authAction === 'add') {
-            navigate('/admin#add'); // Redirect to reset password page
+            navigate('/admin#add', { state: { formData } }); // Redirect to create
         } else if (authAction === 'intro') {
             navigate('/admin#introduction', { state: { introText } }); // Redirect to introduction page
         }
@@ -293,57 +311,6 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
                         )}
                     </div>
 
-                    <div className={`eventDateBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
-                        onClick={(e) => {
-                            if (isCustomClicked) {
-                                handleDateBoxClick("date");
-                                e.stopPropagation();
-                            }
-                        }
-                        }
-                        style={{
-                            fontSize: dateFontSize,
-                            transform: isCustomClicked && showDropdown === "date" && scaling ? "scale(1.05)" : "scale(1)", // Apply scaling when dropdown is open
-                            transition: "transform 0.2s", // Smooth transition for scaling
-                            cursor: isCustomClicked ? "pointer" : "default",
-                        }}>
-                        The Event Date is:
-                        {eventDate}
-
-                        {showDropdown === "date" && (
-                            <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
-                                <Select
-                                    defaultValue={dateFontSize}
-                                    style={{ width: 120 }}
-                                    onChange={(value) => setDateFontSize(value)}
-                                    dropdownRender={(menu) => (
-                                        <>
-                                            {menu}
-                                            <Space style={{ padding: "5px", display: "flex", flexDirection: "column" }}>
-                                                <Input
-                                                    value={dateCustomFontSize}
-                                                    onChange={(e) => handleCustomFontSizeChange("date", e)}
-                                                    style={{ width: 80 }}
-                                                    placeholder="e.g., 18px"
-                                                />
-                                                <Button onClick={() => applyCustomFontSize("date")} type="primary" style={{ marginTop: "5px" }}>
-                                                    Apply
-                                                </Button>
-                                            </Space>
-                                        </>
-                                    )}
-                                >
-                                    <Option value="15px">15px</Option>
-                                    <Option value="20px">20px</Option>
-                                    <Option value="25px">25px</Option>
-                                    <Option value="30px">30px</Option>
-                                    <Option value="35px">35px</Option>
-                                </Select>
-                            </div>
-                        )}
-                    </div>
-
-
                     <div className={`eventLocationBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""} `}
                         onClick={(e) => {
                             if (isCustomClicked) {
@@ -357,10 +324,15 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
                             transform: isCustomClicked && showDropdown === "location" && scaling ? "scale(1.05)" : "scale(1)", // Apply scaling when dropdown is open
                             transition: "transform 0.2s", // Smooth transition for scaling
                             cursor: isCustomClicked ? "pointer" : "default",
-                        }}
-                    >
-                        The Event Location is:
+                        }}>
+                        The Event Location is: 
                         {eventLocation}
+                        <div></div>
+                        The Event Date is: 
+                        {eventDate}
+                        <div></div>
+                        The Event Time is: 
+                        {eventTime}
 
                         {showDropdown === "location" && (
                             <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
@@ -393,8 +365,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
                                 </Select>
                             </div>
                         )}
-                    </div>
-
+                    </div>               
                 </div>
 
                 <div
@@ -435,7 +406,7 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
                             position: "relative",
                         }}
                     >
-                        {parse(description)}
+                        {parse(description.replace(/\n/g, "<br />"))}
                         {showDropdown === "desc" && (
                             <div ref={dropdownRef}
                                 className="fontSizeDropdown"
@@ -607,25 +578,5 @@ function Preview({ eventTitle, eventDate, eventLocation, description }) {
         </div>
     );
 }
-
-Preview.defaultProps = {
-    eventTitle: "Your Event Title Here",
-    eventDate: "11/05/2024, 6:00pm MST",
-    eventLocation: "ZOOM LINK",
-    description: `
-        Hair and skin beauty is about embracing, nourishing, and enhancing our natural features, creating a foundation of confidence and wellness. 
-        For hair, care begins with understanding its type and needs—whether curly, straight, fine, or thick. Key elements like hydration, regular scalp care, and the right products can help 
-        maintain strength and shine, ensuring resilience against everyday environmental stressors. Healthy hair routines also include minimizing heat and chemical treatments that can weaken strands 
-        over time, while encouraging natural texture and growth.
-        <br /><br />
-        For skin, the goal is to achieve a healthy glow that feels as good as it looks. 
-        Skin beauty focuses on consistent hydration, sun protection, and a balanced routine tailored to 
-        each individual’s unique skin type. A gentle cleanser, an effective moisturizer, and SPF protection 
-        lay the groundwork, while targeted serums, antioxidants, and exfoliation work to rejuvenate and refresh.
-        <br /><br />
-        Ultimately, hair and skin beauty aren’t just about outward appearances—they reflect the overall health and 
-        care we invest in ourselves. Embracing this journey of self-care supports a lasting, radiant look that is authentic 
-        and empowering.`
-};
 
 export default Preview;

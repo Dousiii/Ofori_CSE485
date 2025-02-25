@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import React from 'react'
 import "./UploadContent.css"
 import { message } from 'antd'
 
 const UploadContent = ({ addEvent }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -26,6 +27,20 @@ const UploadContent = ({ addEvent }) => {
     const day = String(today.getDate()).padStart(2, "0");
     setMinDate(`${year}-${month}-${day}`);
   }, []);
+
+  useEffect(() => {
+    if (location.state?.formData) {
+      const receivedEvent = location.state.formData;
+      setFormData({
+        title: receivedEvent.title,
+        date: receivedEvent.date,
+        location: receivedEvent.location,
+        time: receivedEvent.time || '',
+        description: receivedEvent.description || '',
+        video: receivedEvent.video || '',
+      });
+    }
+  }, [location.state]);
 
   // Handle input changes for form fields
   const handleChange = (event) => {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './EditContent.css';
 import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const newestEvent = events[events.length - 1];
   const [eventData, setEventData] = useState({
     Event_id: '',
@@ -16,7 +17,18 @@ const EditContent = ({ events, onUpdateEvent }) => {
   });
 
   useEffect(() => {
-    if (newestEvent) {
+    if (location.state?.eventData) {
+      const receivedEvent = location.state.eventData;
+      setEventData({
+        Event_id: receivedEvent.Event_id,
+        Title: receivedEvent.Title,
+        Date: receivedEvent.Date,
+        Location: receivedEvent.Location,
+        Time: receivedEvent.Time || '',
+        Description: receivedEvent.Description || '',
+      });
+    }
+    else if (newestEvent) {
       setEventData({
         Event_id: newestEvent.Event_id,
         Title: newestEvent.Title,
