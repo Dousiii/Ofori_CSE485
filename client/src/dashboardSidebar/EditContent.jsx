@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './EditContent.css';
 import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const newestEvent = events[events.length - 1];
   const [eventData, setEventData] = useState({
     Event_id: '',
@@ -15,8 +16,25 @@ const EditContent = ({ events, onUpdateEvent }) => {
     Description: '',
   });
 
+  const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
+  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
+  const [descFontSize, setDescFontSize] = useState(() => localStorage.getItem("descCustomFontSize") || localStorage.getItem("descFontSize") || "20px");
+  const [persFontSize, setPersFontSize] = useState(() => localStorage.getItem("persCustomFontSize") || localStorage.getItem("persFontSize") || "17px");
+
+
   useEffect(() => {
-    if (newestEvent) {
+    if (location.state?.eventData) {
+      const receivedEvent = location.state.eventData;
+      setEventData({
+        Event_id: receivedEvent.Event_id,
+        Title: receivedEvent.Title,
+        Date: receivedEvent.Date,
+        Location: receivedEvent.Location,
+        Time: receivedEvent.Time || '',
+        Description: receivedEvent.Description || '',
+      });
+    }
+    else if (newestEvent) {
       setEventData({
         Event_id: newestEvent.Event_id,
         Title: newestEvent.Title,
@@ -38,6 +56,11 @@ const EditContent = ({ events, onUpdateEvent }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    localStorage.setItem("admin_fontSize", fontSize);
+    localStorage.setItem("admin_locationFontSize", locationFontSize);
+    localStorage.setItem("admin_descFontSize", descFontSize);
+    localStorage.setItem("admin_persFontSize", persFontSize);
     
     try {
       const response = await fetch(`http://127.0.0.1:5000/updateEvent/${eventData.Event_id}`, {

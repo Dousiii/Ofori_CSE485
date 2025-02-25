@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import React from 'react'
 import "./UploadContent.css"
 import { message } from 'antd'
 
 const UploadContent = ({ addEvent }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -17,6 +18,11 @@ const UploadContent = ({ addEvent }) => {
 
   const [minDate, setMinDate] = useState(""); // For preventing past date selection
   const [showMessage, setShowMessage] = useState(false);
+  
+  const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
+  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
+  const [descFontSize, setDescFontSize] = useState(() => localStorage.getItem("descCustomFontSize") || localStorage.getItem("descFontSize") || "20px");
+  const [persFontSize, setPersFontSize] = useState(() => localStorage.getItem("persCustomFontSize") || localStorage.getItem("persFontSize") || "17px");
 
   // Get today's date for the 'min' attribute on date input
   useEffect(() => {
@@ -27,6 +33,20 @@ const UploadContent = ({ addEvent }) => {
     setMinDate(`${year}-${month}-${day}`);
   }, []);
 
+  useEffect(() => {
+    if (location.state?.formData) {
+      const receivedEvent = location.state.formData;
+      setFormData({
+        title: receivedEvent.title,
+        date: receivedEvent.date,
+        location: receivedEvent.location,
+        time: receivedEvent.time || '',
+        description: receivedEvent.description || '',
+        video: receivedEvent.video || '',
+      });
+    }
+  }, [location.state]);
+
   // Handle input changes for form fields
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -36,6 +56,11 @@ const UploadContent = ({ addEvent }) => {
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    localStorage.setItem("admin_fontSize", fontSize);
+    localStorage.setItem("admin_locationFontSize", locationFontSize);
+    localStorage.setItem("admin_descFontSize", descFontSize);
+    localStorage.setItem("admin_persFontSize", persFontSize);
     
     try {
       const response = await fetch('http://127.0.0.1:5000/createEvent', {

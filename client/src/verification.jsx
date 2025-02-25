@@ -14,6 +14,8 @@ function Verification() {
   const navigate = useNavigate();
   const [adminId, setAdminId] = useState(null);
   const [skipVerification, setSkipVerification] = useState(false);
+  const authAction = sessionStorage.getItem("authAction");
+  const isSignIn = authAction === "signIn";
 
   //use the session email to get the adminID
   const fetchAdminIdByEmail = useCallback(async () => {
@@ -199,6 +201,7 @@ const handleSubmit = async (event) => {
             <input
               type="checkbox"
               id="skipVerification"
+              disabled={!isSignIn}
               checked={skipVerification}
               onChange={(e) => setSkipVerification(e.target.checked)}
             />

@@ -59,3 +59,11 @@
 .intro-form button:hover {
     background-color: #72c276;
 }
+
+.intro-form button[type="preview"] {
+    background-color: #5084e5;
+}
+
+.intro-form button[type="preview"]:hover {
+    background-color: rgb(82, 166, 205);
+}

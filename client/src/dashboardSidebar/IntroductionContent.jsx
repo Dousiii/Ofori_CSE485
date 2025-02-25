@@ -1,31 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './IntroductionContent.css';
 import { message } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const IntroductionContent = () => {
   const [introText, setIntroText] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [imageUrl, setImageUrl] = useState('');
 
+  const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
+  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
+  const [descFontSize, setDescFontSize] = useState(() => localStorage.getItem("descCustomFontSize") || localStorage.getItem("descFontSize") || "20px");
+  const [persFontSize, setPersFontSize] = useState(() => localStorage.getItem("persCustomFontSize") || localStorage.getItem("persFontSize") || "17px");
+  
   useEffect(() => {
     const fetchIntroduction = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setIntroText(data.intro_text);
-          setImageUrl(data.image_url);
-        } else {
+      if (location.state?.introText) {
+        setIntroText(location.state.introText);
+      } else {
+        try {
+          const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+          const data = await response.json();
+          
+          if (response.ok) {
+            setIntroText(data.intro_text);
+            setImageUrl(data.image_url);
+          } else {
+            message.error('Failed to load introduction');
+          }
+        } catch (error) {
+          console.error('Error fetching introduction:', error);
           message.error('Failed to load introduction');
         }
-      } catch (error) {
-        console.error('Error fetching introduction:', error);
-        message.error('Failed to load introduction');
       }
     };
 
     fetchIntroduction();
-  }, []);
+  }, [location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,8 +48,18 @@ const IntroductionContent = () => {
     }
   };
 
+  const handlePreview = () => {
+    sessionStorage.setItem('authAction', 'intro');
+    navigate('/preview', { state: { introText } });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    localStorage.setItem("admin_fontSize", fontSize);
+    localStorage.setItem("admin_locationFontSize", locationFontSize);
+    localStorage.setItem("admin_descFontSize", descFontSize);
+    localStorage.setItem("admin_persFontSize", persFontSize);
     
     try {
       const response = await fetch('http://127.0.0.1:5000/updateIntroduction', {
@@ -90,6 +112,13 @@ const IntroductionContent = () => {
         />
 
         <button type="submit">Update Introduction</button>
+        <button 
+          type="preview" 
+          style={{ marginLeft: "30px" }} 
+          onClick={handlePreview}
+        >
+          Preview Introduction
+        </button>
         </div>
       </form>
     </div>

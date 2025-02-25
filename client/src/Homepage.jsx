@@ -8,12 +8,20 @@ import playImg from "./assets/play.png";
 import stopImg from "./assets/stop.png";
 import demoImg from "./assets/demo.png";
 import http from "./http";
+import parse from "html-react-parser";
+
+const isValidURL = (str) => {
+  const pattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
+  return pattern.test(str);
+};
 
 function Homepage() {
   const [isPlay, setIsplay] = useState(false);
-  const [locate,setLocate] = useState("Demo");
-  const [ddTime,setDdTime] = useState("Demo");
-  const [title,setTitle] = useState("Demo");
+  const [locate,setLocate] = useState("");
+  const [ddTime,setDdTime] = useState("");
+  const [title,setTitle] = useState("");
+  const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
   const [currentPopup, setCurrentPopup] = useState(null); // Current popup: 'leave', 'timer', or null
   const [hasLeavePopupTriggered, setHasLeavePopupTriggered] = useState(false); // Move the mouse out of the pop-up window to trigger the marker
   const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
@@ -27,10 +35,25 @@ function Homepage() {
 
   const [newestEvent, setNewestEvent] = useState(null);
 
+  //set font size
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem("admin_fontSize") || "40px");
+  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("admin_locationFontSize") || "20px");
+  const [descFontSize, setDescFontSize] = useState(() =>  localStorage.getItem("admin_descFontSize") || "20px");
+  const [persFontSize, setPersFontSize] = useState(() =>  localStorage.getItem("admin_persFontSize") || "17px");
+
+
+  useEffect(() => {
+    if (fontSize) setFontSize(fontSize);
+    if (locationFontSize) setLocationFontSize(locationFontSize);
+    if (descFontSize) setDescFontSize(descFontSize);
+    if (persFontSize) setPersFontSize(persFontSize);
+  }, []); // This runs only once when the Home page is loaded
+
   const [introData, setIntroData] = useState({
     intro_text: "",
     image_url: ""
   });
+
 
   const playSubmit = (values) => {
     http.post('/addAudienceInfo', {
@@ -55,12 +78,6 @@ function Homepage() {
     console.log(e);
   };
 
-  // const timeInfo = http.get('/getEvents').then(response => {
-  //   console.log(response.data);
-  //  }).catch(error => {
-  //   console.error('Failed to fetch resources:', error);
-  //  });
-
   const aatext = () => {
     return <DownCircleFilled />;
   };
@@ -68,6 +85,22 @@ function Homepage() {
   const aaButton = () => {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
+
+  const locationInfo = http.get('/getEvents').then(response => {
+      console.log(response.data);
+      let dataList = response.data;
+      if (dataList.length > 0) {
+        let lastEvent = dataList[dataList.length - 1];
+        setLocate(lastEvent.Location);
+        setDdTime(lastEvent.Date);
+        setTitle(lastEvent.Title);
+        setTime(lastEvent.Time);
+        setDescription(lastEvent.Description);
+        return "ok";
+      }
+      }).catch(error => {
+     console.error('Failed to fetch resources:', error);
+  });
 
   const play = () => {
     videoRef.current.play();
@@ -123,29 +156,6 @@ function Homepage() {
 
   // Reset state when closing popup
   const closePopup = () => setCurrentPopup(null);
-  
-
-  useEffect(() => {
-    const fetchNewestEvent = async () => {
-      try {
-        const response = await http.get('/getEvents');
-        const events = response.data;
-
-        if (events.length > 0) {
-          const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
-          setNewestEvent(sortedEvents[0]);
-          setLocate(sortedEvents[0].Location);
-          setDdTime(sortedEvents[0].Date);
-          setTitle(sortedEvents[0].Title);
-        }
-      } catch (error) {
-        console.error('Failed to fetch events:', error);
-        // Don't set to "daa" here, keep the previous valid state
-      }
-    };
-
-    fetchNewestEvent();
-  }, []);
 
   useEffect(() => {
     const fetchIntroduction = async () => {
@@ -171,52 +181,53 @@ function Homepage() {
           <div> </div>
         </div>
         <div className="title">
-          <h2>{title}</h2>
-          <div className="s12" style={{ marginTop: '10px' }}>Location: {locate}</div>
-          <div className="s12">Date:  {ddTime}</div>
-          <div className="s12">Time: 12:00</div>
+          <h2 style={{ fontSize: fontSize }}>{title}</h2>
+          <div className="s12" style={{ marginTop: '10px', fontSize: locationFontSize }}>
+              Location:{" "}
+              {isValidURL(locate) ? (
+                  <a 
+                      href={locate.startsWith("http") ? locate : `https://${locate}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ color: "blue", textDecoration: "underline" }}
+                  >
+                      {locate}
+                  </a>
+              ) : (
+                  locate
+              )}
+          </div>
+          <div className="s12" style={{ fontSize:  locationFontSize }}>Date:  {ddTime}</div>
+          <div className="s12" style={{ fontSize:  locationFontSize }}>Time: {time}</div>
         </div>
 
         <div className="videoBox">
           <video
             autoPlay
             muted
+            controls
             onEnded={onVideoEnd}
             className="videoItem"
             ref={videoRef}
             src={newestEvent?.Video_url || ""}
           >
           </video>
-          {
-            isPlay === true ? <img src={playImg} className="stopClass" onClick={play} /> : <img src={stopImg} className="stopClass" onClick={stop} />
-          }
         </div>
         <div className="w1200 borderBottom">
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
 
         <div className="w1200 " style={{ flexDirection: "column", alignItems: "center" }}>
-          <div>
-            Join our FREE 21-day summit for expert insights that will help you
-            walk with pride, knowing your hair is healthy, beautiful, and
-            uniquely yours. Join our FREE 21-day summit for expert insights that
-            will help you walk with pride, knowing your hair is healthy,
-            beautiful, and uniquely yours.
+          <div style={{ fontSize:  descFontSize }}>
+          {parse(description.replace(/\n/g, "<br />"))}
           </div>
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
-        <div className="bgBox  mt30" >
+        <div className="introduction_p  mt30" >
+          <img src={introData.image_url}  className="mt30 demo"/> 
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
-            <div>
-              {introData.intro_text}
-            </div>
-              <img 
-                src={introData.image_url} 
-                style={{ width: '40%', height: 'auto' }}
-              />
-              <div className="rightText">
-                <div>Join our FREE </div>
-                <div> summit for expert insigh</div>
+            <div style={{ fontSize:  persFontSize }}>
+            {parse(introData.intro_text.replace(/\n/g, "<br />"))}
             </div>
           </div>
         </div>
