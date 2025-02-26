@@ -354,6 +354,7 @@ def update_event(event_id):
         event.Location = data['location']
         event.Time = data.get('time')
         event.Description = data.get('description', '')
+        event.Video_url = data.get('video_url', '')
         
         db.session.commit()
         

@@ -14,6 +14,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
     Location: '',
     Time: '',
     Description: '',
+    Video_url: '',
   });
 
   const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
@@ -32,6 +33,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
         Location: receivedEvent.Location,
         Time: receivedEvent.Time || '',
         Description: receivedEvent.Description || '',
+        Video_url: receivedEvent.Video_url || '',
       });
     }
     else if (newestEvent) {
@@ -42,6 +44,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
         Location: newestEvent.Location,
         Time: newestEvent.Time || '',
         Description: newestEvent.Description || '',
+        Video_url: newestEvent.Video_url || '',
       });
     }
   }, [newestEvent]);
@@ -74,6 +77,7 @@ const EditContent = ({ events, onUpdateEvent }) => {
           location: eventData.Location,
           time: eventData.Time,
           description: eventData.Description,
+          video_url: eventData.Video_url,
         }),
       });
 
@@ -154,6 +158,17 @@ const EditContent = ({ events, onUpdateEvent }) => {
           name="Description"
           value={eventData.Description}
           onChange={handleChange}
+        />
+
+        <label htmlFor="Video_url">Video URL:</label>
+        <input
+          type="text"
+          id="Video_url"
+          name="Video_url"
+          value={eventData.Video_url}
+          onChange={handleChange}
+          placeholder="Enter video URL..."
+          required
         />
 
         <button type="submit">Update Event</button>

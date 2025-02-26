@@ -18,6 +18,12 @@
 
 .form-group {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.0rem;
+}
+.image {
+    width: 100%;
 }
 
 .form-group label {
@@ -29,7 +35,7 @@
 }
 
 .form-group textarea {
-    width: 100%;
+    width: 97%;
     min-height: 300px;
     padding: 1rem;
     border: 1px solid #ddd;
@@ -37,6 +43,20 @@
     font-size: 1rem;
     line-height: 1.5;
     resize: vertical;
+}
+
+.form-group input[type="text"] {
+    width: 97%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #9abace;
+    box-shadow: 0 0 5px rgba(154, 186, 206, 0.5);
 }
 
 .form-group textarea:focus {
