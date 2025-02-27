@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./DefaultContent.css"
 import { Modal, message } from 'antd';
 
@@ -11,6 +11,35 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventAudiences, setSelectedEventAudiences] = useState([]);
+  // const [events, setEvents] = useState([]);
+  // const [audiences, setAudiences] = useState([])
+
+  // useEffect(()=>{
+  //   const fetchEvents = async () => {
+  //     try {
+  //       const response = await fetch('http://127.0.0.1:5000/getEvents');
+  //       const data = await response.json();
+  //       setEvents(data);
+  //     } catch (error) {
+  //       console.error('Error fetching events:', error);
+  //       message.error('Failed to load events');
+  //     }
+  //   };
+  
+  //   const fetchAudiences = async () => {
+  //     try {
+  //       const response = await fetch('http://127.0.0.1:5000/getAudiences');
+  //       const data = await response.json();
+  //       setAudiences(data);
+  //     } catch (error) {
+  //       console.error('Error fetching audiences:', error);
+  //       message.error('Failed to load audience data');
+  //     }
+  //   };
+  //   fetchEvents();
+  //   fetchAudiences();
+
+  // }, [])
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -20,9 +49,11 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
     event?.Title?.toLowerCase().includes(searchQuery.toLowerCase())
   ) || [];
 
-  const sortedEvents = filteredEvents.length > 0
-    ? [...filteredEvents].sort((a, b) => new Date(b.Date) - new Date(a.Date))
-    : [];
+  // const sortedEvents = filteredEvents.length > 0
+  //   ? [...filteredEvents].sort((a, b) => new Date(b.Date) - new Date(a.Date))
+  //   : [];
+
+  const sortedEvents = filteredEvents.length ? filteredEvents : []
 
   const handleEventClick = (event) => {
     setSelectedEvent(event);

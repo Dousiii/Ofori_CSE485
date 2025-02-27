@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { message } from "antd";
 import http from './http';
 import Cookies from 'js-cookie';
@@ -13,6 +13,8 @@ function Popup({ onClose, isEditing = false, onExit }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [newestEvent, setNewestEvent] = useState(null);
+
 
   // Save the edited content
   const handleSave = () => {
@@ -21,11 +23,31 @@ function Popup({ onClose, isEditing = false, onExit }) {
     message.success("Changes Saved!");
   };
 
+  useEffect(() => {
+    const fetchNewestEvent = async () => {
+      try {
+        const response = await http.get('/getEvents');
+        console.log(response.data, 'newEvents');
+        const events = response.data;
+
+        if (events.length > 0) {
+          // Sort events by date in descending order and select the newest one
+          const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+          setNewestEvent(sortedEvents[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+      }
+    };
+
+    fetchNewestEvent();
+  }, []);
+
   const playSubmit = (e) => {
     e.preventDefault();
 
     http.post('/addAudienceInfo', {
-      event_id: 3,
+      event_id: newestEvent?.Event_id,
       name: name,
       email: email,
       phone: phone

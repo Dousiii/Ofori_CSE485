@@ -27,9 +27,10 @@ function Homepage() {
 
   const [newestEvent, setNewestEvent] = useState(null);
 
+
   const playSubmit = (values) => {
     http.post('/addAudienceInfo', {
-      event_id: 3, // Setting Event_id to 3
+      event_id: newestEvent?.Event_id, // Setting Event_id to 3
       name: values.name,
       email: values.email,
       phone: values.phoneNumber
@@ -141,7 +142,7 @@ function Homepage() {
     const fetchNewestEvent = async () => {
       try {
         const response = await http.get('/getEvents');
-        console.log(response.data);
+        console.log(response.data, 'newEvents');
         const events = response.data;
 
         if (events.length > 0) {
@@ -173,6 +174,7 @@ function Homepage() {
         <div className="videoBox">
           <video
             autoPlay
+            controls
             muted
             onEnded={onVideoEnd}
             className="videoItem"

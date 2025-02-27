@@ -68,6 +68,7 @@ const UploadContent = ({ addEvent }) => {
           description: "",
           video: null,
         });
+        // navigate('/admin')
       } else {
         message.error('Failed to create event: ' + data.error);
       }
