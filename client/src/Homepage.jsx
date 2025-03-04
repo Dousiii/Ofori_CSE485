@@ -68,7 +68,7 @@ function Homepage() {
       console.log(response.data);
       let dataList = response.data;
       if (dataList.length > 0) {
-        let lastEvent = dataList[dataList.length - 1];
+        let lastEvent = dataList[0];
         setLocate(lastEvent.Location);
         setDdTime(lastEvent.Date);
         setTitle(lastEvent.Title);
@@ -182,9 +182,9 @@ function Homepage() {
           >
             <source src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4" type="video/mp4"></source>
           </video>
-          {
+          {/* {
             isPlay === true ? <img src={playImg} className="stopClass" onClick={play} /> : <img src={stopImg} className="stopClass" onClick={stop} />
-          }
+          } */}
         </div>
         <div className="w1200 borderBottom">
           <Link href="#componentsSubmit" title={aaButton()} />

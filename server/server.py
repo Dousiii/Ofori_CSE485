@@ -18,7 +18,7 @@ CORS(app)
 
 # MySQL Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Ofori%401324@146.190.71.187:3306/ofori'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
@@ -85,6 +85,7 @@ class Pop_up(db.Model):
 @app.route('/getAdmins', methods=['GET'])
 def get_admins():
     admins = Admin.query.all()  #get all admins
+    
     return jsonify([{
         'Admin_id': admin.Admin_id,
         'Username': admin.Username,
@@ -95,8 +96,9 @@ def get_admins():
 #function to get all events from Event table
 @app.route('/getEvents', methods=['GET'])
 def get_events():
+    # events = Event.query.all()  #get all events
+    events = Event.query.order_by(db.desc(Event.Event_id)).all()  #get all events
     
-    events = Event.query.all()  #get all events
     return jsonify([{
         'Event_id': event.Event_id,
         'Title': event.Title,
@@ -112,6 +114,7 @@ def get_events():
 @app.route('/getAudiences', methods=['GET'])
 def get_Audience():
     audiences = Audience.query.all()  #get all audience in table
+
     return jsonify([{
         'Audience_id': audience.Audience_id,
         'Name': audience.Name,

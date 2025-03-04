@@ -5,7 +5,7 @@ import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
   const navigate = useNavigate();
-  const newestEvent = events[events.length - 1];
+  const newestEvent = events?.[0];
   const [eventData, setEventData] = useState({
     Event_id: '',
     Title: '',
