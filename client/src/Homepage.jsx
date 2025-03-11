@@ -8,20 +8,12 @@ import playImg from "./assets/play.png";
 import stopImg from "./assets/stop.png";
 import demoImg from "./assets/demo.png";
 import http from "./http";
-import parse from "html-react-parser";
-
-const isValidURL = (str) => {
-  const pattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
-  return pattern.test(str);
-};
 
 function Homepage() {
   const [isPlay, setIsplay] = useState(false);
-  const [locate,setLocate] = useState("");
-  const [ddTime,setDdTime] = useState("");
-  const [title,setTitle] = useState("");
-  const [time, setTime] = useState("");
-  const [description, setDescription] = useState("");
+  const [locate,setLocate] = useState("Demo");
+  const [ddTime,setDdTime] = useState("Demo");
+  const [title,setTitle] = useState("Demo");
   const [currentPopup, setCurrentPopup] = useState(null); // Current popup: 'leave', 'timer', or null
   const [hasLeavePopupTriggered, setHasLeavePopupTriggered] = useState(false); // Move the mouse out of the pop-up window to trigger the marker
   const [hasTimerPopupTriggered, setHasTimerPopupTriggered] = useState(false); // Random pop-up trigger mark
@@ -33,31 +25,12 @@ function Homepage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  const [video, setVideo] = useState(null);
-
-  //set font size
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem("admin_fontSize") || "40px");
-  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("admin_locationFontSize") || "20px");
-  const [descFontSize, setDescFontSize] = useState(() =>  localStorage.getItem("admin_descFontSize") || "20px");
-  const [persFontSize, setPersFontSize] = useState(() =>  localStorage.getItem("admin_persFontSize") || "17px");
-
-
-  useEffect(() => {
-    if (fontSize) setFontSize(fontSize);
-    if (locationFontSize) setLocationFontSize(locationFontSize);
-    if (descFontSize) setDescFontSize(descFontSize);
-    if (persFontSize) setPersFontSize(persFontSize);
-  }, []); // This runs only once when the Home page is loaded
-
-  const [introData, setIntroData] = useState({
-    intro_text: "",
-    image_url: ""
-  });
+  const [newestEvent, setNewestEvent] = useState(null);
 
 
   const playSubmit = (values) => {
     http.post('/addAudienceInfo', {
-      event_id: 17, // Setting Event_id to current
+      event_id: newestEvent?.Event_id, // Setting Event_id to 3
       name: values.name,
       email: values.email,
       phone: values.phoneNumber
@@ -78,6 +51,12 @@ function Homepage() {
     console.log(e);
   };
 
+  // const timeInfo = http.get('/getEvents').then(response => {
+  //   console.log(response.data);
+  //  }).catch(error => {
+  //   console.error('Failed to fetch resources:', error);
+  //  });
+
   const aatext = () => {
     return <DownCircleFilled />;
   };
@@ -85,22 +64,22 @@ function Homepage() {
   const aaButton = () => {
     return <Button className="buttonSubmit">Enroll Now</Button>;
   };
-
   const locationInfo = http.get('/getEvents').then(response => {
       console.log(response.data);
       let dataList = response.data;
       if (dataList.length > 0) {
-        let lastEvent = dataList[dataList.length - 1];
+        let lastEvent = dataList[0];
         setLocate(lastEvent.Location);
         setDdTime(lastEvent.Date);
         setTitle(lastEvent.Title);
-        setTime(lastEvent.Time);
-        setDescription(lastEvent.Description);
-        setVideo(lastEvent.Video_url);
         return "ok";
       }
+     
+      return "kok";
       }).catch(error => {
      console.error('Failed to fetch resources:', error);
+     setLocate("daa");
+     return "demo";
   });
 
   const play = () => {
@@ -157,22 +136,26 @@ function Homepage() {
 
   // Reset state when closing popup
   const closePopup = () => setCurrentPopup(null);
+  
 
   useEffect(() => {
-    const fetchIntroduction = async () => {
+    const fetchNewestEvent = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setIntroData(data);
+        const response = await http.get('/getEvents');
+        console.log(response.data, 'newEvents');
+        const events = response.data;
+
+        if (events.length > 0) {
+          // Sort events by date in descending order and select the newest one
+          const sortedEvents = events.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+          setNewestEvent(sortedEvents[0]);
         }
       } catch (error) {
-        console.error('Error fetching introduction:', error);
+        console.error('Failed to fetch events:', error);
       }
     };
 
-    fetchIntroduction();
+    fetchNewestEvent();
   }, []);
 
   return (
@@ -182,63 +165,66 @@ function Homepage() {
           <div> </div>
         </div>
         <div className="title">
-          <h2 style={{ fontSize: fontSize }}>{title}</h2>
-          <div className="s12" style={{ marginTop: '10px', fontSize: locationFontSize }}>
-              Location:{" "}
-              {isValidURL(locate) ? (
-                  <a 
-                      href={locate.startsWith("http") ? locate : `https://${locate}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{ color: "blue", textDecoration: "underline" }}
-                  >
-                      {locate}
-                  </a>
-              ) : (
-                  locate
-              )}
-          </div>
-          <div className="s12" style={{ fontSize:  locationFontSize }}>Date:  {ddTime}</div>
-          <div className="s12" style={{ fontSize:  locationFontSize }}>Time: {time}</div>
+          <h2>{title}</h2>
+          <div className="s12" style={{ marginTop: '10px' }}>Location: {locate}</div>
+          <div className="s12">Date:  {ddTime}</div>
+          <div className="s12">Time: 12:00</div>
         </div>
 
         <div className="videoBox">
           <video
             autoPlay
-            muted
             controls
+            muted
             onEnded={onVideoEnd}
             className="videoItem"
             ref={videoRef}
-            src={video || ""}
           >
+            <source src="https://cfvod.kaltura.com/pd/p/1825021/sp/182502100/serveFlavor/entryId/1_9xisrkmq/v/1/ev/4/flavorId/1_iuroaxir/name/a.mp4" type="video/mp4"></source>
           </video>
+          {/* {
+            isPlay === true ? <img src={playImg} className="stopClass" onClick={play} /> : <img src={stopImg} className="stopClass" onClick={stop} />
+          } */}
         </div>
         <div className="w1200 borderBottom">
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
 
         <div className="w1200 " style={{ flexDirection: "column", alignItems: "center" }}>
-          <div style={{ fontSize:  descFontSize }}>
-          {parse(description.replace(/\n/g, "<br />"))}
+          <div>
+            Join our FREE 21-day summit for expert insights that will help you
+            walk with pride, knowing your hair is healthy, beautiful, and
+            uniquely yours. Join our FREE 21-day summit for expert insights that
+            will help you walk with pride, knowing your hair is healthy,
+            beautiful, and uniquely yours.
           </div>
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
-        <div className="introduction_p  mt30" >
-          <img src={introData.image_url}  className="mt30 demo"/> 
+        <div className="bgBox  mt30" >
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
-            <div style={{ fontSize:  persFontSize }}>
-            {parse(introData.intro_text.replace(/\n/g, "<br />"))}
+            <div>
+                          Daniella Adisson is the CEO and founder of Ofori Beauty, a company
+                          providing highly informative hair and skin care classes for various
+                          skin types. Her passion for skincare has led her to launch Ofori
+                          Beauty in efforts to enhance the confidence and quality of life of
+                          those struggling with their hair and skin.
+            </div>
+            <div className="flexBox mt30 phoneFlex">
+              <img src={demoImg}  className="img1"/>
+              <div className="rightText">
+                <div>Join our FREE </div>
+                <div> summit for expert insigh</div>
+              </div>
             </div>
           </div>
         </div>
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}
-          className=" borderBottom "
+          className=" borderBottom  fromBox"
           name="basic"
           onFinish={playSubmit}
-          style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
+          style={{  }}
           size="large"
           labelCol={{
             span: 9,

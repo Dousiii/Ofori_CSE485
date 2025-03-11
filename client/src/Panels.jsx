@@ -83,13 +83,6 @@ const Panels = () => {
     setActiveContent("dashboard");
   };
 
-  const handleLogout = () => {
-    // Clear any stored session/auth data
-    sessionStorage.clear();
-    Cookies.remove("skipVerification");
-    navigate("/login");
-  };
-
   const renderContent = () => {
     if (isLoading) {
       return <div>Loading...</div>;
@@ -138,7 +131,7 @@ const Panels = () => {
       <Sidebar setActiveContent={setActiveContent}/>
       <div className="content-info">
         {renderContent()}
-        <button className="logout-button" onClick={handleLogout}>Logout</button>
+        <button className="logout-button">Logout</button>
       </div>
     </div>
   );

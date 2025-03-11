@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './EditContent.css';
 import { message } from 'antd';
 
 const EditContent = ({ events, onUpdateEvent }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const newestEvent = events[events.length - 1];
+  const newestEvent = events?.[0];
   const [eventData, setEventData] = useState({
     Event_id: '',
     Title: '',
@@ -14,29 +13,10 @@ const EditContent = ({ events, onUpdateEvent }) => {
     Location: '',
     Time: '',
     Description: '',
-    Video_url: '',
   });
 
-  const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
-  const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
-  const [descFontSize, setDescFontSize] = useState(() => localStorage.getItem("descCustomFontSize") || localStorage.getItem("descFontSize") || "20px");
-  const [persFontSize, setPersFontSize] = useState(() => localStorage.getItem("persCustomFontSize") || localStorage.getItem("persFontSize") || "17px");
-
-
   useEffect(() => {
-    if (location.state?.eventData) {
-      const receivedEvent = location.state.eventData;
-      setEventData({
-        Event_id: receivedEvent.Event_id,
-        Title: receivedEvent.Title,
-        Date: receivedEvent.Date,
-        Location: receivedEvent.Location,
-        Time: receivedEvent.Time || '',
-        Description: receivedEvent.Description || '',
-        Video_url: receivedEvent.Video_url || '',
-      });
-    }
-    else if (newestEvent) {
+    if (newestEvent) {
       setEventData({
         Event_id: newestEvent.Event_id,
         Title: newestEvent.Title,
@@ -44,7 +24,6 @@ const EditContent = ({ events, onUpdateEvent }) => {
         Location: newestEvent.Location,
         Time: newestEvent.Time || '',
         Description: newestEvent.Description || '',
-        Video_url: newestEvent.Video_url || '',
       });
     }
   }, [newestEvent]);
@@ -59,11 +38,6 @@ const EditContent = ({ events, onUpdateEvent }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    localStorage.setItem("admin_fontSize", fontSize);
-    localStorage.setItem("admin_locationFontSize", locationFontSize);
-    localStorage.setItem("admin_descFontSize", descFontSize);
-    localStorage.setItem("admin_persFontSize", persFontSize);
     
     try {
       const response = await fetch(`http://127.0.0.1:5000/updateEvent/${eventData.Event_id}`, {
@@ -77,7 +51,6 @@ const EditContent = ({ events, onUpdateEvent }) => {
           location: eventData.Location,
           time: eventData.Time,
           description: eventData.Description,
-          video_url: eventData.Video_url,
         }),
       });
 
@@ -158,17 +131,6 @@ const EditContent = ({ events, onUpdateEvent }) => {
           name="Description"
           value={eventData.Description}
           onChange={handleChange}
-        />
-
-        <label htmlFor="Video_url">Video URL:</label>
-        <input
-          type="text"
-          id="Video_url"
-          name="Video_url"
-          value={eventData.Video_url}
-          onChange={handleChange}
-          placeholder="Enter video URL..."
-          required
         />
 
         <button type="submit">Update Event</button>

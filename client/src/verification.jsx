@@ -14,8 +14,6 @@ function Verification() {
   const navigate = useNavigate();
   const [adminId, setAdminId] = useState(null);
   const [skipVerification, setSkipVerification] = useState(false);
-  const authAction = sessionStorage.getItem("authAction");
-  const isSignIn = authAction === "signIn";
 
   //use the session email to get the adminID
   const fetchAdminIdByEmail = useCallback(async () => {
@@ -159,9 +157,8 @@ const handleSubmit = async (event) => {
         sessionStorage.clear(); 
         navigate("/admin");
       } else if (authAction === "forgotPassword") {
-        const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
         sessionStorage.clear(); 
-        navigate("/forget", { state: { email: forgotPasswordEmail } });
+        navigate("/forget");
       }
     } else {
       setErrorMessage(data.error);
@@ -201,7 +198,6 @@ const handleSubmit = async (event) => {
             <input
               type="checkbox"
               id="skipVerification"
-              disabled={!isSignIn}
               checked={skipVerification}
               onChange={(e) => setSkipVerification(e.target.checked)}
             />

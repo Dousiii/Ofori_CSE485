@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import './forget.css';
-import { useNavigate, useLocation } from 'react-router-dom';
-// import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 function Forget() {
     // email, password, and confirmPassword are states that save the user inputs for email, new password, and confirm password respectively
@@ -19,16 +19,14 @@ function Forget() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate(); // useNavigate hook for page navigation
-    const location = useLocation();
 
     // useEffect to load email from sessionStorage when the component is mounted
     useEffect(() => {
-        const storedEmail = location.state?.email; // Retrieve the email from location
+        const storedEmail = sessionStorage.getItem('forgotPasswordEmail'); // Retrieve the email from sessionStorage
         if (storedEmail) {
             setEmail(storedEmail); // Set the email state
-            window.history.replaceState({}, document.title);
         }
-    }, [location, navigate]);
+    }, []);
 
     //use to prevent go to the page without login
     /*

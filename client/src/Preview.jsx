@@ -1,149 +1,37 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
 import playImg from "./assets/play.png";
 import stopImg from "./assets/stop.png";
 import parse from "html-react-parser";
-import image from "./assets/demo.png";
-import { message } from 'antd';
+import image from "./assets/image.png";
 
-const isValidURL = (str) => {
-    const pattern = /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/i;
-    return pattern.test(str);
-};
-
-function Preview() {
+function Preview({ eventTitle, eventDate, eventLocation, description, personalInfo }) {
     const navigate = useNavigate();
     const { Link } = Anchor;
     const { Option } = Select;
+    const [isPlay, setIsplay] = useState(true);
+
     const [showDropdown, setShowDropdown] = useState(null); //set dropdown
-    const [titleCustomFontSize, setTitleCustomFontSize] = useState(localStorage.getItem("titleCustomFontSize") || ""); // use to custon title size
-    const [locationCustomFontSize, setlocationCustomFontSize] = useState(localStorage.getItem("locationCustomFontSize") || ""); //use to custon location size
-    const [descCustomFontSize, setDescCustomFontSize] = useState(localStorage.getItem("descCustomFontSize") || ""); //use to custon descrption size
-    const [persCustomFontSize, setPersCustomFontSize] = useState(localStorage.getItem("persCustomFontSize") || "");//use to custon personal info size
+    const [titleCustomFontSize, setTitleCustomFontSize] = useState(""); // use to custon title size
+    const [dateCustomFontSize, setDateCustomFontSize] = useState("");  // use to custon date size
+    const [locationCustomFontSize, setlocationCustomFontSize] = useState("");  //use to custon location size
+    const [descCustomFontSize, setDescCustomFontSize] = useState(""); //use to custon descrption size
+    const [persCustomFontSize, setPersCustomFontSize] = useState(""); //use to custon personal info size
     const [scaling, setScaling] = useState(false);  //set scaling
     const [showBorder, setShowBorder] = useState(false); //set for show border
     const [isCustomClicked, setIsCustomClicked] = useState(false); // use ti check if custom button click
-    const [fontSize, setFontSize] = useState(localStorage.getItem("fontSize") || "40px");   //set title font size
-    const [locationFontSize, setLocationFontSize] = useState(localStorage.getItem("locationFontSize") || "20px");//set location font size
-    const [descFontSize, setDescFontSize] = useState(localStorage.getItem("descFontSize") || "20px");//set description font size
-    const [persFontSize, setPersFontSize] = useState(localStorage.getItem("persFontSize") || "17px");//set personal info font size
+    const [fontSize, setFontSize] = useState("40px");   //set title font size
+    const [dateFontSize, setDateFontSize] = useState("20px");//set date font size
+    const [locationFontSize, setLocationFontSize] = useState("20px");//set location font size
+    const [descFontSize, setDescFontSize] = useState("20px");//set description font size
+    const [persFontSize, setPersFontSize] = useState("17px");//set personal info font size
     const dropdownRef = useRef(null); // check for click, if user click outside of the box, dropdown cancel
     const customButtonRef = useRef(null); // if user click save, dropdown cancel
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
     const videoRef = useRef();
-    const [dynamicPersonalInfo, setDynamicPersonalInfo] = useState("");
-    const location = useLocation();
-    const introText = location.state?.introText || '';
-    const introSectionRef = useRef(null);
-    const { eventData } = location.state || {};
-    const [eventTitle, setEventTitle] = useState('');
-    const [eventDate, setEventDate] = useState('');
-    const [eventLocation, setEventLocation] = useState('');
-    const [eventTime, setEventTime] = useState('');
-    const [description, setDescription] = useState('');
-    const { formData } = location.state || {};
-
-    useEffect(() => {
-        const checkSourceAndLoad = async () => {
-          const authAction = sessionStorage.getItem('authAction');
-    
-          //check if from intro page
-        if (authAction === 'intro'){
-            setTimeout(() => {
-                introSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
-            if (location.state?.introText) {
-                setDynamicPersonalInfo(location.state.introText);
-            } 
-        }else {
-        //if not, load from database
-            try {
-                const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-                const data = await response.json();
-
-                if (response.ok) {
-                setDynamicPersonalInfo(data.intro_text);
-                } else {
-                message.error('Failed to load introduction');
-                }
-            } catch (error) {
-                console.error('Error fetching introduction:', error);
-                message.error('Failed to load introduction');
-            }
-        }
-        };
-    
-        checkSourceAndLoad();
-    }, [location.state]);
-
-    useEffect(() => {
-        if(location.state?.eventData)
-        {
-            setEventTitle(location.state.eventData.Title);
-            setEventDate(location.state.eventData.Date);
-            setEventTime(location.state.eventData.Time);
-            setEventLocation(location.state.eventData.Location);
-            setDescription(location.state.eventData.Description); 
-        }
-        else if(location.state?.formData)
-        {
-            setEventTitle(location.state.formData.title);
-            setEventDate(location.state.formData.date);
-            setEventTime(location.state.formData.time);
-            setEventLocation(location.state.formData.location);
-            setDescription(location.state.formData.description); 
-        }
-    }, []);
-
-    // Save to localStorage when "Save Change" button is clicked
-  const handleSaveChange = () => {
-    if (isCustomMode) {
-        setFontSize((prev) => {
-            localStorage.setItem("fontSize", prev);
-            return prev;
-          });
-      
-          setLocationFontSize((prev) => {
-            localStorage.setItem("locationFontSize", prev);
-            return prev;
-          });
-      
-          setDescFontSize((prev) => {
-            localStorage.setItem("descFontSize", prev);
-            return prev;
-          });
-      
-          setPersFontSize((prev) => {
-            localStorage.setItem("persFontSize", prev);
-            return prev;
-          });
-      
-          setTitleCustomFontSize((prev) => {
-            localStorage.setItem("titleCustomFontSize", prev);
-            return prev;
-          });
-      
-          setlocationCustomFontSize((prev) => {
-            localStorage.setItem("locationCustomFontSize", prev);
-            return prev;
-          });
-      
-          setDescCustomFontSize((prev) => {
-            localStorage.setItem("descCustomFontSize", prev);
-            return prev;
-          });
-      
-          setPersCustomFontSize((prev) => {
-            localStorage.setItem("persCustomFontSize", prev);
-            return prev;
-          });
-      
-          setIsCustomMode(false); // exit custom mode
-    }
-  };
 
     //check mouse click
     useEffect(() => {
@@ -171,6 +59,8 @@ function Preview() {
         const value = e.target.value;
         if (box === "title") {
             setTitleCustomFontSize(value);
+        } else if (box === "date") {
+            setDateCustomFontSize(value);
         } else if (box === "location") {
             setlocationCustomFontSize(value);
         } else if (box === "desc") {
@@ -179,12 +69,26 @@ function Preview() {
             setPersCustomFontSize(value);
         }
     }
+    const play = () => {
+        videoRef.current.play();
+        setIsplay(false);
+    };
 
+    const stop = () => {
+        videoRef.current.pause();
+        setIsplay(true);
+    };
+
+    const onVideoEnd = () => {
+        setIsplay(true);
+    };
     //use to apply the font size that user custom
     const applyCustomFontSize = (box) => {
         let value = "";
         if (box === "title") {
             value = titleCustomFontSize.trim();
+        } else if (box === "date") {
+            value = dateCustomFontSize.trim();
         } else if (box === "location") {
             value = locationCustomFontSize.trim();
         } else if (box === "desc") {
@@ -199,16 +103,14 @@ function Preview() {
             }
             if (box === "title") {
                 setFontSize(value);
-                setTitleCustomFontSize("");
+            } else if (box === "date") {
+                setDateFontSize(value);
             } else if (box === "location") {
                 setLocationFontSize(value);
-                setlocationCustomFontSize("");
             } else if (box === "desc") {
                 setDescFontSize(value)
-                setDescCustomFontSize("");
             } else if (box === "personal") {
                 setPersFontSize(value);
-                setPersCustomFontSize("");
             }
             setScaling(false);
             setShowDropdown(null);
@@ -237,6 +139,12 @@ function Preview() {
 
     //use to handle when the title box click
     const handleTitleBoxClick = (box) => {
+        // show the drop down
+        toggleDropdown(box);
+    };
+
+
+    const handleDateBoxClick = (box) => {
         // show the drop down
         toggleDropdown(box);
     };
@@ -270,13 +178,10 @@ function Preview() {
     const handleBack = () => {
         const authAction = sessionStorage.getItem('authAction');
         if (authAction === 'edit') {
-            navigate('/admin#edit', { state: { eventData } }); // Redirect to the edit
+            navigate('/admin#edit'); // Redirect to the admin page after Sign In
         } else if (authAction === 'add') {
-            navigate('/admin#add', { state: { formData } }); // Redirect to create
-        } else if (authAction === 'intro') {
-            navigate('/admin#introduction', { state: { introText } }); // Redirect to introduction page
-        }
-        else {
+            navigate('/admin#add'); // Redirect to reset password page
+        } else {
             console.error('Unknown action type');
         }
     };
@@ -286,23 +191,15 @@ function Preview() {
         <div className="previewHome">
             <h2 style={{ textAlign: "center", marginBottom: "50px", fontSize: "40px", marginTop: "30px" }}>This is a preview page</h2>
             <div className="bgBorder">
-                <div className="fixedBorderContainer">
-                    <button onClick={handleBack} className="backButton">Back</button>
-                    <button ref={customButtonRef} className="customButton" onClick={() => {
-                        if (isCustomMode) {
-                            handleSaveChange(); // Save when in custom mode
-                            setIsCustomMode(false); // Switch back to "Custom Font Size" after saving
-                          } else {
-                            // If not in custom mode, enter custom mode to edit font size
-                            setIsCustomMode(true); 
-                          }
-                          toggleBorder();
-                          setIsCustomClicked((prevState) => !prevState);
-                          setShowDropdown(null);
-                    }}>
-                        {isCustomMode ? "Save Change" : "Custom Font Size"}
-                    </button>
-                </div>
+                <button onClick={handleBack} className="backButton">Back</button>
+                <button ref={customButtonRef} className="customButton" onClick={() => {
+                    toggleBorder();
+                    setIsCustomClicked((prevState) => !prevState);
+                    setShowDropdown(null);
+                    setIsCustomMode((prevState) => !prevState);
+                }}>
+                    {isCustomMode ? "Save Change" : "Custom"}
+                </button>
                 <div className={`eventinfoBox ${showBorder ? "withBorder" : "noBorder"}`}>
                     <div className={`eventTitleBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {
@@ -324,7 +221,7 @@ function Preview() {
                         {showDropdown === "title" && (
                             <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
                                 <Select
-                                    value={fontSize}
+                                    defaultValue={fontSize}
                                     style={{ width: 120 }}
                                     onChange={(value) => setFontSize(value)}
                                     dropdownRender={(menu) => (
@@ -354,6 +251,57 @@ function Preview() {
                         )}
                     </div>
 
+                    <div className={`eventDateBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
+                        onClick={(e) => {
+                            if (isCustomClicked) {
+                                handleDateBoxClick("date");
+                                e.stopPropagation();
+                            }
+                        }
+                        }
+                        style={{
+                            fontSize: dateFontSize,
+                            transform: isCustomClicked && showDropdown === "date" && scaling ? "scale(1.05)" : "scale(1)", // Apply scaling when dropdown is open
+                            transition: "transform 0.2s", // Smooth transition for scaling
+                            cursor: isCustomClicked ? "pointer" : "default",
+                        }}>
+                        The Event Date is:
+                        {eventDate}
+
+                        {showDropdown === "date" && (
+                            <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
+                                <Select
+                                    defaultValue={dateFontSize}
+                                    style={{ width: 120 }}
+                                    onChange={(value) => setDateFontSize(value)}
+                                    dropdownRender={(menu) => (
+                                        <>
+                                            {menu}
+                                            <Space style={{ padding: "5px", display: "flex", flexDirection: "column" }}>
+                                                <Input
+                                                    value={dateCustomFontSize}
+                                                    onChange={(e) => handleCustomFontSizeChange("date", e)}
+                                                    style={{ width: 80 }}
+                                                    placeholder="e.g., 18px"
+                                                />
+                                                <Button onClick={() => applyCustomFontSize("date")} type="primary" style={{ marginTop: "5px" }}>
+                                                    Apply
+                                                </Button>
+                                            </Space>
+                                        </>
+                                    )}
+                                >
+                                    <Option value="15px">15px</Option>
+                                    <Option value="20px">20px</Option>
+                                    <Option value="25px">25px</Option>
+                                    <Option value="30px">30px</Option>
+                                    <Option value="35px">35px</Option>
+                                </Select>
+                            </div>
+                        )}
+                    </div>
+
+
                     <div className={`eventLocationBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""} `}
                         onClick={(e) => {
                             if (isCustomClicked) {
@@ -367,27 +315,10 @@ function Preview() {
                             transform: isCustomClicked && showDropdown === "location" && scaling ? "scale(1.05)" : "scale(1)", // Apply scaling when dropdown is open
                             transition: "transform 0.2s", // Smooth transition for scaling
                             cursor: isCustomClicked ? "pointer" : "default",
-                        }}>
-                        The Event Location is: 
-                        {" "}
-                        {isValidURL(eventLocation) ? (
-                            <a 
-                                href={eventLocation.startsWith("http") ? eventLocation : `https://${eventLocation}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                style={{ color: "blue", textDecoration: "underline" }}
-                            >
-                                {eventLocation}
-                            </a>
-                        ) : (
-                            eventLocation
-                        )}
-                        <div></div>
-                        The Event Date is: 
-                        {eventDate}
-                        <div></div>
-                        The Event Time is: 
-                        {eventTime}
+                        }}
+                    >
+                        The Event Location is:
+                        {eventLocation}
 
                         {showDropdown === "location" && (
                             <div ref={dropdownRef} className="fontSizeDropdown" onClick={handleDropdownClick} style={{ display: "inline-block", marginLeft: "10px" }}>
@@ -420,22 +351,26 @@ function Preview() {
                                 </Select>
                             </div>
                         )}
-                    </div>               
+                    </div>
+
                 </div>
 
                 <div
-                    className="flexCenterBox mt50 borderBottom videoBox"
+                    className="flexCenterBox mt50 borderBottom "
                     style={{ flexDirection: "column", alignItems: "center", position: "relative" }}>
 
                     <video
-                        autoPlay
+
                         muted
-                        controls
-                        className="videoItem"
+                        onEnded={onVideoEnd}
+                        className="videoBox"
                         ref={videoRef}
                     >
                         <source src="/video/a.mp4" type="video/mp4"></source>
                     </video>
+                    {
+                        isPlay === true ? <img src={playImg} className="stopClass1" onClick={play} /> : <img src={stopImg} className="stopClass1" onClick={stop} />
+                    }
                     <Link href="#componentsSubmit" title={enrollButton()} />
                 </div>
 
@@ -457,7 +392,7 @@ function Preview() {
                             position: "relative",
                         }}
                     >
-                        {parse(description.replace(/\n/g, "<br />"))}
+                        {parse(description)}
                         {showDropdown === "desc" && (
                             <div ref={dropdownRef}
                                 className="fontSizeDropdown"
@@ -502,8 +437,7 @@ function Preview() {
 
 
 
-                <div className="mt30 introduction_p" ref={introSectionRef}>
-                    <img src={image}  className="mt30 demo"/> 
+                <div className="bgBox  mt30" >
                     <div className={`personalInfoBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {
                             if (isCustomClicked) {
@@ -521,7 +455,7 @@ function Preview() {
                             alignItems: "center"
                         }}
                     >
-                        {parse(dynamicPersonalInfo.replace(/\n/g, "<br />"))}
+                        {parse(personalInfo)}
 
                         {showDropdown === "personal" && (
                             <div ref={dropdownRef}
@@ -558,7 +492,15 @@ function Preview() {
                                     <Option value="30px">30px</Option>
                                 </Select>
                             </div>
-                        )}  
+                        )}
+
+                        <div className="flexBox mt30">
+                            <img src={image} className="avater" />
+                            <div className="rightText">
+                                <div>Join our FREE </div>
+                                <div> summit for expert insigh</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -629,5 +571,33 @@ function Preview() {
         </div>
     );
 }
+
+Preview.defaultProps = {
+    eventTitle: "Your Event Title Here",
+    eventDate: "11/05/2024, 6:00pm MST",
+    eventLocation: "ZOOM LINK",
+    description: `
+        Hair and skin beauty is about embracing, nourishing, and enhancing our natural features, creating a foundation of confidence and wellness. 
+        For hair, care begins with understanding its type and needs—whether curly, straight, fine, or thick. Key elements like hydration, regular scalp care, and the right products can help 
+        maintain strength and shine, ensuring resilience against everyday environmental stressors. Healthy hair routines also include minimizing heat and chemical treatments that can weaken strands 
+        over time, while encouraging natural texture and growth.
+        <br /><br />
+        For skin, the goal is to achieve a healthy glow that feels as good as it looks. 
+        Skin beauty focuses on consistent hydration, sun protection, and a balanced routine tailored to 
+        each individual’s unique skin type. A gentle cleanser, an effective moisturizer, and SPF protection 
+        lay the groundwork, while targeted serums, antioxidants, and exfoliation work to rejuvenate and refresh.
+        <br /><br />
+        Ultimately, hair and skin beauty aren’t just about outward appearances—they reflect the overall health and 
+        care we invest in ourselves. Embracing this journey of self-care supports a lasting, radiant look that is authentic 
+        and empowering.`,
+    personalInfo: `
+        Here you can put some infomation of yourself. <br/>
+        Join our FREE 21-day summit for expert insights that will help you
+        walk with pride, knowing your hair is healthy, beautiful, and
+        uniquely yours. Join our FREE 21-day summit for expert insights that
+        will help you walk with pride, knowing your hair is healthy,
+        beautiful, and uniquely yours.
+    `
+};
 
 export default Preview;
