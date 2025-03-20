@@ -44,6 +44,7 @@ function Preview() {
     const [eventLocation, setEventLocation] = useState('');
     const [eventTime, setEventTime] = useState('');
     const [description, setDescription] = useState('');
+    const [video_url, setVideourl] = useState('');
     const { formData } = location.state || {};
 
     useEffect(() => {
@@ -86,7 +87,8 @@ function Preview() {
             setEventDate(location.state.eventData.Date);
             setEventTime(location.state.eventData.Time);
             setEventLocation(location.state.eventData.Location);
-            setDescription(location.state.eventData.Description); 
+            setDescription(location.state.eventData.Description);
+            setVideourl(location.state.eventData.Video_url);
         }
         else if(location.state?.formData)
         {
@@ -433,8 +435,8 @@ function Preview() {
                         controls
                         className="videoItem"
                         ref={videoRef}
-                    >
-                        <source src="/video/a.mp4" type="video/mp4"></source>
+                        src={video_url || ""}
+                    > 
                     </video>
                     <Link href="#componentsSubmit" title={enrollButton()} />
                 </div>
