@@ -178,9 +178,12 @@ function Homepage() {
   return (
     <div className="bgColor">
       <div className="pageHome">
-        <div className="headerTar ">
-          <div> </div>
-        </div>
+      <div className="headerBackground"></div> 
+      <div className="headerTar">
+          <a href="https://www.oforibeauty.ca/" target="_blank" rel="noopener noreferrer">
+              <img src="/Image/logo.png" alt="Logo" className="logo" />
+          </a>
+      </div>
         <div className="title">
           <h2 style={{ fontSize: fontSize }}>{title}</h2>
           <div className="s12" style={{ marginTop: '10px', fontSize: locationFontSize }}>

@@ -141,18 +141,33 @@ def decrypt_endpoint():
     return jsonify({'decrypted_data': decrypted_data})  # Returns the decrypted data
 
 # API: Admin login
+login_attempts = {}
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
     data = request.json
     email = data.get('email')
-    password = data.get('password')  # User's plain text password
+    password = data.get('password')
+    # Check if the user is locked out
+    if email in login_attempts:
+        attempts, lock_time = login_attempts[email]
+        if attempts >= 3 and time.time() < lock_time:
+            wait_time = int(lock_time - time.time())  # Calculate remaining waiting time
+            return jsonify({"message": f"Too many failed attempts. Try again in {wait_time} seconds."}), 403
     admin = Admin.query.filter_by(Email=email).first()
-
     if admin:
-        # Check hashed password
         if checkpw(password.encode(), admin.Password.encode()):
+            # Login successful, clear failure count
+            login_attempts.pop(email, None)
             return jsonify({"message": "Login successful", "admin_id": admin.Admin_id}), 200
         else:
+            # Record failed attempts
+            if email not in login_attempts:
+                login_attempts[email] = (1, 0)
+            else:
+                attempts, _ = login_attempts[email]
+                attempts += 1
+                lock_time = time.time() + 10 if attempts >= 3 else 0  # 3 failures, lock for 5 minutes (10 for test)
+                login_attempts[email] = (attempts, lock_time)     
             return jsonify({"message": "Invalid password"}), 401
     else:
         return jsonify({"message": "Email not found"}), 404

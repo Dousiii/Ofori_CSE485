@@ -85,9 +85,10 @@ const Panels = () => {
 
   const handleLogout = () => {
     // Clear any stored session/auth data
-    //sessionStorage.clear();
-    //Cookies.remove("skipVerification");
-    navigate("/home");
+
+    sessionStorage.clear();
+    Cookies.remove("skipVerification");
+    navigate("/login");
   };
 
   const renderContent = () => {

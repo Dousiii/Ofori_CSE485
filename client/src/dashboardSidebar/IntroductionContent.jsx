@@ -91,6 +91,8 @@ const IntroductionContent = () => {
       <h2>Edit Introduction</h2>
       <form onSubmit={handleSubmit}>
         <div className='form-group'>
+
+        <div>
         <label htmlFor="introText">Introduction Text:</label>
         <textarea
           id="introText"
@@ -99,7 +101,9 @@ const IntroductionContent = () => {
           onChange={handleChange}
           required
         />
+        </div>
 
+        <div className="image">
         <label htmlFor="imageUrl">Image URL:</label>
         <input
           type="text"
@@ -110,7 +114,9 @@ const IntroductionContent = () => {
           placeholder="Enter image URL..."
           required
         />
+        </div>
 
+        <div>
         <button type="submit">Update Introduction</button>
         <button 
           type="preview" 
@@ -119,6 +125,7 @@ const IntroductionContent = () => {
         >
           Preview Introduction
         </button>
+        </div>
         </div>
       </form>
     </div>
