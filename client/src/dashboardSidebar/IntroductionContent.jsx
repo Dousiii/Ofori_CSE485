@@ -4,10 +4,12 @@ import { message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const IntroductionContent = () => {
-  const [introText, setIntroText] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const [imageUrl, setImageUrl] = useState('');
+  const [introData, setIntroData] = useState({
+    intro_text: '',
+    image_url: '',
+  });
 
   const [fontSize, setFontSize]= useState(() => localStorage.getItem("titleCustomFontSize") || localStorage.getItem("fontSize") || "40px");
   const [locationFontSize, setLocationFontSize] = useState(() => localStorage.getItem("locationCustomFontSize") || localStorage.getItem("locationFontSize") || "20px");
@@ -16,16 +18,22 @@ const IntroductionContent = () => {
   
   useEffect(() => {
     const fetchIntroduction = async () => {
-      if (location.state?.introText) {
-        setIntroText(location.state.introText);
+      if (location.state?.introData) {
+        const receivedEvent = location.state.introData;
+        setIntroData({
+          intro_text: receivedEvent.intro_text,
+          image_url: receivedEvent.image_url,
+        });
       } else {
         try {
           const response = await fetch('http://127.0.0.1:5000/getIntroduction');
           const data = await response.json();
           
           if (response.ok) {
-            setIntroText(data.intro_text);
-            setImageUrl(data.image_url);
+            setIntroData({
+              intro_text: data.intro_text,
+              image_url: data.image_url,
+            });
           } else {
             message.error('Failed to load introduction');
           }
@@ -41,16 +49,15 @@ const IntroductionContent = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'introText') {
-      setIntroText(value);
-    } else if (name === 'imageUrl') {
-      setImageUrl(value);
-    }
+    setIntroData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handlePreview = () => {
     sessionStorage.setItem('authAction', 'intro');
-    navigate('/preview', { state: { introText } });
+    navigate('/preview', { state: { introData } });
   };
 
   const handleSubmit = async (e) => {
@@ -68,8 +75,8 @@ const IntroductionContent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          intro_text: introText,
-          image_url: imageUrl
+          intro_text: introData.intro_text,
+          image_url: introData.image_url,
         }),
       });
 
@@ -93,23 +100,24 @@ const IntroductionContent = () => {
         <div className='form-group'>
 
         <div>
-        <label htmlFor="introText">Introduction Text:</label>
+        <label htmlFor="intro_text">Introduction Text:</label>
         <textarea
-          id="introText"
-          name="introText"
-          value={introText}
+          typr="text"
+          id="intro_text"
+          name="intro_text"
+          value={introData.intro_text}
           onChange={handleChange}
           required
         />
         </div>
 
         <div className="image">
-        <label htmlFor="imageUrl">Image URL:</label>
+        <label htmlFor="image_url">Image URL:</label>
         <input
           type="text"
-          id="imageUrl"
-          name="imageUrl"
-          value={imageUrl}
+          id="image_url"
+          name="image_url"
+          value={introData.image_url}
           onChange={handleChange}
           placeholder="Enter image URL..."
           required
