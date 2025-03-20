@@ -354,6 +354,7 @@ def update_event(event_id):
         event.Location = data['location']
         event.Time = data.get('time')
         event.Description = data.get('description', '')
+        event.Video_url = data.get('video_url', '')
         
         db.session.commit()
         
@@ -366,7 +367,8 @@ def update_event(event_id):
                 'Location': event.Location,
                 'Total_audi': event.Total_audi,
                 'Time': str(event.Time) if event.Time else None,
-                'Description': event.Description
+                'Description': event.Description,
+                'Video_url': event.Video_url
             }
         }), 200
     except Exception as e:
