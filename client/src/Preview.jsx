@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
-import playImg from "./assets/play.png";
-import stopImg from "./assets/stop.png";
 import parse from "html-react-parser";
-import image from "./assets/demo.png";
 import { message } from 'antd';
 
 const isValidURL = (str) => {
@@ -34,9 +31,7 @@ function Preview() {
     const customButtonRef = useRef(null); // if user click save, dropdown cancel
     const [isCustomMode, setIsCustomMode] = useState(false); // check if in custom or save change
     const videoRef = useRef();
-    const [dynamicPersonalInfo, setDynamicPersonalInfo] = useState("");
     const location = useLocation();
-    const introText = location.state?.introText || '';
     const introSectionRef = useRef(null);
     const { eventData } = location.state || {};
     const [eventTitle, setEventTitle] = useState('');
@@ -44,7 +39,11 @@ function Preview() {
     const [eventLocation, setEventLocation] = useState('');
     const [eventTime, setEventTime] = useState('');
     const [description, setDescription] = useState('');
+    const [video_url, setVideourl] = useState('');
     const { formData } = location.state || {};
+    const { introData } = location.state || {};
+    const [introText, setIntroText] = useState('');
+    const [image, setImage] = useState('');
 
     useEffect(() => {
         const checkSourceAndLoad = async () => {
@@ -55,8 +54,9 @@ function Preview() {
             setTimeout(() => {
                 introSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
               }, 100);
-            if (location.state?.introText) {
-                setDynamicPersonalInfo(location.state.introText);
+            if (location.state?.introData) {
+                setIntroText(location.state.introData.intro_text);
+                setImage(location.state.introData.image_url);
             } 
         }else {
         //if not, load from database
@@ -65,7 +65,8 @@ function Preview() {
                 const data = await response.json();
 
                 if (response.ok) {
-                setDynamicPersonalInfo(data.intro_text);
+                    setIntroText(data.intro_text);
+                    setImage(data.image_url);
                 } else {
                 message.error('Failed to load introduction');
                 }
@@ -86,7 +87,8 @@ function Preview() {
             setEventDate(location.state.eventData.Date);
             setEventTime(location.state.eventData.Time);
             setEventLocation(location.state.eventData.Location);
-            setDescription(location.state.eventData.Description); 
+            setDescription(location.state.eventData.Description);
+            setVideourl(location.state.eventData.Video_url);
         }
         else if(location.state?.formData)
         {
@@ -95,6 +97,7 @@ function Preview() {
             setEventTime(location.state.formData.time);
             setEventLocation(location.state.formData.location);
             setDescription(location.state.formData.description); 
+            setVideourl(location.state.formData.video_url);
         }
     }, []);
 
@@ -274,7 +277,7 @@ function Preview() {
         } else if (authAction === 'add') {
             navigate('/admin#add', { state: { formData } }); // Redirect to create
         } else if (authAction === 'intro') {
-            navigate('/admin#introduction', { state: { introText } }); // Redirect to introduction page
+            navigate('/admin#introduction', { state: { introData } }); // Redirect to introduction page
         }
         else {
             console.error('Unknown action type');
@@ -433,8 +436,8 @@ function Preview() {
                         controls
                         className="videoItem"
                         ref={videoRef}
-                    >
-                        <source src="/video/a.mp4" type="video/mp4"></source>
+                        src={video_url || ""}
+                    > 
                     </video>
                     <Link href="#componentsSubmit" title={enrollButton()} />
                 </div>
@@ -521,7 +524,7 @@ function Preview() {
                             alignItems: "center"
                         }}
                     >
-                        {parse(dynamicPersonalInfo.replace(/\n/g, "<br />"))}
+                        {parse(introText.replace(/\n/g, "<br />"))}
 
                         {showDropdown === "personal" && (
                             <div ref={dropdownRef}
@@ -565,66 +568,39 @@ function Preview() {
 
                 <div className="infoTitle">Sigu-Up for Join Event</div>
                 <Form
-                    className="mt50"
-                    name="basic"
-                    onFinish={onFinish}
+                    className="borderBottom"
+                    style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
                     size="large"
-                    labelCol={{
-                        span: 9,
-                    }}
-                    wrapperCol={{
-                        span: 8,
-                    }}
+                    labelCol={{ span: 9 }}
+                    wrapperCol={{ span: 8 }}
                 >
                     <Row>
-                        <Col span={23}>
-                            <Form.Item label="Name" name="name">
+                        <Col span={24}>
+                            <Form.Item label="Name">
                                 <Input />
                             </Form.Item>
                         </Col>
-                        <Col span={23}>
-                            <Form.Item label="Phone Number" name="phoneNumber" rules={[
-                                () => ({
-                                    validator(_, value) {
-                                        if (value && value.length === 10) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('from error'));
-                                    },
-                                }),
-                            ]}>
+                        <Col span={24}>
+                            <Form.Item label="Phone Number">
                                 <Input />
                             </Form.Item>
                         </Col>
                     </Row>
                     <Row>
-                        <Col span={23}>
-                            <Form.Item label="Email" name="email" rules={[
-                                () => ({
-                                    validator(_, value) {
-                                        if (value && value.includes('@hotmail.com')) {
-                                            return Promise.resolve();
-                                        }
-                                        if (value && value.includes('@gmail.com')) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('from error'));
-                                    },
-                                }),
-                            ]}>
+                        <Col span={24}>
+                            <Form.Item label="Email">
                                 <Input />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <div className="flexCenterBox ">
-                        <Button htmlType="submit" className="buttonSubmit" id="componentsSubmit" >
+                    <div className="flexCenterBox">
+                        <Button type="primary" className="buttonSubmit">
                             Submit
                         </Button>
                     </div>
                 </Form>
-                <Anchor>
-                    <Link href="#componentsSubmit" className="fixedButton" title={aatext()} />
-                </Anchor>
+
+
             </div>
         </div>
     );
