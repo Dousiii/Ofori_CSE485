@@ -8,12 +8,12 @@ const UploadContent = ({ addEvent }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
-    title: "",
-    date: "",
-    time: "",
-    location: "",
-    description: "",
-    video_url: "",
+    title: '',
+    date: '',
+    time: '',
+    location: '',
+    description: '',
+    video_url: '',
   });
 
   const [minDate, setMinDate] = useState(""); // For preventing past date selection
@@ -42,7 +42,7 @@ const UploadContent = ({ addEvent }) => {
         location: receivedEvent.location,
         time: receivedEvent.time || '',
         description: receivedEvent.description || '',
-        video: receivedEvent.video || '',
+        video_url: receivedEvent.video_url || '',
       });
     }
   }, [location.state]);

@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Col, Row, Form, Input, Button, Anchor, Select, Space } from "antd";
 import { DownCircleFilled } from '@ant-design/icons';
 import "./preview.css";
-import playImg from "./assets/play.png";
-import stopImg from "./assets/stop.png";
 import parse from "html-react-parser";
 import image from "./assets/demo.png";
 import { message } from 'antd';
@@ -97,6 +95,7 @@ function Preview() {
             setEventTime(location.state.formData.time);
             setEventLocation(location.state.formData.location);
             setDescription(location.state.formData.description); 
+            setVideourl(location.state.formData.video_url);
         }
     }, []);
 
@@ -571,62 +570,84 @@ function Preview() {
                     name="basic"
                     onFinish={onFinish}
                     size="large"
-                    labelCol={{
-                        span: 9,
-                    }}
-                    wrapperCol={{
-                        span: 8,
-                    }}
                 >
                     <Row>
                         <Col span={23}>
-                            <Form.Item label="Name" name="name">
+                            <Form.Item
+                                label="Name"
+                                name="name"
+                                labelCol={{ span: 6 }}
+                                wrapperCol={{ span: 16 }}
+                                rules={[{ required: true, message: 'Please enter your name' }]}
+                            >
                                 <Input />
                             </Form.Item>
                         </Col>
                         <Col span={23}>
-                            <Form.Item label="Phone Number" name="phoneNumber" rules={[
-                                () => ({
-                                    validator(_, value) {
-                                        if (value && value.length === 10) {
+                            <Form.Item
+                                label="Phone Number"
+                                name="phoneNumber"
+                                labelCol={{ span: 6 }}
+                                wrapperCol={{ span: 16 }}
+                                rules={[
+                                    {
+                                        validator(_, value) {
+                                            if (!value) {
+                                                return Promise.reject(new Error('Phone number is required'));
+                                            }
+                                            if (value.length !== 10) {
+                                                return Promise.reject(new Error('Phone number must be 10 digits'));
+                                            }
                                             return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('from error'));
+                                        },
                                     },
-                                }),
-                            ]}>
+                                ]}
+                            >
                                 <Input />
                             </Form.Item>
                         </Col>
-                    </Row>
-                    <Row>
                         <Col span={23}>
-                            <Form.Item label="Email" name="email" rules={[
-                                () => ({
-                                    validator(_, value) {
-                                        if (value && value.includes('@hotmail.com')) {
+                            <Form.Item
+                                label="Email"
+                                name="email"
+                                labelCol={{ span: 6 }}
+                                wrapperCol={{ span: 16 }}
+                                rules={[
+                                    {
+                                        validator(_, value) {
+                                            if (!value) {
+                                                return Promise.reject(new Error('Email is required'));
+                                            }
+                                            if (!value.includes('@hotmail.com') && !value.includes('@gmail.com')) {
+                                                return Promise.reject(new Error('Only Hotmail and Gmail are allowed'));
+                                            }
                                             return Promise.resolve();
-                                        }
-                                        if (value && value.includes('@gmail.com')) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('from error'));
+                                        },
                                     },
-                                }),
-                            ]}>
+                                ]}
+                            >
                                 <Input />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <div className="flexCenterBox ">
-                        <Button htmlType="submit" className="buttonSubmit" id="componentsSubmit" >
+                    <div className="flexCenterBox">
+                        <Button htmlType="submit" className="buttonSubmit" id="componentsSubmit">
                             Submit
                         </Button>
                     </div>
                 </Form>
-                <Anchor>
-                    <Link href="#componentsSubmit" className="fixedButton" title={aatext()} />
-                </Anchor>
+
+                <Anchor
+                    items={[
+                        {
+                            key: 'submit',
+                            href: '#componentsSubmit',
+                            title: aatext(),
+                            className: 'fixedButton'
+                        }
+                    ]}
+                />
+
             </div>
         </div>
     );
