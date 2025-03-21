@@ -98,17 +98,23 @@ def get_admins():
 def get_events():
     # events = Event.query.all()  #get all events
     events = Event.query.order_by(db.desc(Event.Event_id)).all()  #get all events
+    data = list()
+    for event in events:
+        event_id = event.Event_id
+        audience_count = Audience.query.filter_by(Event_id=event_id).count()
+        data.append({
+            'Event_id': event.Event_id,
+            'Title': event.Title,
+            'Date': event.Date,
+            'Location': event.Location,
+            'Total_audi': audience_count,
+            'Description': event.Description,
+            'Video_url': event.Video_url,
+            'Time': str(event.Time) if event.Time else None
+        })
     
-    return jsonify([{
-        'Event_id': event.Event_id,
-        'Title': event.Title,
-        'Date': event.Date,
-        'Location': event.Location,
-        'Total_audi': event.Total_audi,
-        'Description': event.Description,
-        'Video_url': event.Video_url,
-        'Time': str(event.Time) if event.Time else None  # Convert time to string
-    } for event in events])
+    return jsonify(data)
+
 
 #function to get all audiences from Audience table
 @app.route('/getAudiences', methods=['GET'])
@@ -124,7 +130,6 @@ def get_Audience():
     } for audience in audiences])
 
 
-#
 
 #       MySql setting done   ⬆︎⬆︎⬆︎⬆︎
 
@@ -231,6 +236,7 @@ def send_verification_code():
     else:
         return jsonify({'error': 'Failed to send email'}), 500
 
+
 @app.route('/verify-code', methods=['POST'])
 def verify_code():
     data = request.json
@@ -255,6 +261,7 @@ def verify_code():
     else:
         return jsonify({"error": "Invalid code"}), 400
 
+
 @app.route('/get_admin_id', methods=['POST'])
 def get_admin_id():
     data = request.json
@@ -266,6 +273,7 @@ def get_admin_id():
         return jsonify({"admin_id": admin.Admin_id}), 200
     else:
         return jsonify({"error": "Admin not found"}), 404
+
 
 
 @app.route('/check_email', methods=['POST'])
@@ -385,7 +393,7 @@ def add_audience_info():
         name = data.get('name')
         email = data.get('email')
         phone = data.get('phone')
-
+        print(1111111111111111111, event_id)
         if not (event_id and name and email):
             return jsonify({"error": "Missing required fields"}), 400
 
@@ -395,7 +403,10 @@ def add_audience_info():
             return jsonify({"error": "Event not found"}), 404
 
         # Check if the email already exists for the given Event
-        existing_audience = Audience.query.filter_by(Event_id=event_id, Email=email).first()
+        existing_audience = Audience.query.filter_by(Event_id=event_id, Email=email, Name=name).first()
+        if existing_audience:
+            return jsonify({"error": "user already exists for this event"}), 400
+
 
         # Create new Audience instance
         new_audience = Audience(
@@ -444,6 +455,7 @@ def get_introduction():
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
 
 @app.route('/updateIntroduction', methods=['PUT'])
 def update_introduction():
@@ -467,6 +479,7 @@ def update_introduction():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
