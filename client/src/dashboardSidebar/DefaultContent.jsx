@@ -11,6 +11,15 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventAudiences, setSelectedEventAudiences] = useState([]);
+  const [eventData, setEventData] = useState({
+    Event_id: '',
+    Title: '',
+    Date: '',
+    Location: '',
+    Time: '',
+    Description: '',
+    Video_url: '',
+  });
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -21,7 +30,7 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
   ) || [];
 
   const sortedEvents = filteredEvents.length > 0
-    ? [...filteredEvents].sort((a, b) => new Date(b.Date) - new Date(a.Date))
+    ? [...filteredEvents].sort((a, b) => b.Event_id - a.Event_id)
     : [];
 
   const handleEventClick = (event) => {

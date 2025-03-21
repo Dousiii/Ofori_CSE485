@@ -160,16 +160,14 @@ const EditContent = ({ events, onUpdateEvent }) => {
           onChange={handleChange}
         />
 
-        <label htmlFor="Video_url">Video URL:</label>
+<label htmlFor="Video_url">Video URL:</label>
         <input
           type="text"
           id="Video_url"
           name="Video_url"
           value={eventData.Video_url}
           onChange={handleChange}
-          placeholder="Enter video URL..."
-          required
-        />
+        />  
 
         <button type="submit">Update Event</button>
         <button 

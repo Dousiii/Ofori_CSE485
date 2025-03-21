@@ -85,6 +85,7 @@ const Panels = () => {
 
   const handleLogout = () => {
     // Clear any stored session/auth data
+
     sessionStorage.clear();
     Cookies.remove("skipVerification");
     navigate("/login");
