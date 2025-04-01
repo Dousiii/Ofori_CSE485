@@ -219,6 +219,7 @@
     max-width: 500px;
     height: auto;
     max-height: 90vh; 
+    height: 350px;
     overflow-y: auto; 
   }
 
