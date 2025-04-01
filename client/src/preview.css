@@ -12,12 +12,9 @@
 }
 
 .customButton {
-    position: absolute; 
-    top: -60px; 
-    right: -6px; 
-    padding: 10px 20px;
+    padding: 11px 30px;
     font-size: 14px;
-    background-color: rgb(235, 111, 111);
+    background-color: #5084e5;
     color: white;
     border: none;
     border-radius: 5px;
@@ -26,9 +23,6 @@
 }
 
 .backButton {
-    position: absolute; 
-    top: -60px; 
-    left: -6px; 
     padding: 11px 30px;
     font-size: 14px;
     background-color: rgb(235, 111, 111);
@@ -55,9 +49,9 @@
     z-index: 10;
 }
 
-.eventinfoBox { 
-    padding: 20px;  
-    margin: 20px 0;  
+.eventinfoBox {
+    padding: 20px;
+    margin: 20px 0;
     text-align: center;  
     background-color: white; 
     font-size: 40px; 
@@ -68,8 +62,7 @@
 }
 
 .eventTitleBox {
-    padding: 20px;  
-    margin: 20px 0;  
+    padding: 10px;
     text-align: center;  
     background-color: white; 
     font-size: 40px; 
@@ -79,16 +72,6 @@
     position: relative;
 }
 
-.eventDateBox {
-    padding: 10px;  
-    text-align: center; 
-    background-color: white;  
-    font-size: 20px; 
-    cursor: pointer;
-    transition: box-shadow 0.9s ease-in-out;
-    transition: background-color 0.3s;
-    position: relative;
-}
 
 .eventLocationBox {
     padding: 10px; 
@@ -125,6 +108,9 @@
     margin: 0 auto;
     color: #C88686FF;
     line-height: 30px;
+    width: 60%;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .personalImaBox {
@@ -244,4 +230,34 @@
 }
 .stopClass1:hover{
     cursor: pointer;
+    }
+
+     .introduction_p {
+         padding: 20px 30px;
+         width: 100%;
+         max-width: 1200px;
+         margin: 0 auto;
+         color: #C88686FF;
+         line-height: 30px;
+         background-color: #f3dcdc;
+         box-sizing: border-box;
+         display: flex;
+         flex-direction: row;
+         align-items: center;
+         gap: 20px;
+     }
+
+     .demo {
+         width: 30%;
+         height: 400px;
+         object-fit: cover;
+     }
+
+     .fixedBorderContainer {
+         position: fixed;
+         z-index: 999;
+         top: 100px;
+         z-index: 1000;
+         display: flex;
+         gap: 30px;
 }
