@@ -227,15 +227,41 @@ function Homepage() {
           </div>
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
-        <div className="introduction_p  mt30" >
+        <div
+          className="introduction_p mt30"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            backgroundColor: "#f8e8e8", // light pink background like the second image
+            flexWrap: "wrap" // ensures responsiveness on mobile
+          }}
+        >
           <img
             src={introData.image_url}
-            style={{ display: "block", margin: "0 auto", maxWidth: "100%", height: "auto" }}
-            className="mt30"
+            alt="Introduction"
+            style={{
+              maxWidth: "300px",
+              width: "100%",
+              height: "auto",
+              margin: "20px"
+            }}
           />
+          <div
+            style={{
+              maxWidth: "600px",
+              fontSize: persFontSize,
+              color: "#b07575",
+              margin: "20px"
+            }}
+          >
+            {parse(introData.intro_text.replace(/\n/g, "<br />"))}
+          </div>
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div style={{ fontSize:  persFontSize }}>
-            {parse(introData.intro_text.replace(/\n/g, "<br />"))}
+
             </div>
           </div>
         </div>
