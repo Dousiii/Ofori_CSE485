@@ -238,10 +238,9 @@ function Homepage() {
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}
-          className=" borderBottom "
+          className="borderBottom fromBox"
           name="basic"
           onFinish={playSubmit}
-          style={{ width: "1200px", margin: "50px auto", marginBottom: "0" }}
           size="large"
           labelCol={{
             span: 9,
