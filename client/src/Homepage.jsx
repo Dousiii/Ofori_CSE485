@@ -228,7 +228,11 @@ function Homepage() {
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
         <div className="introduction_p  mt30" >
-          <img src={introData.image_url}  className="mt30 demo"/> 
+          <img
+            src={introData.image_url}
+            style={{ display: "block", margin: "0 auto", maxWidth: "100%", height: "auto" }}
+            className="mt30"
+          />
           <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
             <div style={{ fontSize:  persFontSize }}>
             {parse(introData.intro_text.replace(/\n/g, "<br />"))}
