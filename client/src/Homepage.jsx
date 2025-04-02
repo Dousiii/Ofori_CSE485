@@ -227,6 +227,7 @@ function Homepage() {
           </div>
           <Link href="#componentsSubmit" title={aaButton()} />
         </div>
+        
         <div
           className="introduction_p mt30"
           style={{
@@ -235,36 +236,27 @@ function Homepage() {
             alignItems: "center",
             justifyContent: "center",
             padding: "20px",
-            backgroundColor: "#f8e8e8", // light pink background like the second image
+            backgroundColor: "#f3dcdc", // light pink background like the second image
             flexWrap: "wrap" // ensures responsiveness on mobile
           }}
         >
           <img
             src={introData.image_url}
             alt="Introduction"
-            style={{
-              maxWidth: "300px",
-              width: "100%",
-              height: "auto",
-              margin: "20px"
-            }}
+            className="image_home"
           />
           <div
             style={{
-              maxWidth: "600px",
+              maxWidth: "700px",
               fontSize: persFontSize,
-              color: "#b07575",
+              color: "#C88686FF",
               margin: "20px"
             }}
           >
             {parse(introData.intro_text.replace(/\n/g, "<br />"))}
           </div>
-          <div className="w1200" style={{ flexDirection: "column", alignItems: "center" }}>
-            <div style={{ fontSize:  persFontSize }}>
-
-            </div>
-          </div>
         </div>
+
         <div className="infoTitle">Sigu-Up for Join Event</div>
         <Form
           form = {form}

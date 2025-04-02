@@ -253,3 +253,21 @@
         padding-top: 20px;
     }
 }
+
+
+.image_home {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    margin: 20px;
+  }
+  
+  @media (min-width: 769px) { 
+    .image_home {
+      width: 30%;
+      height: 400px;
+      object-fit: cover;
+      max-width: none; 
+    }
+  }
+  
