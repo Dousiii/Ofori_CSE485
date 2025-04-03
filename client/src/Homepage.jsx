@@ -205,17 +205,13 @@ function Homepage() {
           <div className="s12" style={{ fontSize:  locationFontSize }}>Time: {time}</div>
         </div>
 
-        <div className="videoBox">
-          <video
-            autoPlay
-            muted
-            controls
-            onEnded={onVideoEnd}
-            className="videoItem"
-            ref={videoRef}
-            src={video || ""}
-          >
-          </video>
+        <div className="videoBox mt50">
+          <iframe 
+              src= {video || ""}
+              allow="autoplay"
+              frameborder="0"
+              allowFullScreen>
+          </iframe>
         </div>
         <div className="w1200 borderBottom">
           <Link href="#componentsSubmit" title={aaButton()} />

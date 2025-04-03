@@ -31,17 +31,15 @@ const Panels = () => {
     fetchData();
   }, []);
 
-  //use to prevent go to the page without login
-  /*
+  //for prevent direct access, only can access for login 
   useEffect(() => {
-    if (Cookies.get("skipVerification")) {
-      navigate("/admin"); // Directly go to admin page
-      return;
+    const isVerified = sessionStorage.getItem("verified") === "true";
+    const skipVerification = Cookies.get("skipVerification");
+  
+    if (!isVerified && !skipVerification) {
+      navigate("/login");
     }
-    
-    // Proceed to verification if no cookie
-    navigate("/login");
-  }, []); */
+  }, []);  
 
   const fetchEvents = async () => {
     try {

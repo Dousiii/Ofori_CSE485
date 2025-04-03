@@ -28,19 +28,11 @@ function Forget() {
             setEmail(storedEmail); // Set the email state
             window.history.replaceState({}, document.title);
         }
+        else
+        {
+          navigate("/login");
+        }
     }, [location, navigate]);
-
-    //use to prevent go to the page without login
-    /*
-    useEffect(() => {
-      if (Cookies.get("skipVerification")) {
-        navigate("/admin"); // Directly go to admin page
-        return;
-      }
-      
-      // Proceed to verification if no cookie
-      navigate("/login");
-    }, []); */
 
     // This function validates the password complexity based on common password requirements:
     // At least 7 characters, one uppercase letter, one lowercase letter, one number, and one special character

@@ -12,10 +12,10 @@ function Verification() {
   const [verificationCode, setVerificationCode] = useState(''); //use to check user enter code
   const [sentCode, setSentCode] = useState('');   //store the send code
   const navigate = useNavigate();
-  const [adminId, setAdminId] = useState(null);
-  const [skipVerification, setSkipVerification] = useState(false);
-  const authAction = sessionStorage.getItem("authAction");
-  const isSignIn = authAction === "signIn";
+  const [adminId, setAdminId] = useState(null); //set admin id
+  const [skipVerification, setSkipVerification] = useState(false);  //set for skip verification
+  const authAction = sessionStorage.getItem("authAction");    //check which page will redirect to
+  const isSignIn = authAction === "signIn";   //check if from login page
 
   //use the session email to get the adminID
   const fetchAdminIdByEmail = useCallback(async () => {
@@ -87,16 +87,18 @@ function Verification() {
     setIsCounting(true);
   };
 
+  //check if user from login page or reset password page, if it is direct access, send user to login page
   useEffect(() => {
     const authAction = sessionStorage.getItem('authAction');
   
     if (!authAction) {
       sessionStorage.removeItem('loggedInUserEmail');
       sessionStorage.removeItem('forgotPasswordEmail');
-      navigate('/login', { replace: true });  // Use replace to prevent back navigation
+      navigate('/login', { replace: true });  // Use replace to prevent back navigation or direct access
     }
   }, []);  
 
+  //for resend code counting
   useEffect(() => {
     //ensure the resend button and timer can work multiple time
     if (!isCounting) return;
@@ -136,41 +138,44 @@ function Verification() {
   }, [isEmailLoaded, userEmail, sendVerificationEmail]);
 
   //use to check if the code is correct
-const handleSubmit = async (event) => {
-  event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  try {
-    const response = await fetch("http://localhost:5000/verify-code", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: userEmail, code: verificationCode }),
-    });
+    try {
+      const response = await fetch("http://localhost:5000/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, code: verificationCode }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      if (skipVerification) {
-        //Cookies.set("skipVerification", "true", { expires: 7, secure: true }); #cookies for 7 days
-        Cookies.set('skipVerification', 'true', { expires: 2 / 1440 }); // 2 minute 
+      if (response.ok) {
+        if (skipVerification) {
+          Cookies.set("skipVerification", "true", { expires: 7, secure: true }); // cookies for 7 days
+        }
+
+        const authAction = sessionStorage.getItem("authAction");
+        //if user is login
+        if (authAction === "signIn") {
+          sessionStorage.clear(); 
+          sessionStorage.setItem("verified", "true");
+          navigate("/admin");
+        }
+        //if user is reset password 
+        else if (authAction === "forgotPassword") {
+          const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
+          sessionStorage.clear(); 
+          navigate("/forget", { state: { email: forgotPasswordEmail } });
+        }
+      } else {
+        setErrorMessage(data.error);
       }
-
-      const authAction = sessionStorage.getItem("authAction");
-      if (authAction === "signIn") {
-        sessionStorage.clear(); 
-        navigate("/admin");
-      } else if (authAction === "forgotPassword") {
-        const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
-        sessionStorage.clear(); 
-        navigate("/forget", { state: { email: forgotPasswordEmail } });
-      }
-    } else {
-      setErrorMessage(data.error);
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      setErrorMessage("An error occurred. Please try again.");
     }
-  } catch (error) {
-    console.error("Error verifying code:", error);
-    setErrorMessage("An error occurred. Please try again.");
-  }
-};
+  };
 
   
 

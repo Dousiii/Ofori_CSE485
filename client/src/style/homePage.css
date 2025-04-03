@@ -154,14 +154,6 @@
     padding-bottom: 30px;
 }
 
-.videoBox {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    height: auto;
-    position: relative;
-}
-
 .videoItem {
     width: 100%;
     height: 100%;
@@ -219,10 +211,6 @@
     body {
         padding: 0 !important;
     }
-
-    .videoBox {
-        padding-top: 20px;
-    }
 }
 
 .fromBox{
@@ -249,9 +237,6 @@
     body{
         padding: 0 !important;
     }
-    .videoBox{
-        padding-top: 20px;
-    }
 }
 
 
@@ -270,4 +255,31 @@
       max-width: none; 
     }
   }
+
+.videoBox {
+    position: relative;
+    width: 100%; 
+    max-width: 1200px;  
+    aspect-ratio: 16 / 9; 
+}
+
+.videoBox iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .videoBox iframe {
+        width: 100%; 
+        max-width: 400px; 
+        height: auto; 
+        aspect-ratio: 16 / 9;
+    }
+}
+
+
+
   

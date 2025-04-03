@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { message } from "antd";
 import './popup.css';
+import { useNavigate } from 'react-router-dom';
 
 function Popup({ onClose }) {
   const [title, setTitle] = useState("");
@@ -9,6 +10,7 @@ function Popup({ onClose }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get("http://localhost:5000/getPopup")
@@ -21,6 +23,11 @@ function Popup({ onClose }) {
         message.error("Failed to load popup content");
       });
   }, []);
+
+  //prevent direct access, redirect to home page
+  useEffect(() => {
+      navigate("/home");
+  }, []); 
 
   const playSubmit = (e) => {
     e.preventDefault();

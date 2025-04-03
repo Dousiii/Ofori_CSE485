@@ -11,6 +11,7 @@ from bcrypt import hashpw, gensalt, checkpw
 import time
 
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -224,7 +225,7 @@ def send_verification_code():
     if not sendgrid_api_key:
         # If there's no API key, return a mock code for development
         code = '123456'
-        expiry_time = time.time() + 60  #+300 (5 minutes)
+        expiry_time = time.time() + 300  #+300 (5 minutes)
         verification_data[email] = {"code": code, "expires_at": expiry_time}
         return jsonify({'message': 'Verification code sent (mock)', 'code': '123456', 'expires_at': expiry_time}), 200
     #
@@ -234,7 +235,7 @@ def send_verification_code():
 
     
     code = str(random.randint(100000, 999999))  #Get random 6 digits code for verification
-    expiry_time = time.time() + 60  #+300 (5 minutes)
+    expiry_time = time.time() + 300  #+300 (5 minutes)
     verification_data[email] = {"code": code, "expires_at": expiry_time}
     status = send_verification_email(email, code)      #call the function in veri_server.py file
 

@@ -57,6 +57,7 @@ const IntroductionContent = () => {
 
   const handlePreview = () => {
     sessionStorage.setItem('authAction', 'intro');
+    sessionStorage.setItem("fromAdmin", "true");
     navigate('/preview', { state: { introData } });
   };
 
