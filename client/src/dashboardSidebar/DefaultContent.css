@@ -68,17 +68,8 @@
     margin-top: 1.5rem; /* Space above the button */
     position: relative; /* To position the button in the corner */
   }
-
-  .event-list, .scrollable-box {
-    min-height: 450px;
-    max-height: 550px;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
+  .groupSearch{
+    gap: 2rem;
   }
 
   .peopleList {
@@ -95,6 +86,25 @@
   }
 
   .peopleList h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+    padding: 0 10px;
+  }
+
+  .event-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 510px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+
+  .event-list h2 {
     font-size: 1.2rem;
     color: #333;
     margin-bottom: 15px;
@@ -228,4 +238,27 @@
 
   .peopleInfo strong {
     color: #333;
+  }
+
+  /* Add these styles to make the people list scrollable */
+  .people-scroll-container {
+    max-height: 595px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+  /* Add these styles to make the people list scrollable */
+  .event-scroll-container {
+    max-height: 525px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
   }
