@@ -11,6 +11,12 @@
   z-index: 9999;
 }
 
+.error-message {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
 .popup-container {
   position: relative;
   display: flex;
