@@ -146,6 +146,7 @@
 
 .buttonSubmit:hover {
     cursor: pointer;
+    background: rgb(126, 60, 60) !important;
 }
 
 .borderBottom {
@@ -160,6 +161,7 @@
     margin: 0 auto;
     height: auto;
     position: relative;
+    margin-top: 20px !important;
 }
 
 .videoItem {

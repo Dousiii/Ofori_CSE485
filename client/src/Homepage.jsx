@@ -292,10 +292,10 @@ function Homepage() {
                       if (!value || value.length === 0) {
                         return Promise.resolve(); // Don't validate empty input
                       }
-                      if (value.length === 10) {
+                      if (/^\d{10}$/.test(value)) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('Please enter a 10-digit phone number'));
+                      return Promise.reject(new Error('Please enter a valid 10-digit phone number'));
                     },
                   }),
                 ]}
