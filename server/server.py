@@ -9,7 +9,8 @@ from flask import Flask, request, jsonify
 from veri_server import send_verification_email
 from bcrypt import hashpw, gensalt, checkpw
 import time
-
+import random
+import string
 
 
 app = Flask(__name__)
@@ -36,6 +37,7 @@ class Admin(db.Model):
     Username = db.Column(db.String(50), nullable=False)
     Password = db.Column(db.String(255), nullable=False)
     Email = db.Column(db.String(100), nullable=False)
+    Backup_code = db.Column(db.String(500), nullable=False)
 
 #Event table
 class Event(db.Model):
@@ -90,7 +92,8 @@ def get_admins():
         'Admin_id': admin.Admin_id,
         'Username': admin.Username,
         'Password': admin.Password,
-        'Email': admin.Email
+        'Email': admin.Email,
+        'Backup_code': admin.Backup_code
     } for admin in admins])
 
 #function to get all events from Event table
@@ -206,6 +209,11 @@ def get_admin_email_api(admin_id):
     else:
         return jsonify({'error': 'Admin not found'}), 404
 
+# generate the backup code
+def generate_backup_code():
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(characters, k=7))
+
 # Dictionary to store verification codes and expiration times
 verification_data = {}
 # Endpoint to send verification code
@@ -215,6 +223,25 @@ def send_verification_code():
     if not email:
         return jsonify({'error': 'Email is required'}), 400
         
+    # Check database if there is a backup code
+    admin = Admin.query.filter_by(Email=email).first()
+
+    if admin and admin.Backup_code:
+        # If it has, decrpted the code in database
+        decrypted_backup_code = decrypt_data(admin.Backup_code.encode())
+    else:
+        # create new backup code
+        new_backup_code = generate_backup_code()
+        encrypted_backup_code = encrypt_data(new_backup_code).decode()
+
+        if not admin:
+            return jsonify({'error': 'Admin not found'}), 404
+        
+        # store in database
+        admin.Backup_code = encrypted_backup_code
+        db.session.commit()
+
+        decrypted_backup_code = new_backup_code  #return the decrypted code
 
     #Use for when API key is not set and use for testing, will delete in the future
     #
@@ -227,7 +254,13 @@ def send_verification_code():
         code = '123456'
         expiry_time = time.time() + 300  #+300 (5 minutes)
         verification_data[email] = {"code": code, "expires_at": expiry_time}
-        return jsonify({'message': 'Verification code sent (mock)', 'code': '123456', 'expires_at': expiry_time}), 200
+
+        return jsonify({
+            'message': 'Verification code sent (mock)',
+            'code': code,
+            'expires_at': expiry_time,
+            'backup_code': decrypted_backup_code  # return backup code
+        }), 200
     #
     #
     #
@@ -240,7 +273,7 @@ def send_verification_code():
     status = send_verification_email(email, code)      #call the function in veri_server.py file
 
     if status == 202:  # 202 means the email was successfully accepted by SendGrid
-        return jsonify({'message': 'Verification code sent', 'code': code, 'expires_at': expiry_time}), 200
+        return jsonify({'message': 'Verification code sent', 'code': code, 'expires_at': expiry_time, 'backup_code': decrypted_backup_code}), 200
     else:
         return jsonify({'error': 'Failed to send email'}), 500
 
@@ -253,20 +286,40 @@ def verify_code():
     if not email or not user_code:
         return jsonify({"error": "Email and code are required"}), 400
 
+    admin = Admin.query.filter_by(Email=email).first()
+    if not admin:
+        return jsonify({"error": "Admin not found"}), 404
+
+    #get the code
     stored_data = verification_data.get(email)
+    
 
-    if not stored_data:
-        return jsonify({"error": "No code found. Request a new one."}), 400
+    # check code
+    if stored_data:
+        if time.time() > stored_data["expires_at"]:
+            return jsonify({"error": "Verification code expired. Request a new one."}), 400
 
-    # Check if the code has expired
-    if time.time() > stored_data["expires_at"]:
-        return jsonify({"error": "Verification code expired. Request a new one."}), 400
+        if stored_data["code"] == user_code:
+            return jsonify({"message": "Verification successful"}), 200
 
-    # Check if the code matches
-    if stored_data["code"] == user_code:
-        return jsonify({"message": "Verification successful"}), 200
-    else:
-        return jsonify({"error": "Invalid code"}), 400
+     #Check back up code
+    if admin.Backup_code:
+        stored_backup_code = decrypt_data(admin.Backup_code.encode())  # decrypted the code
+        if stored_backup_code == user_code:
+            new_backup_code = generate_backup_code()
+            encrypted_new_backup_code = encrypt_data(new_backup_code).decode()
+
+            #Update the new backup code to database
+            admin.Backup_code = encrypted_new_backup_code
+            db.session.commit()
+
+            return jsonify({
+                "message": "Backup code verified successfully",
+                "new_backup_code": new_backup_code
+            }), 200
+
+    return jsonify({"error": "Invalid code"}), 400
+
 
 @app.route('/get_admin_id', methods=['POST'])
 def get_admin_id():

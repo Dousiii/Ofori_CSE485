@@ -11,6 +11,10 @@ function Verification() {
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationCode, setVerificationCode] = useState(''); //use to check user enter code
   const [sentCode, setSentCode] = useState('');   //store the send code
+  const [backupCode, setBackupCode] = useState('');   // new state to store backup code
+  const [newBackupCode, setNewBackupCode] = useState(''); // store new backup code after successful verification
+  const [showBackupCodePopup, setShowBackupCodePopup] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const [adminId, setAdminId] = useState(null); //set admin id
   const [skipVerification, setSkipVerification] = useState(false);  //set for skip verification
@@ -52,9 +56,9 @@ function Verification() {
       });
   
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         setSentCode(data.code);   //set the code for check
+        setBackupCode(data.backup_code); // get the backup code from the server
       } else {
         setErrorMessage(data.error);
       }
@@ -140,33 +144,38 @@ function Verification() {
   //use to check if the code is correct
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:5000/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: userEmail, code: verificationCode }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         if (skipVerification) {
           Cookies.set("skipVerification", "true", { expires: 7, secure: true }); // cookies for 7 days
         }
 
-        const authAction = sessionStorage.getItem("authAction");
-        //if user is login
-        if (authAction === "signIn") {
-          sessionStorage.clear(); 
-          sessionStorage.setItem("verified", "true");
-          navigate("/admin");
+        // Check if new backup code is provided in the response
+        if (data.new_backup_code) {
+          setNewBackupCode(data.new_backup_code);
+          setShowBackupCodePopup(true);
         }
-        //if user is reset password 
-        else if (authAction === "forgotPassword") {
-          const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
-          sessionStorage.clear(); 
-          navigate("/forget", { state: { email: forgotPasswordEmail } });
+        else
+        {
+          const authAction = sessionStorage.getItem("authAction");
+          if (authAction === "signIn") {
+            sessionStorage.clear(); 
+            sessionStorage.setItem("verified", "true");
+            navigate("/admin");
+          } else if (authAction === "forgotPassword") {
+            const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
+            sessionStorage.clear(); 
+            navigate("/forget", { state: { email: forgotPasswordEmail } });
+          }
         }
       } else {
         setErrorMessage(data.error);
@@ -175,6 +184,27 @@ function Verification() {
       console.error("Error verifying code:", error);
       setErrorMessage("An error occurred. Please try again.");
     }
+  };
+  
+  const closeBackupCodePopup = () => {
+    const authAction = sessionStorage.getItem("authAction");
+    if (authAction === "signIn") {
+      sessionStorage.clear(); 
+      sessionStorage.setItem("verified", "true");
+      navigate("/admin");
+    } else if (authAction === "forgotPassword") {
+      const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
+      sessionStorage.clear(); 
+      navigate("/forget", { state: { email: forgotPasswordEmail } });
+    }
+    setShowBackupCodePopup(false);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(newBackupCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); 
+    });
   };
 
   
@@ -224,6 +254,52 @@ function Verification() {
             {isCounting ? "Resend in " + counter + "s" : "Resend Code"}
           </button>
         </p>
+
+      {showBackupCodePopup && (
+      <div className="popup_v">
+          <div className="popup-content_v">
+          <h2 style={{ color: "#fc7bb1" }}>Backup Code Verified</h2>
+            <p>Your new backup code is: </p>
+            <p>
+              <strong>{newBackupCode}</strong>
+              <button
+                onClick={handleCopy}
+                style={{
+                  marginLeft: "10px",
+                  padding: "4px 8px",
+                  fontSize: "0.9em",
+                  cursor: "pointer",
+                  borderRadius: "5px",
+                }}
+              >
+                Copy
+              </button>
+            </p>
+
+            {copied && (
+              <div style={{
+                position: "fixed",
+                top: "20px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "#d75a5a",
+                color: "white",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                zIndex: 1000,
+              }}>
+                Backup code copied to clipboard!
+              </div>
+            )}
+
+            <p>
+              <span style={{ color: "red" }}>Important</span>: For your security, please store this code in a safe place.
+            </p>
+            <button className="button_v" onClick={closeBackupCodePopup}>Close</button>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
