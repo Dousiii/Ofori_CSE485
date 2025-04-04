@@ -57,6 +57,7 @@ const IntroductionContent = () => {
 
   const handlePreview = () => {
     sessionStorage.setItem('authAction', 'intro');
+    sessionStorage.setItem("fromAdmin", "true");
     navigate('/preview', { state: { introData } });
   };
 
@@ -113,6 +114,7 @@ const IntroductionContent = () => {
 
         <div className="image">
         <label htmlFor="image_url">Image URL:</label>
+        <label>Recommended: imgur, for more information please see user guide</label>
         <input
           type="text"
           id="image_url"

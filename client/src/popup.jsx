@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { message } from "antd";
 import './popup.css';
+import { useNavigate } from 'react-router-dom';
 
 function Popup({ onClose }) {
   const [title, setTitle] = useState("");
@@ -9,6 +10,7 @@ function Popup({ onClose }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
   const [currentEventId, setCurrentEventId] = useState(null);
   const [formErrors, setFormErrors] = useState({
     name: '',
@@ -52,6 +54,12 @@ function Popup({ onClose }) {
         console.error("Failed to fetch events", error);
       });
   }, []);
+
+
+  //prevent direct access, redirect to home page
+  useEffect(() => {
+      navigate("/home");
+  }, []); 
 
   const validateForm = () => {
     let valid = true;

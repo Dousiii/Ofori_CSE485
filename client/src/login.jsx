@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 import Cookies from 'js-cookie';
@@ -80,6 +80,11 @@ function Login() {
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
+
+    //make sure to clear all sessions
+    useEffect(() => {
+        sessionStorage.clear(); 
+      }, []);
 
     return (
         <div className="login-background">

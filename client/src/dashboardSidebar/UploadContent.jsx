@@ -105,6 +105,7 @@ const UploadContent = ({ addEvent }) => {
 
   const handlePreview = () => {
     sessionStorage.setItem('authAction', 'add');
+    sessionStorage.setItem("fromAdmin", "true");
     navigate('/preview', { state: { formData } });
   };
 
@@ -171,14 +172,22 @@ const UploadContent = ({ addEvent }) => {
         />
 
 
-        <label htmlFor="video_url">Video URL:</label>
+        <label htmlFor="Video_url">YouTube Video URL: </label>
+        <label>
+          Please enter your YouTube link (set video as Unlisted or Public):{" "}<div></div>
+          <code>https://www.youtube.com/embed/&#123;YOUR_VIDEO_ID&#125;?autoplay=1&mute=1</code>
+        </label>
+        <label>
+          Example:{" "}<div></div>
+          <code>https://www.youtube.com/embed/Fp5ghKduTK8?autoplay=1&mute=1</code>
+        </label>
         <input
           type="text"
           id="video_url"
           name="video_url"
           value={formData.video_url}
           onChange={handleChange}
-          placeholder="Enter video URL..."
+          placeholder="Enter YouTube Video URL..."
           required
         />
 

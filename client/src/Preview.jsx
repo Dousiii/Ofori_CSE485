@@ -45,36 +45,43 @@ function Preview() {
     const [introText, setIntroText] = useState('');
     const [image, setImage] = useState('');
 
+    //only user can access from admin page
+    useEffect(() => {
+        if (sessionStorage.getItem("fromAdmin") !== "true") {
+          navigate("/admin");
+        }
+    }, []);
+
     useEffect(() => {
         const checkSourceAndLoad = async () => {
           const authAction = sessionStorage.getItem('authAction');
     
           //check if from intro page
-        if (authAction === 'intro'){
-            setTimeout(() => {
-                introSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
-            if (location.state?.introData) {
-                setIntroText(location.state.introData.intro_text);
-                setImage(location.state.introData.image_url);
-            } 
-        }else {
-        //if not, load from database
-            try {
-                const response = await fetch('http://127.0.0.1:5000/getIntroduction');
-                const data = await response.json();
+            if (authAction === 'intro'){
+                setTimeout(() => {
+                    introSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+                if (location.state?.introData) {
+                    setIntroText(location.state.introData.intro_text);
+                    setImage(location.state.introData.image_url);
+                } 
+            }else {
+            //if not, load from database
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/getIntroduction');
+                    const data = await response.json();
 
-                if (response.ok) {
-                    setIntroText(data.intro_text);
-                    setImage(data.image_url);
-                } else {
-                message.error('Failed to load introduction');
+                    if (response.ok) {
+                        setIntroText(data.intro_text);
+                        setImage(data.image_url);
+                    } else {
+                    message.error('Failed to load introduction');
+                    }
+                } catch (error) {
+                    console.error('Error fetching introduction:', error);
+                    message.error('Failed to load introduction');
                 }
-            } catch (error) {
-                console.error('Error fetching introduction:', error);
-                message.error('Failed to load introduction');
             }
-        }
         };
     
         checkSourceAndLoad();
@@ -102,51 +109,51 @@ function Preview() {
     }, []);
 
     // Save to localStorage when "Save Change" button is clicked
-  const handleSaveChange = () => {
-    if (isCustomMode) {
-        setFontSize((prev) => {
-            localStorage.setItem("fontSize", prev);
-            return prev;
-          });
-      
-          setLocationFontSize((prev) => {
-            localStorage.setItem("locationFontSize", prev);
-            return prev;
-          });
-      
-          setDescFontSize((prev) => {
-            localStorage.setItem("descFontSize", prev);
-            return prev;
-          });
-      
-          setPersFontSize((prev) => {
-            localStorage.setItem("persFontSize", prev);
-            return prev;
-          });
-      
-          setTitleCustomFontSize((prev) => {
-            localStorage.setItem("titleCustomFontSize", prev);
-            return prev;
-          });
-      
-          setlocationCustomFontSize((prev) => {
-            localStorage.setItem("locationCustomFontSize", prev);
-            return prev;
-          });
-      
-          setDescCustomFontSize((prev) => {
-            localStorage.setItem("descCustomFontSize", prev);
-            return prev;
-          });
-      
-          setPersCustomFontSize((prev) => {
-            localStorage.setItem("persCustomFontSize", prev);
-            return prev;
-          });
-      
-          setIsCustomMode(false); // exit custom mode
-    }
-  };
+    const handleSaveChange = () => {
+        if (isCustomMode) {
+            setFontSize((prev) => {
+                localStorage.setItem("fontSize", prev);
+                return prev;
+            });
+        
+            setLocationFontSize((prev) => {
+                localStorage.setItem("locationFontSize", prev);
+                return prev;
+            });
+        
+            setDescFontSize((prev) => {
+                localStorage.setItem("descFontSize", prev);
+                return prev;
+            });
+        
+            setPersFontSize((prev) => {
+                localStorage.setItem("persFontSize", prev);
+                return prev;
+            });
+        
+            setTitleCustomFontSize((prev) => {
+                localStorage.setItem("titleCustomFontSize", prev);
+                return prev;
+            });
+        
+            setlocationCustomFontSize((prev) => {
+                localStorage.setItem("locationCustomFontSize", prev);
+                return prev;
+            });
+        
+            setDescCustomFontSize((prev) => {
+                localStorage.setItem("descCustomFontSize", prev);
+                return prev;
+            });
+        
+            setPersCustomFontSize((prev) => {
+                localStorage.setItem("persCustomFontSize", prev);
+                return prev;
+            });
+        
+            setIsCustomMode(false); // exit custom mode
+        }
+    };
 
     //check mouse click
     useEffect(() => {
@@ -427,23 +434,26 @@ function Preview() {
                 </div>
 
                 <div
-                    className="flexCenterBox mt50 borderBottom videoBox"
+                    className=" mt50 videoBox"
                     style={{ flexDirection: "column", alignItems: "center", position: "relative" }}>
 
-                    <video
-                        autoPlay
-                        muted
-                        controls
-                        className="videoItem"
-                        ref={videoRef}
-                        src={video_url || ""}
-                    > 
-                    </video>
+                    <iframe 
+                        src= {video_url || ""}
+                        allow="autoplay"
+                        frameborder="0"
+                        allowFullScreen>
+                    </iframe>
+                    
+                </div>
+
+                <div className="w1200 borderBottom">
                     <Link href="#componentsSubmit" title={enrollButton()} />
                 </div>
 
+                
 
-                <div className="flexBox mt50 borderBottom" style={{ flexDirection: "column", alignItems: "center" }}>
+
+                <div className="flexBox mt30 borderBottom" style={{ flexDirection: "column", alignItems: "center" }}>
                     <div className={`descriptionBox ${showBorder ? "withBorder" : "noBorder"} ${isCustomClicked ? "hoverEnabled" : ""}`}
                         onClick={(e) => {
                             if (isCustomClicked) {
