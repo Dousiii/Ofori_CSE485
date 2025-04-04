@@ -77,6 +77,11 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
     }
   };
 
+  // Calculate the number of attendees for each event
+  const getAttendeeCount = (eventId) => {
+    return audiences?.filter(audience => audience.Event_id === eventId).length || 0;
+  };
+
   if (events.length === 0) {
     return (
       <div className="content">
@@ -105,6 +110,9 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
             onChange={handleSearchChange}
           />
           <div className="event-list">
+            <h2>Event List</h2>
+            <div className="event-scroll-container">
+            
             {sortedEvents.map(event => (
               <div
                 key={event.Event_id}
@@ -116,7 +124,7 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
                     <h3>{event.Title}</h3>
                     <p>Date: {event.Date}</p>
                     <p>Location: {event.Location}</p>
-                    <p>Total Attendees: {event.Total_audi}</p>
+                    <p>Total Attendees: {getAttendeeCount(event.Event_id)}</p>
                   </div>
                   <div className="delete-container">
                     <button 
@@ -129,20 +137,23 @@ const DefaultContent = ({ events, audiences, onDeleteEvent }) => {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
 
         <div className="peopleList">
           <h2>{selectedEvent ? `Participants for ${selectedEvent.Title}` : 'Select an event to view participants'}</h2>
-          {selectedEventAudiences.map(audience => (
-            <div key={audience.Audience_id} className="peopleInfo">
-              <div>
-                <p><strong>Name:</strong> {audience.Name}</p>
-                <p><strong>Email:</strong> {audience.Email}</p>
-                <p><strong>Phone:</strong> {audience.Phone || 'N/A'}</p>
+          <div className="people-scroll-container">
+            {selectedEventAudiences.map(audience => (
+              <div key={audience.Audience_id} className="peopleInfo">
+                <div>
+                  <p><strong>Name:</strong> {audience.Name}</p>
+                  <p><strong>Email:</strong> {audience.Email}</p>
+                  <p><strong>Phone:</strong> {audience.Phone || 'N/A'}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

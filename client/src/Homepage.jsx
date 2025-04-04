@@ -41,6 +41,8 @@ function Homepage() {
   const [descFontSize, setDescFontSize] = useState(() =>  localStorage.getItem("admin_descFontSize") || "20px");
   const [persFontSize, setPersFontSize] = useState(() =>  localStorage.getItem("admin_persFontSize") || "17px");
 
+  // Add this state to track current event ID
+  const [currentEventId, setCurrentEventId] = useState(null);
 
   useEffect(() => {
     if (fontSize) setFontSize(fontSize);
@@ -54,10 +56,14 @@ function Homepage() {
     image_url: ""
   });
 
-
   const playSubmit = (values) => {
+    if (!currentEventId) {
+      message.error('No active event found. Please try again later.');
+      return;
+    }
+
     http.post('/addAudienceInfo', {
-      event_id: 17, // Setting Event_id to current
+      event_id: currentEventId, // Use the dynamic event ID
       name: values.name,
       email: values.email,
       phone: values.phoneNumber
@@ -71,8 +77,6 @@ function Homepage() {
         console.error('API error:', error);
       });
   };
-
- // const [location, setLocation] = useRef("Demo");
 
   const onFinish = async (e) => {
     console.log(e);
@@ -97,6 +101,7 @@ function Homepage() {
         setTime(lastEvent.Time);
         setDescription(lastEvent.Description);
         setVideo(lastEvent.Video_url);
+        setCurrentEventId(lastEvent.Event_id); // Store the current event ID
         return "ok";
       }
       }).catch(error => {
@@ -280,10 +285,13 @@ function Homepage() {
                 rules={[
                   () => ({
                     validator(_, value) {
-                      if (value && value.length === 10) {
+                      if (!value || value.length === 0) {
+                        return Promise.resolve(); // Don't validate empty input
+                      }
+                      if (/^\d{10}$/.test(value)) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('from error'));
+                      return Promise.reject(new Error('Please enter a valid 10-digit phone number'));
                     },
                   }),
                 ]}
@@ -300,10 +308,13 @@ function Homepage() {
                 rules={[
                   () => ({
                     validator(_, value) {
-                      if (value && validateExtension(value)) {
+                      if (!value || value.length === 0) {
+                        return Promise.resolve(); // Don't validate empty input
+                      }
+                      if (validateExtension(value)) {
                         return Promise.resolve();
                       }
-                      return Promise.reject(new Error('from error'));
+                      return Promise.reject(new Error('Please enter a valid email address'));
                     },
                   }),
                 ]}

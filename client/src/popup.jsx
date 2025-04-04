@@ -11,8 +11,26 @@ function Popup({ onClose }) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const [currentEventId, setCurrentEventId] = useState(null);
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    phone: '',
+    email: ''
+  });
+
+  // Validation function for email
+  const validateExtension = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  // Function to validate phone number
+  const validatePhone = (phone) => {
+    return phone.length === 10;
+  };
 
   useEffect(() => {
+    // Fetch popup content
     axios.get("http://localhost:5000/getPopup")
       .then(response => {
         setTitle(response.data.title || "Are you sure you want to miss out on HEALTHY BEAUTY?");
@@ -22,18 +40,70 @@ function Popup({ onClose }) {
         console.error("Failed to fetch popup content", error);
         message.error("Failed to load popup content");
       });
+      
+    // Fetch current event ID
+    axios.get("http://localhost:5000/getEvents")
+      .then(response => {
+        if (response.data && response.data.length > 0) {
+          // Get the most recent event (highest ID)
+          const latestEvent = response.data.sort((a, b) => b.Event_id - a.Event_id)[0];
+          setCurrentEventId(latestEvent.Event_id);
+        }
+      })
+      .catch(error => {
+        console.error("Failed to fetch events", error);
+      });
   }, []);
+
 
   //prevent direct access, redirect to home page
   useEffect(() => {
       navigate("/home");
   }, []); 
 
+  const validateForm = () => {
+    let valid = true;
+    const errors = { name: '', phone: '', email: '' };
+    
+    if (!name) {
+      errors.name = 'Name is required';
+      valid = false;
+    }
+    
+    if (!phone) {
+      errors.phone = 'Phone number is required';
+      valid = false;
+    } else if (!validatePhone(phone)) {
+      errors.phone = 'Please enter a 10-digit phone number';
+      valid = false;
+    }
+    
+    if (!email) {
+      errors.email = 'Email is required';
+      valid = false;
+    } else if (!validateExtension(email)) {
+      errors.email = 'Please enter a valid email address';
+      valid = false;
+    }
+    
+    setFormErrors(errors);
+    return valid;
+  };
+
   const playSubmit = (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    if (!currentEventId) {
+      message.error("No active event found");
+      return;
+    }
 
     axios.post("http://localhost:5000/addAudienceInfo", {
-      event_id: 3,
+      event_id: currentEventId,
       name: name,
       email: email,
       phone: phone
@@ -82,6 +152,7 @@ function Popup({ onClose }) {
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
               />
+              {formErrors.name && <div className="error-message">{formErrors.name}</div>}
             </div>
             <div className="pop-input-container">
               <input 
@@ -91,6 +162,7 @@ function Popup({ onClose }) {
                 value={phone} 
                 onChange={(e) => setPhone(e.target.value)}
               />
+              {formErrors.phone && <div className="error-message">{formErrors.phone}</div>}
             </div>
             <div className="pop-input-container">
               <input 
@@ -100,6 +172,7 @@ function Popup({ onClose }) {
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {formErrors.email && <div className="error-message">{formErrors.email}</div>}
             </div>
 
             <button type="submit" className="pop-submit-button">
